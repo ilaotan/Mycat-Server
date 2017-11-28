@@ -43,7 +43,8 @@ public final class PairUtil {
             int i = Integer.parseInt(slice.trim());
             if (i >= 0) {
                 return new Pair<Integer, Integer>(0, i);
-            } else {
+            }
+            else {
                 return new Pair<Integer, Integer>(i, 0);
             }
         }
@@ -52,12 +53,14 @@ public final class PairUtil {
         int start, end;
         if (left.length() <= 0) {
             start = 0;
-        } else {
+        }
+        else {
             start = Integer.parseInt(left);
         }
         if (right.length() <= 0) {
             end = 0;
-        } else {
+        }
+        else {
             end = Integer.parseInt(right);
         }
         return new Pair<Integer, Integer>(start, end);
@@ -67,7 +70,7 @@ public final class PairUtil {
      * <pre>
      * 将名字和索引用进行分割 当src = "offer_group[4]", l='[', r=']'时，
      * 返回的Piar<String,Integer>("offer", 4);
-     * 当src = "offer_group", l='[', r=']'时， 
+     * 当src = "offer_group", l='[', r=']'时，
      * 返回Pair<String, Integer>("offer",-1);
      * </pre>
      */
@@ -89,7 +92,8 @@ public final class PairUtil {
         int index = DEFAULT_INDEX;
         try {
             index = Integer.parseInt(src.substring(offset + 1, length - 1));
-        } catch (NumberFormatException e) {
+        }
+        catch (NumberFormatException e) {
             return new Pair<String, Integer>(src, DEFAULT_INDEX);
         }
         return new Pair<String, Integer>(src.substring(0, offset), index);

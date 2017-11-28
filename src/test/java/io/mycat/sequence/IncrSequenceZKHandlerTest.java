@@ -23,10 +23,15 @@ import java.util.concurrent.ConcurrentSkipListSet;
  */
 public class IncrSequenceZKHandlerTest {
     private final static int MAX_CONNECTION = 5;
-    private final static int threadCount = 5;
-    private final static int LOOP = 5;
+
+    private final static int threadCount    = 5;
+
+    private final static int LOOP           = 5;
+
     TestingServer testingServer = null;
-    IncrSequenceZKHandler incrSequenceZKHandler[];
+
+    IncrSequenceZKHandler       incrSequenceZKHandler[];
+
     ConcurrentSkipListSet<Long> results;
 
     @Before
@@ -49,7 +54,8 @@ public class IncrSequenceZKHandlerTest {
                     Properties props = PropertiesUtil.loadProps("sequence_conf.properties");
                     try {
                         incrSequenceZKHandler[a].initializeZK(props, testingServer.getConnectString());
-                    } catch (Exception e) {
+                    }
+                    catch (Exception e) {
                         e.printStackTrace();
                     }
                     Thread threads[] = new Thread[threadCount];
@@ -68,7 +74,8 @@ public class IncrSequenceZKHandlerTest {
                     for (int j = 0; j < threadCount; j++) {
                         try {
                             threads[j].join();
-                        } catch (InterruptedException e) {
+                        }
+                        catch (InterruptedException e) {
                             e.printStackTrace();
                         }
                     }
@@ -87,6 +94,7 @@ public class IncrSequenceZKHandlerTest {
         Assert.assertEquals(MAX_CONNECTION * LOOP * threadCount, results.size());
 //        Assert.assertTrue(results.pollLast().equals(MAX_CONNECTION * LOOP * threadCount + 1L));
 //        Assert.assertTrue(results.pollFirst().equals(2L));
-        System.out.println("Time elapsed:" + ((double) (end - start + 1) / 1000.0) + "s\n TPS:" + ((double) (MAX_CONNECTION * LOOP * threadCount) / (double) (end - start + 1) * 1000.0) + "/s");
+        System.out.println("Time elapsed:" + ((double) (end - start + 1) / 1000.0) + "s\n TPS:" + ((double)
+                (MAX_CONNECTION * LOOP * threadCount) / (double) (end - start + 1) * 1000.0) + "/s");
     }
 }

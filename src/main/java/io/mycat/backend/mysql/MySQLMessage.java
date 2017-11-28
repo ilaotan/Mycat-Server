@@ -34,12 +34,15 @@ import java.util.Calendar;
  * @author mycat
  */
 public class MySQLMessage {
-    public static final long NULL_LENGTH = -1;
+    public static final  long   NULL_LENGTH = -1;
+
     private static final byte[] EMPTY_BYTES = new byte[0];
 
     private final byte[] data;
-    private final int length;
-    private int position;
+
+    private final int    length;
+
+    private       int    position;
 
     public MySQLMessage(byte[] data) {
         this.data = data;
@@ -136,16 +139,16 @@ public class MySQLMessage {
     public long readLength() {
         int length = data[position++] & 0xff;
         switch (length) {
-        case 251:
-            return NULL_LENGTH;
-        case 252:
-            return readUB2();
-        case 253:
-            return readUB3();
-        case 254:
-            return readLong();
-        default:
-            return length;
+            case 251:
+                return NULL_LENGTH;
+            case 252:
+                return readUB2();
+            case 253:
+                return readUB3();
+            case 254:
+                return readLong();
+            default:
+                return length;
         }
     }
 
@@ -158,7 +161,6 @@ public class MySQLMessage {
         position = length;
         return ab;
     }
-
 
 
     public byte[] readBytes(int length) {
@@ -181,26 +183,25 @@ public class MySQLMessage {
             }
         }
         switch (offset) {
-        case -1:
-            byte[] ab1 = new byte[length - position];
-            System.arraycopy(b, position, ab1, 0, ab1.length);
-            position = length;
-            return ab1;
-        case 0:
-            position++;
-            return EMPTY_BYTES;
-        default:
-            byte[] ab2 = new byte[offset - position];
-            System.arraycopy(b, position, ab2, 0, ab2.length);
-            position = offset + 1;
-            return ab2;
+            case -1:
+                byte[] ab1 = new byte[length - position];
+                System.arraycopy(b, position, ab1, 0, ab1.length);
+                position = length;
+                return ab1;
+            case 0:
+                position++;
+                return EMPTY_BYTES;
+            default:
+                byte[] ab2 = new byte[offset - position];
+                System.arraycopy(b, position, ab2, 0, ab2.length);
+                position = offset + 1;
+                return ab2;
         }
     }
 
     public byte[] readBytesWithLength() {
         int length = (int) readLength();
-        if(length==NULL_LENGTH)
-        {
+        if (length == NULL_LENGTH) {
             return null;
         }
         if (length <= 0) {
@@ -226,7 +227,7 @@ public class MySQLMessage {
         if (position >= length) {
             return null;
         }
-        
+
         String s = new String(data, position, length - position, charset);
         position = length;
         return s;
@@ -253,7 +254,8 @@ public class MySQLMessage {
             String s = new String(b, position, offset - position);
             position = offset + 1;
             return s;
-        } else {
+        }
+        else {
             position++;
             return null;
         }
@@ -272,17 +274,17 @@ public class MySQLMessage {
             }
         }
         switch (offset) {
-        case -1:
-            String s1 = new String(b, position, length - position, charset);
-            position = length;
-            return s1;
-        case 0:
-            position++;
-            return null;
-        default:
-            String s2 = new String(b, position, offset - position, charset);
-            position = offset + 1;
-            return s2;
+            case -1:
+                String s1 = new String(b, position, length - position, charset);
+                position = length;
+                return s1;
+            case 0:
+                position++;
+                return null;
+            default:
+                String s2 = new String(b, position, offset - position, charset);
+                position = offset + 1;
+                return s2;
         }
     }
 
@@ -331,7 +333,8 @@ public class MySQLMessage {
             Timestamp time = new Timestamp(cal.getTimeInMillis());
             time.setNanos((int) nanos);
             return time;
-        } else {
+        }
+        else {
             Calendar cal = getLocalCalendar();
             cal.set(year, --month, date, hour, minute, second);
             return new java.sql.Date(cal.getTimeInMillis());
@@ -343,6 +346,7 @@ public class MySQLMessage {
         return src == null ? null : new BigDecimal(src);
     }
 
+    @Override
     public String toString() {
         return new StringBuilder().append(Arrays.toString(data)).toString();
     }

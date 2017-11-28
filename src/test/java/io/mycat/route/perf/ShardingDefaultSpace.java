@@ -38,13 +38,16 @@ import io.mycat.route.factory.RouteStrategyFactory;
  */
 public class ShardingDefaultSpace {
     private SchemaConfig schema;
-    private static int total=1000000;
-    protected LayerCachePool cachePool = new SimpleCachePool();
+
+    private static int            total     = 1000000;
+
+    protected      LayerCachePool cachePool = new SimpleCachePool();
+
     public ShardingDefaultSpace() throws InterruptedException {
-         String schemaFile = "/route/schema.xml";
- 		String ruleFile = "/route/rule.xml";
- 		SchemaLoader schemaLoader = new XMLSchemaLoader(schemaFile, ruleFile);
- 		schema = schemaLoader.getSchemas().get("cndb");
+        String schemaFile = "/route/schema.xml";
+        String ruleFile = "/route/rule.xml";
+        SchemaLoader schemaLoader = new XMLSchemaLoader(schemaFile, ruleFile);
+        schema = schemaLoader.getSchemas().get("cndb");
     }
 
     /**
@@ -54,7 +57,7 @@ public class ShardingDefaultSpace {
         SchemaConfig schema = this.getSchema();
         String sql = "insert into offer (member_id, gmt_create) values ('1','2001-09-13 20:20:33')";
         for (int i = 0; i < total; i++) {
-            RouteStrategyFactory.getRouteStrategy().route(new SystemConfig(),schema,-1, sql, null, null,cachePool);
+            RouteStrategyFactory.getRouteStrategy().route(new SystemConfig(), schema, -1, sql, null, null, cachePool);
         }
     }
 
@@ -69,6 +72,6 @@ public class ShardingDefaultSpace {
         long start = System.currentTimeMillis();
         test.testDefaultSpace();
         long end = System.currentTimeMillis();
-        System.out.println("take " + (end - start) + " ms. avg "+(end-start+0.0)/total);
+        System.out.println("take " + (end - start) + " ms. avg " + (end - start + 0.0) / total);
     }
 }

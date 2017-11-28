@@ -34,7 +34,7 @@ import io.mycat.route.parser.util.Pair;
 
 /**
  * 切换数据节点的数据源
- * 
+ *
  * @author mycat
  */
 public final class SwitchDataSource {
@@ -45,7 +45,7 @@ public final class SwitchDataSource {
         Map<String, PhysicalDBPool> dns = MycatServer.getInstance().getConfig().getDataHosts();
         Integer idx = pair.getValue();
         for (String key : pair.getKey()) {
-        	PhysicalDBPool dn = dns.get(key);
+            PhysicalDBPool dn = dns.get(key);
             if (dn != null) {
                 int m = dn.getActivedIndex();
                 int n = (idx == null) ? dn.next(m) : idx.intValue();

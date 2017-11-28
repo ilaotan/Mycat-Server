@@ -23,8 +23,7 @@ public class Util {
      * @param sequences to compare.
      * @return the minimum sequence found or Long.MAX_VALUE if the array is empty.
      */
-    public static long getMinimumSequence(final Sequence[] sequences)
-    {
+    public static long getMinimumSequence(final Sequence[] sequences) {
         return getMinimumSequence(sequences, Long.MAX_VALUE);
     }
 
@@ -36,10 +35,8 @@ public class Util {
      * @return the smaller of minimum sequence value found in {@code sequences} and {@code minimum};
      * {@code minimum} if {@code sequences} is empty
      */
-    public static long getMinimumSequence(final Sequence[] sequences, long minimum)
-    {
-        for (int i = 0, n = sequences.length; i < n; i++)
-        {
+    public static long getMinimumSequence(final Sequence[] sequences, long minimum) {
+        for (int i = 0, n = sequences.length; i < n; i++) {
             long value = sequences[i].get();
             minimum = Math.min(minimum, value);
         }
@@ -47,11 +44,9 @@ public class Util {
         return minimum;
     }
 
-    public static int log2(int i)
-    {
+    public static int log2(int i) {
         int r = 0;
-        while ((i >>= 1) != 0)
-        {
+        while ((i >>= 1) != 0) {
             ++r;
         }
         return r;

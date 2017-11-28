@@ -37,21 +37,21 @@ import io.mycat.config.model.UserConfig;
  * @author mycat
  */
 public interface ConfigLoader {
-	SchemaConfig getSchemaConfig(String schema);
+    SchemaConfig getSchemaConfig(String schema);
 
-	Map<String, SchemaConfig> getSchemaConfigs();
+    Map<String, SchemaConfig> getSchemaConfigs();
 
-	Map<String, DataNodeConfig> getDataNodes();
+    Map<String, DataNodeConfig> getDataNodes();
 
-	Map<String, DataHostConfig> getDataHosts();
+    Map<String, DataHostConfig> getDataHosts();
 
-	SystemConfig getSystemConfig();
+    SystemConfig getSystemConfig();
 
-	UserConfig getUserConfig(String user);
+    UserConfig getUserConfig(String user);
 
-	Map<String, UserConfig> getUserConfigs();
+    Map<String, UserConfig> getUserConfigs();
 
-	FirewallConfig getFirewallConfig();
+    FirewallConfig getFirewallConfig();
 
-	ClusterConfig getClusterConfig();
+    ClusterConfig getClusterConfig();
 }

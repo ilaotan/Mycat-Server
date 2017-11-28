@@ -12,29 +12,17 @@ import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * 测试SQLstat相关元素并发安全性
- *
- *
- *
- *
- *
- *
+ * <p>
+ * <p>
+ * <p>
+ * <p>
+ * <p>
+ * <p>
  * 此单元测试会造成服务器上build运行时间过长一直通不过，最多build了6天还没结束，所以先忽略
- *
- *
- *
- *  后续修复好了再打开
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
+ * <p>
+ * <p>
+ * <p>
+ * 后续修复好了再打开
  *
  * @author Hash Zhang
  * @version 1.0
@@ -42,7 +30,8 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class TestConcurrentSafety {
     private static final int THREAD_COUNT = 2;
-    private static final int LOOP_COUNT = 1000;
+
+    private static final int LOOP_COUNT   = 1000;
 
     String sql = "SELECT `fnum`, `forg`, `fdst`, `airline`, `ftype` , `ports_of_call`, " +
             "`scheduled_deptime`, `scheduled_arrtime`, `actual_deptime`, `actual_arrtime`, " +
@@ -74,13 +63,14 @@ public class TestConcurrentSafety {
             "WHERE `fnum` = 'CA3'  AND `forg` = 'PEK'";
 
 
-    @Test  @Ignore
+    @Test
+    @Ignore
     public void testQueryConditionAnalyzer() throws InterruptedException {
 
 
-        final QueryResult qr = new QueryResult("zhuam", ServerParse.SELECT, sql, 0, 0, 0, 0, 0,0);
-        final QueryResult qr2 = new QueryResult("zhuam", ServerParse.SELECT, sql2, 0, 0, 0, 0, 0,0);
-        final QueryResult qr3 = new QueryResult("zhuam", ServerParse.SELECT, sql3, 0, 0, 0, 0, 0,0);
+        final QueryResult qr = new QueryResult("zhuam", ServerParse.SELECT, sql, 0, 0, 0, 0, 0, 0);
+        final QueryResult qr2 = new QueryResult("zhuam", ServerParse.SELECT, sql2, 0, 0, 0, 0, 0, 0);
+        final QueryResult qr3 = new QueryResult("zhuam", ServerParse.SELECT, sql3, 0, 0, 0, 0, 0, 0);
 
         final QueryConditionAnalyzer analyzer = QueryConditionAnalyzer.getInstance();
         analyzer.setCf("dynamic&fnum");
@@ -136,7 +126,8 @@ public class TestConcurrentSafety {
         Assert.assertTrue((list.get(2).getValue().get() == (long) THREAD_COUNT * LOOP_COUNT));
     }
 
-    @Test       @Ignore
+    @Test
+    @Ignore
     public void testUserSqlHighStat() throws InterruptedException {
         final UserSqlHighStat userSqlHighStat = new UserSqlHighStat();
 
@@ -187,10 +178,9 @@ public class TestConcurrentSafety {
 
         List<SqlFrequency> sqlFrequency = userSqlHighStat.getSqlFrequency(true);
         Assert.assertTrue(sqlFrequency.size() == 2);
-        Assert.assertTrue(sqlFrequency.get(0).getCount() == 2 * THREAD_COUNT *LOOP_COUNT);
-        Assert.assertTrue(sqlFrequency.get(1).getCount() == THREAD_COUNT *LOOP_COUNT);
+        Assert.assertTrue(sqlFrequency.get(0).getCount() == 2 * THREAD_COUNT * LOOP_COUNT);
+        Assert.assertTrue(sqlFrequency.get(1).getCount() == THREAD_COUNT * LOOP_COUNT);
     }
-
 
 
 }

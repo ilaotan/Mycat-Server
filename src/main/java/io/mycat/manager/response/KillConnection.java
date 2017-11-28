@@ -26,7 +26,8 @@ package io.mycat.manager.response;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger; import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import io.mycat.MycatServer;
 import io.mycat.manager.ManagerConnection;
@@ -71,7 +72,8 @@ public final class KillConnection {
                 long value = 0;
                 try {
                     value = Long.parseLong(id);
-                } catch (NumberFormatException e) {
+                }
+                catch (NumberFormatException e) {
                     continue;
                 }
                 FrontendConnection fc = null;

@@ -30,7 +30,8 @@ import java.beans.Expression;
  */
 public final class TableRuleConfig {
 
-    private final String name;
+    private final String       name;
+
     private final RuleConfig[] rules;
 
     public TableRuleConfig(String name, RuleConfig[] rules) {
@@ -52,9 +53,11 @@ public final class TableRuleConfig {
     }
 
     public static final class RuleConfig {
-        private String tableRuleName;
+        private       String     tableRuleName;
+
         /** upper-case */
-        private final String[] columns;
+        private final String[]   columns;
+
         private final Expression algorithm;
 
         public RuleConfig(String[] columns, Expression algorithm) {

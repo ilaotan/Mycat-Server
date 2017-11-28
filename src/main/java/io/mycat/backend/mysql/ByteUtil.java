@@ -64,16 +64,16 @@ public class ByteUtil {
     public static long readLength(byte[] data, int offset) {
         int length = data[offset++] & 0xff;
         switch (length) {
-        case 251:
-            return MySQLMessage.NULL_LENGTH;
-        case 252:
-            return readUB2(data, offset);
-        case 253:
-            return readUB3(data, offset);
-        case 254:
-            return readLong(data, offset);
-        default:
-            return length;
+            case 251:
+                return MySQLMessage.NULL_LENGTH;
+            case 252:
+                return readUB2(data, offset);
+            case 253:
+                return readUB3(data, offset);
+            case 254:
+                return readLong(data, offset);
+            default:
+                return length;
         }
     }
 
@@ -92,11 +92,14 @@ public class ByteUtil {
         int length = src.length;
         if (length < 251) {
             return 1 + length;
-        } else if (length < 0x10000L) {
+        }
+        else if (length < 0x10000L) {
             return 3 + length;
-        } else if (length < 0x1000000L) {
+        }
+        else if (length < 0x1000000L) {
             return 4 + length;
-        } else {
+        }
+        else {
             return 9 + length;
         }
     }
@@ -104,11 +107,14 @@ public class ByteUtil {
     public static int decodeLength(long length) {
         if (length < 251) {
             return 1;
-        } else if (length < 0x10000L) {
+        }
+        else if (length < 0x10000L) {
             return 3;
-        } else if (length < 0x1000000L) {
+        }
+        else if (length < 0x1000000L) {
             return 4;
-        } else {
+        }
+        else {
             return 9;
         }
     }

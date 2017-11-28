@@ -12,15 +12,15 @@ import io.mycat.config.loader.zkprocess.entity.Property;
 
 /**
  * 系统信息
-* 源文件名：System.java
-* 文件版本：1.0.0
-* 创建作者：liujun
-* 创建日期：2016年9月16日
-* 修改作者：liujun
-* 修改日期：2016年9月16日
-* 文件描述：TODO
-* 版权所有：Copyright 2016 zjhz, Inc. All Rights Reserved.
-*/
+ * 源文件名：System.java
+ * 文件版本：1.0.0
+ * 创建作者：liujun
+ * 创建日期：2016年9月16日
+ * 修改作者：liujun
+ * 修改日期：2016年9月16日
+ * 文件描述：TODO
+ * 版权所有：Copyright 2016 zjhz, Inc. All Rights Reserved.
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "system")
 public class System implements Propertied {
@@ -45,10 +45,11 @@ public class System implements Propertied {
 
     /**
      * 设置最新的方法值
-    * 方法描述
-    * @param newSet
-    * @创建日期 2016年9月17日
-    */
+     * 方法描述
+     *
+     * @param newSet
+     * @创建日期 2016年9月17日
+     */
     public void setNewValue(System newSet) {
         if (null != newSet) {
             List<Property> valuePro = newSet.getProperty();

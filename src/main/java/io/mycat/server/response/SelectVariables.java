@@ -37,7 +37,8 @@ import io.mycat.server.ServerConnection;
 import io.mycat.util.LongUtil;
 import io.mycat.util.StringUtil;
 
-import org.slf4j.Logger; import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -50,16 +51,15 @@ import java.util.regex.Pattern;
 /**
  * @author mycat
  */
-public final class SelectVariables
-{
+public final class SelectVariables {
     private static final Logger LOGGER = LoggerFactory.getLogger(SelectVariables.class);
 
 
     public static void execute(ServerConnection c, String sql) {
 
-     String subSql=   sql.substring(sql.indexOf("SELECT")+6);
-    List<String>  splitVar=   Splitter.on(",").omitEmptyStrings().trimResults().splitToList(subSql) ;
-        splitVar=convert(splitVar);
+        String subSql = sql.substring(sql.indexOf("SELECT") + 6);
+        List<String> splitVar = Splitter.on(",").omitEmptyStrings().trimResults().splitToList(subSql);
+        splitVar = convert(splitVar);
         int FIELD_COUNT = splitVar.size();
         ResultSetHeaderPacket header = PacketUtil.getHeader(FIELD_COUNT);
         FieldPacket[] fields = new FieldPacket[FIELD_COUNT];
@@ -67,8 +67,7 @@ public final class SelectVariables
         int i = 0;
         byte packetId = 0;
         header.packetId = ++packetId;
-        for (int i1 = 0, splitVarSize = splitVar.size(); i1 < splitVarSize; i1++)
-        {
+        for (int i1 = 0, splitVarSize = splitVar.size(); i1 < splitVarSize; i1++) {
             String s = splitVar.get(i1);
             fields[i] = PacketUtil.getField(s, Fields.FIELD_TYPE_VAR_STRING);
             fields[i++].packetId = ++packetId;
@@ -78,71 +77,64 @@ public final class SelectVariables
         ByteBuffer buffer = c.allocate();
 
         // write header
-        buffer = header.write(buffer, c,true);
+        buffer = header.write(buffer, c, true);
 
         // write fields
         for (FieldPacket field : fields) {
-            buffer = field.write(buffer, c,true);
+            buffer = field.write(buffer, c, true);
         }
 
 
         EOFPacket eof = new EOFPacket();
         eof.packetId = ++packetId;
         // write eof
-        buffer = eof.write(buffer, c,true);
+        buffer = eof.write(buffer, c, true);
 
         // write rows
         //byte packetId = eof.packetId;
 
         RowDataPacket row = new RowDataPacket(FIELD_COUNT);
-        for (int i1 = 0, splitVarSize = splitVar.size(); i1 < splitVarSize; i1++)
-        {
+        for (int i1 = 0, splitVarSize = splitVar.size(); i1 < splitVarSize; i1++) {
             String s = splitVar.get(i1);
-            String value=  variables.get(s) ==null?"":variables.get(s) ;
+            String value = variables.get(s) == null ? "" : variables.get(s);
             row.add(value.getBytes());
 
         }
 
         row.packetId = ++packetId;
-        buffer = row.write(buffer, c,true);
-
+        buffer = row.write(buffer, c, true);
 
 
         // write lastEof
         EOFPacket lastEof = new EOFPacket();
         lastEof.packetId = ++packetId;
-        buffer = lastEof.write(buffer, c,true);
+        buffer = lastEof.write(buffer, c, true);
 
         // write buffer
         c.write(buffer);
     }
 
-    private static List<String> convert(List<String> in)
-    {
-        List<String> out=new ArrayList<>();
-        for (String s : in)
-        {
-          int asIndex=s.toUpperCase().indexOf(" AS ");
-            if(asIndex!=-1)
-            {
-                out.add(s.substring(asIndex+4)) ;
+    private static List<String> convert(List<String> in) {
+        List<String> out = new ArrayList<>();
+        for (String s : in) {
+            int asIndex = s.toUpperCase().indexOf(" AS ");
+            if (asIndex != -1) {
+                out.add(s.substring(asIndex + 4));
             }
         }
-         if(out.isEmpty())
-         {
-             return in;
-         }  else
-         {
-             return out;
-         }
+        if (out.isEmpty()) {
+            return in;
+        }
+        else {
+            return out;
+        }
 
 
     }
 
 
-
-
     private static final Map<String, String> variables = new HashMap<String, String>();
+
     static {
         variables.put("@@character_set_client", "utf8");
         variables.put("@@character_set_connection", "utf8");
@@ -184,6 +176,6 @@ public final class SelectVariables
         variables.put("wait_timeout", "172800");
         variables.put("auto_increment_increment", "1");
     }
-    
+
 
 }

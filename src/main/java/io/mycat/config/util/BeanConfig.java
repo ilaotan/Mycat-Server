@@ -36,7 +36,9 @@ public class BeanConfig implements Cloneable {
     private static final ReflectionProvider refProvider = new ReflectionProvider();
 
     private String name;
+
     private String className;
+
     private Map<String, Object> params = new HashMap<String, Object>();
 
     public String getName() {
@@ -67,7 +69,8 @@ public class BeanConfig implements Cloneable {
         Object obj = null;
         try {
             obj = refProvider.newInstance(Class.forName(className));
-        } catch (ClassNotFoundException e) {
+        }
+        catch (ClassNotFoundException e) {
             throw new ConfigException(e);
         }
         ParameterMapping.mapping(obj, params);
@@ -81,15 +84,18 @@ public class BeanConfig implements Cloneable {
     public Object clone() {
         try {
             super.clone();
-        } catch (CloneNotSupportedException e) {
+        }
+        catch (CloneNotSupportedException e) {
             throw new ConfigException(e);
         }
         BeanConfig bc = null;
         try {
             bc = getClass().newInstance();
-        } catch (InstantiationException e) {
+        }
+        catch (InstantiationException e) {
             throw new ConfigException(e);
-        } catch (IllegalAccessException e) {
+        }
+        catch (IllegalAccessException e) {
             throw new ConfigException(e);
         }
 //        if (bc == null) {

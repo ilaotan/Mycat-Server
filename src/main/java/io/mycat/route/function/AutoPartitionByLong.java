@@ -34,135 +34,145 @@ import io.mycat.config.model.rule.RuleAlgorithm;
 
 /**
  * auto partition by Long ,can be used in auto increment primary key partition
- * 
+ *
  * @author wuzhi
  */
-public class AutoPartitionByLong extends AbstractPartitionAlgorithm implements RuleAlgorithm{
+public class AutoPartitionByLong extends AbstractPartitionAlgorithm implements RuleAlgorithm {
 
-	private String mapFile;
-	private LongRange[] longRongs;
-	
-	private int defaultNode = -1;
-	@Override
-	public void init() {
+    private String      mapFile;
 
-		initialize();
-	}
+    private LongRange[] longRongs;
 
-	public void setMapFile(String mapFile) {
-		this.mapFile = mapFile;
-	}
+    private int defaultNode = -1;
 
-	@Override
-	public Integer calculate(String columnValue)  {
+    @Override
+    public void init() {
+
+        initialize();
+    }
+
+    public void setMapFile(String mapFile) {
+        this.mapFile = mapFile;
+    }
+
+    @Override
+    public Integer calculate(String columnValue) {
 //		columnValue = NumberParseUtil.eliminateQoute(columnValue);
-		try {
-			long value = Long.parseLong(columnValue);
-			Integer rst = null;
-			for (LongRange longRang : this.longRongs) {
-				if (value <= longRang.valueEnd && value >= longRang.valueStart) {
-					return longRang.nodeIndx;
-				}
-			}
-			//数据超过范围，暂时使用配置的默认节点
-			if (rst == null && defaultNode >= 0) {
-				return defaultNode;
-			}
-			return rst;
-		} catch (NumberFormatException e){
-			throw new IllegalArgumentException(new StringBuilder().append("columnValue:").append(columnValue).append(" Please eliminate any quote and non number within it.").toString(),e);
-		}
-	}
-	
-	@Override
-	public Integer[] calculateRange(String beginValue, String endValue)  {
-		return AbstractPartitionAlgorithm.calculateSequenceRange(this, beginValue, endValue);
-	}
+        try {
+            long value = Long.parseLong(columnValue);
+            Integer rst = null;
+            for (LongRange longRang : this.longRongs) {
+                if (value <= longRang.valueEnd && value >= longRang.valueStart) {
+                    return longRang.nodeIndx;
+                }
+            }
+            //数据超过范围，暂时使用配置的默认节点
+            if (rst == null && defaultNode >= 0) {
+                return defaultNode;
+            }
+            return rst;
+        }
+        catch (NumberFormatException e) {
+            throw new IllegalArgumentException(new StringBuilder().append("columnValue:").append(columnValue).append
+                    (" Please eliminate any quote and non number within it.").toString(), e);
+        }
+    }
 
-	@Override
-	public int getPartitionNum() {
+    @Override
+    public Integer[] calculateRange(String beginValue, String endValue) {
+        return AbstractPartitionAlgorithm.calculateSequenceRange(this, beginValue, endValue);
+    }
+
+    @Override
+    public int getPartitionNum() {
 //		int nPartition = longRongs.length;
-		
+
 		/*
 		 * fix #1284 这里的统计应该统计Range的nodeIndex的distinct总数
 		 */
-		Set<Integer> distNodeIdxSet = new HashSet<Integer>();
-		for(LongRange range : longRongs) {
-			distNodeIdxSet.add(range.nodeIndx);
-		}
-		int nPartition = distNodeIdxSet.size();
-		return nPartition;
-	}
+        Set<Integer> distNodeIdxSet = new HashSet<Integer>();
+        for (LongRange range : longRongs) {
+            distNodeIdxSet.add(range.nodeIndx);
+        }
+        int nPartition = distNodeIdxSet.size();
+        return nPartition;
+    }
 
-	private void initialize() {
-		BufferedReader in = null;
-		try {
-			// FileInputStream fin = new FileInputStream(new File(fileMapPath));
-			InputStream fin = this.getClass().getClassLoader()
-					.getResourceAsStream(mapFile);
-			if (fin == null) {
-				throw new RuntimeException("can't find class resource file "
-						+ mapFile);
-			}
-			in = new BufferedReader(new InputStreamReader(fin));
-			LinkedList<LongRange> longRangeList = new LinkedList<LongRange>();
+    private void initialize() {
+        BufferedReader in = null;
+        try {
+            // FileInputStream fin = new FileInputStream(new File(fileMapPath));
+            InputStream fin = this.getClass().getClassLoader()
+                    .getResourceAsStream(mapFile);
+            if (fin == null) {
+                throw new RuntimeException("can't find class resource file "
+                        + mapFile);
+            }
+            in = new BufferedReader(new InputStreamReader(fin));
+            LinkedList<LongRange> longRangeList = new LinkedList<LongRange>();
 
-			for (String line = null; (line = in.readLine()) != null;) {
-				line = line.trim();
-				if (line.startsWith("#") || line.startsWith("//")) {
-					continue;
-				}
-				int ind = line.indexOf('=');
-				if (ind < 0) {
-					System.out.println(" warn: bad line int " + mapFile + " :"
-							+ line);
-					continue;
-				}
-					String pairs[] = line.substring(0, ind).trim().split("-");
-					long longStart = NumberParseUtil.parseLong(pairs[0].trim());
-					long longEnd = NumberParseUtil.parseLong(pairs[1].trim());
-					int nodeId = Integer.parseInt(line.substring(ind + 1)
-							.trim());
-					longRangeList
-							.add(new LongRange(nodeId, longStart, longEnd));
+            for (String line = null; (line = in.readLine()) != null; ) {
+                line = line.trim();
+                if (line.startsWith("#") || line.startsWith("//")) {
+                    continue;
+                }
+                int ind = line.indexOf('=');
+                if (ind < 0) {
+                    System.out.println(" warn: bad line int " + mapFile + " :"
+                            + line);
+                    continue;
+                }
+                String pairs[] = line.substring(0, ind).trim().split("-");
+                long longStart = NumberParseUtil.parseLong(pairs[0].trim());
+                long longEnd = NumberParseUtil.parseLong(pairs[1].trim());
+                int nodeId = Integer.parseInt(line.substring(ind + 1)
+                        .trim());
+                longRangeList
+                        .add(new LongRange(nodeId, longStart, longEnd));
 
-			}
-			longRongs = longRangeList.toArray(new LongRange[longRangeList
-					.size()]);
-		} catch (Exception e) {
-			if (e instanceof RuntimeException) {
-				throw (RuntimeException) e;
-			} else {
-				throw new RuntimeException(e);
-			}
+            }
+            longRongs = longRangeList.toArray(new LongRange[longRangeList
+                    .size()]);
+        }
+        catch (Exception e) {
+            if (e instanceof RuntimeException) {
+                throw (RuntimeException) e;
+            }
+            else {
+                throw new RuntimeException(e);
+            }
 
-		} finally {
-			try {
-				in.close();
-			} catch (Exception e2) {
-			}
-		}
-	}
-	
-	public int getDefaultNode() {
-		return defaultNode;
-	}
+        }
+        finally {
+            try {
+                in.close();
+            }
+            catch (Exception e2) {
+            }
+        }
+    }
 
-	public void setDefaultNode(int defaultNode) {
-		this.defaultNode = defaultNode;
-	}
+    public int getDefaultNode() {
+        return defaultNode;
+    }
 
-	static class LongRange {
-		public final int nodeIndx;
-		public final long valueStart;
-		public final long valueEnd;
+    public void setDefaultNode(int defaultNode) {
+        this.defaultNode = defaultNode;
+    }
 
-		public LongRange(int nodeIndx, long valueStart, long valueEnd) {
-			super();
-			this.nodeIndx = nodeIndx;
-			this.valueStart = valueStart;
-			this.valueEnd = valueEnd;
-		}
+    static class LongRange {
+        public final int  nodeIndx;
 
-	}
+        public final long valueStart;
+
+        public final long valueEnd;
+
+        public LongRange(int nodeIndx, long valueStart, long valueEnd) {
+            super();
+            this.nodeIndx = nodeIndx;
+            this.valueStart = valueStart;
+            this.valueEnd = valueEnd;
+        }
+
+    }
 }

@@ -27,48 +27,52 @@ import io.mycat.config.model.rule.RuleAlgorithm;
 import io.mycat.route.util.PartitionUtil;
 
 public final class PartitionByLong extends AbstractPartitionAlgorithm implements RuleAlgorithm {
-	protected int[] count;
-	protected int[] length;
-	protected PartitionUtil partitionUtil;
+    protected int[]         count;
 
-	private static int[] toIntArray(String string) {
-		String[] strs = io.mycat.util.SplitUtil.split(string, ',', true);
-		int[] ints = new int[strs.length];
-		for (int i = 0; i < strs.length; ++i) {
-			ints[i] = Integer.parseInt(strs[i]);
-		}
-		return ints;
-	}
+    protected int[]         length;
 
-	public void setPartitionCount(String partitionCount) {
-		this.count = toIntArray(partitionCount);
-	}
+    protected PartitionUtil partitionUtil;
 
-	public void setPartitionLength(String partitionLength) {
-		this.length = toIntArray(partitionLength);
-	}
+    private static int[] toIntArray(String string) {
+        String[] strs = io.mycat.util.SplitUtil.split(string, ',', true);
+        int[] ints = new int[strs.length];
+        for (int i = 0; i < strs.length; ++i) {
+            ints[i] = Integer.parseInt(strs[i]);
+        }
+        return ints;
+    }
 
-	@Override
-	public void init() {
-		partitionUtil = new PartitionUtil(count, length);
+    public void setPartitionCount(String partitionCount) {
+        this.count = toIntArray(partitionCount);
+    }
 
-	}
+    public void setPartitionLength(String partitionLength) {
+        this.length = toIntArray(partitionLength);
+    }
 
-	@Override
-	public Integer calculate(String columnValue)  {
+    @Override
+    public void init() {
+        partitionUtil = new PartitionUtil(count, length);
+
+    }
+
+    @Override
+    public Integer calculate(String columnValue) {
 //		columnValue = NumberParseUtil.eliminateQoute(columnValue);
-		try {
-			long key = Long.parseLong(columnValue);
-			return partitionUtil.partition(key);
-		} catch (NumberFormatException e){
-			throw new IllegalArgumentException(new StringBuilder().append("columnValue:").append(columnValue).append(" Please eliminate any quote and non number within it.").toString(),e);
-		}
-	}
-	
-	@Override
-	public Integer[] calculateRange(String beginValue, String endValue)  {
-		return AbstractPartitionAlgorithm.calculateSequenceRange(this, beginValue, endValue);
-	}
+        try {
+            long key = Long.parseLong(columnValue);
+            return partitionUtil.partition(key);
+        }
+        catch (NumberFormatException e) {
+            throw new IllegalArgumentException(new StringBuilder().append("columnValue:").append(columnValue).append
+                    (" Please eliminate any quote and non number within it.").toString(), e);
+        }
+    }
+
+    @Override
+    public Integer[] calculateRange(String beginValue, String endValue) {
+        return AbstractPartitionAlgorithm.calculateSequenceRange(this, beginValue, endValue);
+    }
 
 //	@Override
 //	public int getPartitionCount() {
@@ -78,5 +82,5 @@ public final class PartitionByLong extends AbstractPartitionAlgorithm implements
 //		}
 //		return nPartition;
 //	}
-	
+
 }

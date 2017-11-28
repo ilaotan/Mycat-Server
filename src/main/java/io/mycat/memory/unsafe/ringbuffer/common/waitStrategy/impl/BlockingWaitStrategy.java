@@ -16,7 +16,8 @@ import java.util.concurrent.locks.ReentrantLock;
  * @date 2016/8/1
  */
 public class BlockingWaitStrategy implements WaitStrategy {
-    private final Lock lock = new ReentrantLock();
+    private final Lock      lock                     = new ReentrantLock();
+
     private final Condition processorNotifyCondition = lock.newCondition();
 
     @Override
@@ -33,7 +34,8 @@ public class BlockingWaitStrategy implements WaitStrategy {
                     //在processorNotifyCondition上等待唤醒
                     processorNotifyCondition.await();
                 }
-            } finally {
+            }
+            finally {
                 lock.unlock();
             }
         }
@@ -51,7 +53,8 @@ public class BlockingWaitStrategy implements WaitStrategy {
         try {
             //生产者生产消息后，会唤醒所有等待的消费者线程
             processorNotifyCondition.signalAll();
-        } finally {
+        }
+        finally {
             lock.unlock();
         }
     }

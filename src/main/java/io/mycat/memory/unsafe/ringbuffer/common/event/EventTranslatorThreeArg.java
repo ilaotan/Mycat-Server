@@ -9,5 +9,5 @@ package io.mycat.memory.unsafe.ringbuffer.common.event;
  * @date 2016/7/29
  */
 public interface EventTranslatorThreeArg<T, A, B, C> {
-     void translateTo(final T event, long sequence, final A arg0, final B arg1, final C arg2);
+    void translateTo(final T event, long sequence, final A arg0, final B arg1, final C arg2);
 }

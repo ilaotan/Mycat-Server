@@ -9,12 +9,14 @@ import io.mycat.config.model.rule.RuleAlgorithm;
  * @author XiaoSK
  */
 public final class PartitionByJumpConsistentHash extends AbstractPartitionAlgorithm
-        implements RuleAlgorithm  {
+        implements RuleAlgorithm {
 
     private static final long UNSIGNED_MASK = 0x7fffffffffffffffL;
-    private static final long JUMP = 1L << 31;
+
+    private static final long JUMP          = 1L << 31;
+
     // If JDK >= 1.8, just use Long.parseUnsignedLong("2862933555777941757") instead.
-    private static final long CONSTANT = Long.parseLong("286293355577794175", 10) * 10 + 7;
+    private static final long CONSTANT      = Long.parseLong("286293355577794175", 10) * 10 + 7;
 
     private int totalBuckets;
 
@@ -22,14 +24,14 @@ public final class PartitionByJumpConsistentHash extends AbstractPartitionAlgori
     public Integer calculate(String columnValue) {
         return jumpConsistentHash(columnValue.hashCode(), totalBuckets);
     }
-    
-	@Override
-	public int getPartitionNum() {
-		int nPartition = this.totalBuckets;
-		return nPartition;
-	}
 
-	public static int jumpConsistentHash(final long key, final int buckets) {
+    @Override
+    public int getPartitionNum() {
+        int nPartition = this.totalBuckets;
+        return nPartition;
+    }
+
+    public static int jumpConsistentHash(final long key, final int buckets) {
         checkBuckets(buckets);
         long k = key;
         long b = -1;

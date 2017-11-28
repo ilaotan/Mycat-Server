@@ -38,10 +38,14 @@ import io.mycat.net.mysql.RowDataPacket;
  */
 public final class ShowParser {
 
-    private static final int FIELD_COUNT = 7;
-    private static final ResultSetHeaderPacket header = PacketUtil.getHeader(FIELD_COUNT);
-    private static final FieldPacket[] fields = new FieldPacket[FIELD_COUNT];
-    private static final EOFPacket eof = new EOFPacket();
+    private static final int                   FIELD_COUNT = 7;
+
+    private static final ResultSetHeaderPacket header      = PacketUtil.getHeader(FIELD_COUNT);
+
+    private static final FieldPacket[]         fields      = new FieldPacket[FIELD_COUNT];
+
+    private static final EOFPacket             eof         = new EOFPacket();
+
     static {
         int i = 0;
         byte packetId = 0;
@@ -75,28 +79,28 @@ public final class ShowParser {
         ByteBuffer buffer = c.allocate();
 
         // write header
-        buffer = header.write(buffer, c,true);
+        buffer = header.write(buffer, c, true);
 
         // write fields
         for (FieldPacket field : fields) {
-            buffer = field.write(buffer, c,true);
+            buffer = field.write(buffer, c, true);
         }
 
         // write eof
-        buffer = eof.write(buffer, c,true);
+        buffer = eof.write(buffer, c, true);
 
         // write rows
         byte packetId = eof.packetId;
         for (int i = 0; i < 1; i++) {
             RowDataPacket row = getRow(c.getCharset());
             row.packetId = ++packetId;
-            buffer = row.write(buffer, c,true);
+            buffer = row.write(buffer, c, true);
         }
 
         // write last eof
         EOFPacket lastEof = new EOFPacket();
         lastEof.packetId = ++packetId;
-        buffer = lastEof.write(buffer, c,true);
+        buffer = lastEof.write(buffer, c, true);
 
         // write buffer
         c.write(buffer);

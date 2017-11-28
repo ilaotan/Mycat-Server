@@ -23,7 +23,8 @@
  */
 package io.mycat.config;
 
-import org.slf4j.Logger; import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import io.mycat.config.model.MycatNodeConfig;
 
@@ -31,26 +32,27 @@ import io.mycat.config.model.MycatNodeConfig;
  * @author mycat
  */
 public class MycatNode {
-	private static final Logger LOGGER = LoggerFactory.getLogger(MycatNode.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MycatNode.class);
 
-	private final String name;
-	private final MycatNodeConfig config;
+    private final String          name;
 
-	public MycatNode(MycatNodeConfig config) {
-		this.name = config.getName();
-		this.config = config;
-	}
+    private final MycatNodeConfig config;
 
-	public String getName() {
-		return name;
-	}
+    public MycatNode(MycatNodeConfig config) {
+        this.name = config.getName();
+        this.config = config;
+    }
 
-	public MycatNodeConfig getConfig() {
-		return config;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public boolean isOnline() {
-		return (true);
-	}
+    public MycatNodeConfig getConfig() {
+        return config;
+    }
+
+    public boolean isOnline() {
+        return (true);
+    }
 
 }

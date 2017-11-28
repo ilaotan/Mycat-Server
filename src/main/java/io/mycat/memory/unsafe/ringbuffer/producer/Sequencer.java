@@ -10,7 +10,7 @@ import io.mycat.memory.unsafe.ringbuffer.common.barrier.SequenceBarrier;
  * @version 3.3.5
  * @date 2016/7/23
  */
-public interface Sequencer extends Cursored,Sequenced{
+public interface Sequencer extends Cursored, Sequenced {
     /**
      * -1 为 sequence的起始值
      */

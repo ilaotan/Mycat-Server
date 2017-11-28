@@ -31,7 +31,7 @@ import io.mycat.net.FrontendConnection;
 
 /**
  * From server to client during initial handshake.
- * 
+ * <p>
  * <pre>
  * Bytes                        Name
  * -----                        ----
@@ -45,22 +45,29 @@ import io.mycat.net.FrontendConnection;
  * 2                            server_status
  * 13                           (filler) always 0x00 ...
  * 13                           rest of scramble_buff (4.1)
- * 
+ *
  * @see http://forge.mysql.com/wiki/MySQL_Internals_ClientServer_Protocol#Handshake_Initialization_Packet
  * </pre>
- * 
+ *
  * @author mycat
  */
 public class HandshakePacket extends MySQLPacket {
-    private static final byte[] FILLER_13 = new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    private static final byte[] FILLER_13 = new byte[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
-    public byte protocolVersion;
+    public byte   protocolVersion;
+
     public byte[] serverVersion;
-    public long threadId;
+
+    public long   threadId;
+
     public byte[] seed;
-    public int serverCapabilities;
-    public byte serverCharsetIndex;
-    public int serverStatus;
+
+    public int    serverCapabilities;
+
+    public byte   serverCharsetIndex;
+
+    public int    serverStatus;
+
     public byte[] restOfScrambleBuff;
 
     public void read(BinaryPacket bin) {

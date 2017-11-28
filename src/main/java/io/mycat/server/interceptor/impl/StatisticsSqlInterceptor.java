@@ -8,7 +8,8 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.slf4j.Logger; import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import io.mycat.MycatServer;
 import io.mycat.config.model.SystemConfig;
@@ -18,74 +19,78 @@ import io.mycat.server.parser.ServerParse;
 import java.io.File;
 
 public class StatisticsSqlInterceptor implements SQLInterceptor {
-    
-private final class StatisticsSqlRunner implements Runnable {
-        
+
+    private final class StatisticsSqlRunner implements Runnable {
+
         private int    sqltype = 0;
+
         private String sqls    = "";
-        
+
         public StatisticsSqlRunner(int sqltype, String sqls) {
             this.sqltype = sqltype;
             this.sqls = sqls;
         }
-        
+
+        @Override
         public void run() {
             try {
                 SystemConfig sysconfig = MycatServer.getInstance().getConfig().getSystem();
                 String sqlInterceptorType = sysconfig.getSqlInterceptorType();
                 String sqlInterceptorFile = sysconfig.getSqlInterceptorFile();
-                
+
                 String[] sqlInterceptorTypes = sqlInterceptorType.split(",");
                 for (String type : sqlInterceptorTypes) {
                     if (StatisticsSqlInterceptor.parseType(type.toUpperCase()) == sqltype) {
                         switch (sqltype) {
                             case ServerParse.SELECT:
                                 StatisticsSqlInterceptor.appendFile(sqlInterceptorFile, "SELECT:"
-                                    + sqls + "");
+                                        + sqls + "");
                                 break;
                             case ServerParse.UPDATE:
                                 StatisticsSqlInterceptor.appendFile(sqlInterceptorFile, "UPDATE:"
-                                    + sqls);
+                                        + sqls);
                                 break;
                             case ServerParse.INSERT:
                                 StatisticsSqlInterceptor.appendFile(sqlInterceptorFile, "INSERT:"
-                                    + sqls);
+                                        + sqls);
                                 break;
                             case ServerParse.DELETE:
                                 StatisticsSqlInterceptor.appendFile(sqlInterceptorFile, "DELETE:"
-                                    + sqls);
+                                        + sqls);
                                 break;
                             default:
                                 break;
                         }
                     }
                 }
-                
-            } catch (Exception e) {
-                LOGGER.error("interceptSQL error:" + e.getMessage(),e);
+
+            }
+            catch (Exception e) {
+                LOGGER.error("interceptSQL error:" + e.getMessage(), e);
             }
         }
     }
-    
-    private static final Logger         LOGGER  = LoggerFactory.getLogger(StatisticsSqlInterceptor.class);
-    
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(StatisticsSqlInterceptor.class);
+
     private static Map<String, Integer> typeMap = new HashMap<String, Integer>();
+
     static {
         typeMap.put("SELECT", 7);
         typeMap.put("UPDATE", 11);
         typeMap.put("INSERT", 4);
         typeMap.put("DELETE", 3);
     }
-    
+
     public static int parseType(String type) {
         return typeMap.get(type);
     }
-    
+
     /**
      * 方法追加文件：使用FileWriter
      */
     private static synchronized void appendFile(String fileName, String content) {
-        
+
         Calendar calendar = Calendar.getInstance();
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String dayFile = dateFormat.format(calendar.getTime());
@@ -103,39 +108,42 @@ private final class StatisticsSqlRunner implements Runnable {
             }
             writer = new FileWriter(file, true);
             String newContent = content.replaceAll("[\\t\\n\\r]", "")
-                + System.getProperty("line.separator");
+                    + System.getProperty("line.separator");
             writer.write(newContent);
-            
+
             writer.flush();
-        } catch (IOException e) {
-            LOGGER.error("appendFile error:" + e.getMessage(),e);
-        } finally {
-            if(writer != null ){
+        }
+        catch (IOException e) {
+            LOGGER.error("appendFile error:" + e.getMessage(), e);
+        }
+        finally {
+            if (writer != null) {
                 try {
                     writer.close();
-                } catch (IOException e) {
-                    LOGGER.error("close file error:" + e.getMessage(),e);
+                }
+                catch (IOException e) {
+                    LOGGER.error("close file error:" + e.getMessage(), e);
                 }
             }
         }
     }
-    
+
     /**
      * interceptSQL ,
-     * 	type :insert,delete,update,select
-     *  exectime:xxx ms
-     *  log content : select:select 1 from table,exectime:100ms,shared:1
+     * type :insert,delete,update,select
+     * exectime:xxx ms
+     * log content : select:select 1 from table,exectime:100ms,shared:1
      * etc
      */
     @Override
     public String interceptSQL(String sql, int sqlType) {
         LOGGER.debug("sql interceptSQL:");
-        
+
         final int sqltype = sqlType;
         final String sqls = DefaultSqlInterceptor.processEscape(sql);
         MycatServer.getInstance().getBusinessExecutor()
-            .execute(new StatisticsSqlRunner(sqltype, sqls));
+                .execute(new StatisticsSqlRunner(sqltype, sqls));
         return sql;
     }
-    
+
 }

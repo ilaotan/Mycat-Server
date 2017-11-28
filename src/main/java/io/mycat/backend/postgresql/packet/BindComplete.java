@@ -18,26 +18,27 @@ import io.mycat.backend.postgresql.utils.PIOUtils;
  *
  */
 public class BindComplete extends PostgreSQLPacket {
-	private char marker = PacketMarker.B_BindComplete.getValue();
-	private int length;
+    private char marker = PacketMarker.B_BindComplete.getValue();
 
-	@Override
-	public int getLength() {
-		return length;
-	}
+    private int length;
 
-	@Override
-	public char getMarker() {
-		return marker;
-	}
+    @Override
+    public int getLength() {
+        return length;
+    }
 
-	public static BindComplete parse(ByteBuffer buffer, int offset) {
-		if ((char) buffer.get(offset) != PacketMarker.B_BindComplete.getValue()) {
-			throw new IllegalArgumentException(
-					"this packet not is BindComplete");
-		}
-		BindComplete parse = new BindComplete();
-		parse.length = PIOUtils.redInteger4(buffer, offset + 1);
-		return parse;
-	}
+    @Override
+    public char getMarker() {
+        return marker;
+    }
+
+    public static BindComplete parse(ByteBuffer buffer, int offset) {
+        if ((char) buffer.get(offset) != PacketMarker.B_BindComplete.getValue()) {
+            throw new IllegalArgumentException(
+                    "this packet not is BindComplete");
+        }
+        BindComplete parse = new BindComplete();
+        parse.length = PIOUtils.redInteger4(buffer, offset + 1);
+        return parse;
+    }
 }

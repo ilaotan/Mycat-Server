@@ -5,6 +5,7 @@ import io.mycat.sqlengine.SQLJob;
 import io.mycat.sqlengine.SQLQueryResult;
 import io.mycat.sqlengine.SQLQueryResultListener;
 import io.mycat.util.ZKUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,11 +17,16 @@ import java.util.concurrent.Semaphore;
  */
 public class SqlExecuteListener implements SQLQueryResultListener<SQLQueryResult<Map<String, String>>> {
     private static final Logger LOGGER = LoggerFactory.getLogger(SqlExecuteListener.class);
-    private MigrateTask task;
-   private String sql   ;
-    private BinlogStream binlogStream;
-    private Semaphore semaphore;
-    private volatile SQLJob sqlJob;
+
+    private          MigrateTask  task;
+
+    private          String       sql;
+
+    private          BinlogStream binlogStream;
+
+    private          Semaphore    semaphore;
+
+    private volatile SQLJob       sqlJob;
 
     public SQLJob getSqlJob() {
         return sqlJob;
@@ -30,51 +36,56 @@ public class SqlExecuteListener implements SQLQueryResultListener<SQLQueryResult
         this.sqlJob = sqlJob;
     }
 
-    public SqlExecuteListener(MigrateTask task, String sql, BinlogStream binlogStream,Semaphore semaphore) {
+    public SqlExecuteListener(MigrateTask task, String sql, BinlogStream binlogStream, Semaphore semaphore) {
         this.task = task;
         this.sql = sql;
         this.binlogStream = binlogStream;
-        this.semaphore=semaphore;
+        this.semaphore = semaphore;
     }
 
-    @Override public void onResult(SQLQueryResult<Map<String, String>> result) {
+    @Override
+    public void onResult(SQLQueryResult<Map<String, String>> result) {
         try {
             if (!result.isSuccess()) {
                 try {
                     task.setHaserror(true);
-                    pushMsgToZK(task.getZkpath(), task.getFrom() + "-" + task.getTo(), 2, "sql:" + sql + ";" + result.getErrMsg());
+                    pushMsgToZK(task.getZkpath(), task.getFrom() + "-" + task.getTo(), 2, "sql:" + sql + ";" + result
+                            .getErrMsg());
                     close("sucess");
                     binlogStream.disconnect();
-                } catch (Exception e) {
+                }
+                catch (Exception e) {
                     LOGGER.error("error:", e);
                     close(e.getMessage());
                 }
-            } else {
+            }
+            else {
                 close("sucess");
             }
 
             task.setHasExecute(false);
-        }finally {
+        }
+        finally {
             semaphore.release();
         }
     }
 
 
-
-    private void pushMsgToZK(String rootZkPath,String child,int status,String msg) throws Exception {
+    private void pushMsgToZK(String rootZkPath, String child, int status, String msg) throws Exception {
         String path = rootZkPath + "/" + child;
-        TaskStatus taskStatus=new TaskStatus();
+        TaskStatus taskStatus = new TaskStatus();
         taskStatus.setMsg(msg);
         taskStatus.setStatus(status);
         task.setStatus(status);
 
-        if(ZKUtils.getConnection().checkExists().forPath(path)==null )
-        {
-            ZKUtils.getConnection().create().forPath(path, JSON.toJSONBytes(taskStatus)) ;
-        } else{
-            ZKUtils.getConnection().setData().forPath(path, JSON.toJSONBytes(taskStatus)) ;
+        if (ZKUtils.getConnection().checkExists().forPath(path) == null) {
+            ZKUtils.getConnection().create().forPath(path, JSON.toJSONBytes(taskStatus));
+        }
+        else {
+            ZKUtils.getConnection().setData().forPath(path, JSON.toJSONBytes(taskStatus));
         }
     }
+
     public void close(String msg) {
         SQLJob curJob = sqlJob;
         if (curJob != null) {

@@ -47,56 +47,54 @@ public final class ObjectUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger(ObjectUtil.class);
 
 
-    public static Object getStaticFieldValue(String className,String fieldName)
-    {
+    public static Object getStaticFieldValue(String className, String fieldName) {
         Class clazz = null;
-        try
-        {
+        try {
             clazz = Class.forName(className);
-           Field field = clazz.getField(fieldName);
-             if(field!=null) {
-                 return field.get(null);
-             }
-        } catch (ClassNotFoundException e)
-        {
+            Field field = clazz.getField(fieldName);
+            if (field != null) {
+                return field.get(null);
+            }
+        }
+        catch (ClassNotFoundException e) {
             //LOGGER.error("getStaticFieldValue", e);
-        } catch (NoSuchFieldException e)
-        {
-           // LOGGER.error("getStaticFieldValue", e);
-        } catch (IllegalAccessException e)
-        {
-          //  LOGGER.error("getStaticFieldValue", e);
+        }
+        catch (NoSuchFieldException e) {
+            // LOGGER.error("getStaticFieldValue", e);
+        }
+        catch (IllegalAccessException e) {
+            //  LOGGER.error("getStaticFieldValue", e);
         }
         return null;
     }
 
-    
-	public static Object copyObject(Object object) {
-		ByteArrayOutputStream b = new ByteArrayOutputStream();
-		ObjectOutputStream s = null;
-		try {
-			s = new ObjectOutputStream(b);
-			s.writeObject(object);
-			ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(b.toByteArray()));
-			return ois.readObject();
-		} catch (IOException e) {
-            throw new RuntimeException(e);
-		} catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-		}
 
-	}
-	
+    public static Object copyObject(Object object) {
+        ByteArrayOutputStream b = new ByteArrayOutputStream();
+        ObjectOutputStream s = null;
+        try {
+            s = new ObjectOutputStream(b);
+            s.writeObject(object);
+            ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(b.toByteArray()));
+            return ois.readObject();
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
     /**
      * 递归地比较两个数组是否相同，支持多维数组。
      * <p>
      * 如果比较的对象不是数组，则此方法的结果同<code>ObjectUtil.equals</code>。
      * </p>
-     * 
-     * @param array1
-     *            数组1
-     * @param array2
-     *            数组2
+     *
+     * @param array1 数组1
+     * @param array2 数组2
      * @return 如果相等, 则返回<code>true</code>
      */
     public static boolean equals(Object array1, Object array2) {
@@ -134,7 +132,8 @@ public final class ObjectUtil {
             }
 
             return true;
-        } else if (array1 instanceof int[]) {
+        }
+        else if (array1 instanceof int[]) {
             int[] intArray1 = (int[]) array1;
             int[] intArray2 = (int[]) array2;
 
@@ -149,7 +148,8 @@ public final class ObjectUtil {
             }
 
             return true;
-        } else if (array1 instanceof short[]) {
+        }
+        else if (array1 instanceof short[]) {
             short[] shortArray1 = (short[]) array1;
             short[] shortArray2 = (short[]) array2;
 
@@ -164,7 +164,8 @@ public final class ObjectUtil {
             }
 
             return true;
-        } else if (array1 instanceof byte[]) {
+        }
+        else if (array1 instanceof byte[]) {
             byte[] byteArray1 = (byte[]) array1;
             byte[] byteArray2 = (byte[]) array2;
 
@@ -179,7 +180,8 @@ public final class ObjectUtil {
             }
 
             return true;
-        } else if (array1 instanceof double[]) {
+        }
+        else if (array1 instanceof double[]) {
             double[] doubleArray1 = (double[]) array1;
             double[] doubleArray2 = (double[]) array2;
 
@@ -194,7 +196,8 @@ public final class ObjectUtil {
             }
 
             return true;
-        } else if (array1 instanceof float[]) {
+        }
+        else if (array1 instanceof float[]) {
             float[] floatArray1 = (float[]) array1;
             float[] floatArray2 = (float[]) array2;
 
@@ -209,7 +212,8 @@ public final class ObjectUtil {
             }
 
             return true;
-        } else if (array1 instanceof boolean[]) {
+        }
+        else if (array1 instanceof boolean[]) {
             boolean[] booleanArray1 = (boolean[]) array1;
             boolean[] booleanArray2 = (boolean[]) array2;
 
@@ -224,7 +228,8 @@ public final class ObjectUtil {
             }
 
             return true;
-        } else if (array1 instanceof char[]) {
+        }
+        else if (array1 instanceof char[]) {
             char[] charArray1 = (char[]) array1;
             char[] charArray2 = (char[]) array2;
 
@@ -239,7 +244,8 @@ public final class ObjectUtil {
             }
 
             return true;
-        } else {
+        }
+        else {
             Object[] objectArray1 = (Object[]) array1;
             Object[] objectArray2 = (Object[]) array2;
 
@@ -276,20 +282,24 @@ public final class ObjectUtil {
                         .indexOf(propertyDescriptor));
                 if (pd.getDisplayName().equals(
                         propertyDescriptor.getDisplayName())
-                        && !pd.getDisplayName().equals("class")
+                        && !"class".equals(pd.getDisplayName())
                         && propertyDescriptor.getWriteMethod() != null) {
-                        propertyDescriptor.getWriteMethod().invoke(toObj, pd.getReadMethod().invoke(fromObj, null));
+                    propertyDescriptor.getWriteMethod().invoke(toObj, pd.getReadMethod().invoke(fromObj, null));
                 }
 
             }
-        } catch (IntrospectionException e) {
-          throw  new RuntimeException(e);
-        } catch (IllegalArgumentException e) {
-            throw  new RuntimeException(e);
-        } catch (IllegalAccessException e) {
-            throw  new RuntimeException(e);
-        } catch (InvocationTargetException e) {
-            throw  new RuntimeException(e);
+        }
+        catch (IntrospectionException e) {
+            throw new RuntimeException(e);
+        }
+        catch (IllegalArgumentException e) {
+            throw new RuntimeException(e);
+        }
+        catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+        catch (InvocationTargetException e) {
+            throw new RuntimeException(e);
         }
     }
 }

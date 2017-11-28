@@ -10,11 +10,12 @@ import io.mycat.route.RouteResultset;
 import io.mycat.util.StringUtil;
 
 public class DruidDeleteParser extends DefaultDruidParser {
-	@Override
-	public void statementParse(SchemaConfig schema, RouteResultset rrs, SQLStatement stmt) throws SQLNonTransientException {
-		MySqlDeleteStatement delete = (MySqlDeleteStatement)stmt;
-		String tableName = StringUtil.removeBackquote(delete.getTableName().getSimpleName().toUpperCase());
-		ctx.addTable(tableName);
-	}
+    @Override
+    public void statementParse(SchemaConfig schema, RouteResultset rrs, SQLStatement stmt) throws
+            SQLNonTransientException {
+        MySqlDeleteStatement delete = (MySqlDeleteStatement) stmt;
+        String tableName = StringUtil.removeBackquote(delete.getTableName().getSimpleName().toUpperCase());
+        ctx.addTable(tableName);
+    }
 }
 

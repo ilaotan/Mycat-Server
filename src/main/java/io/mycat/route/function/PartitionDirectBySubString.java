@@ -14,10 +14,13 @@ import io.mycat.config.model.rule.RuleAlgorithm;
 public class PartitionDirectBySubString extends AbstractPartitionAlgorithm implements RuleAlgorithm {
     // 字符子串起始索引（zero-based)
     private int startIndex;
+
     // 字串长度
     private int size;
+
     // 分区数量
     private int partitionCount;
+
     // 默认分区（在分区数量定义时，字串标示的分区编号不在分区数量内时，使用默认分区）
     private int defaultPartition;
 
@@ -50,10 +53,10 @@ public class PartitionDirectBySubString extends AbstractPartitionAlgorithm imple
                 ? defaultPartition : partition;
     }
 
-	@Override
-	public int getPartitionNum() {
-		int nPartition = this.partitionCount;
-		return nPartition;
-	}
-	
+    @Override
+    public int getPartitionNum() {
+        int nPartition = this.partitionCount;
+        return nPartition;
+    }
+
 }

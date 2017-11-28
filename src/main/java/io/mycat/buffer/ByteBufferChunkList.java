@@ -20,12 +20,16 @@ import java.util.concurrent.ConcurrentSkipListSet;
  */
 public class ByteBufferChunkList {
     private static final Logger LOGGER = LoggerFactory.getLogger(ByteBufferChunkList.class);
+
     private final int minUsage;
+
     private final int maxUsage;
 
     Set<ByteBufferChunk> byteBufferChunks;
-    ByteBufferChunkList prevList;
-    ByteBufferChunkList nextList;
+
+    ByteBufferChunkList  prevList;
+
+    ByteBufferChunkList  nextList;
 
     public ByteBufferChunkList(int minUsage, int maxUsage, int chunkSize, int pageSize, int numOfChunks) {
         this.minUsage = minUsage;
@@ -38,7 +42,7 @@ public class ByteBufferChunkList {
     }
 
     public ByteBufferChunk getIndex(ByteBuffer buffer) {
-        for(ByteBufferChunk byteBufferChunk : byteBufferChunks){
+        for (ByteBufferChunk byteBufferChunk : byteBufferChunks) {
             if (byteBufferChunk.isInThisChunk(buffer)) {
                 return byteBufferChunk;
             }
@@ -51,7 +55,8 @@ public class ByteBufferChunkList {
             ByteBuffer buf = cur.allocateRun(reqCapacity);
             if (buf == null) {
                 continue;
-            } else {
+            }
+            else {
                 final int usage = cur.usage();
                 if (usage >= maxUsage) {
                     ByteBufferChunkList next = nextList;

@@ -55,7 +55,8 @@ public class SplitUtil {
             for (int x = min; x <= max; x++) {
                 list.add(new StringBuilder(p[0]).append('[').append(x).append(']').toString());
             }
-        } else {
+        }
+        else {
             list.add(p[0]);
         }
         return list.toArray(new String[list.size()]);
@@ -112,7 +113,8 @@ public class SplitUtil {
                 if (match) {
                     if (trim) {
                         list.add(src.substring(start, i).trim());
-                    } else {
+                    }
+                    else {
                         list.add(src.substring(start, i));
                     }
                     match = false;
@@ -126,7 +128,8 @@ public class SplitUtil {
         if (match) {
             if (trim) {
                 list.add(src.substring(start, i).trim());
-            } else {
+            }
+            else {
                 list.add(src.substring(start, i));
             }
         }
@@ -166,7 +169,8 @@ public class SplitUtil {
                 match = true;
                 i++;
             }
-        } else if (separatorChars.length() == 1) {// 优化分隔符长度为1的情形
+        }
+        else if (separatorChars.length() == 1) {// 优化分隔符长度为1的情形
             char sep = separatorChars.charAt(0);
             while (i < length) {
                 if (src.charAt(i) == sep) {
@@ -183,7 +187,8 @@ public class SplitUtil {
                 match = true;
                 i++;
             }
-        } else {// 一般情形
+        }
+        else {// 一般情形
             while (i < length) {
                 if (separatorChars.indexOf(src.charAt(i)) >= 0) {
                     if (match) {
@@ -226,7 +231,8 @@ public class SplitUtil {
         List<String> list = new LinkedList<String>();
         if (src.indexOf(c1) == -1) {
             list.add(src.trim());
-        } else {
+        }
+        else {
             String[] s = split(src, c1, true);
             String[] scope = split(s[1], c2, true);
             int min = Integer.parseInt(scope[0]);
@@ -235,11 +241,13 @@ public class SplitUtil {
                 for (int x = min; x <= max; x++) {
                     list.add(new StringBuilder(s[0]).append(x).toString());
                 }
-            } else if (c4 == '0') {
+            }
+            else if (c4 == '0') {
                 for (int x = min; x <= max; x++) {
                     list.add(new StringBuilder(s[0]).append(c3).append(x).toString());
                 }
-            } else {
+            }
+            else {
                 for (int x = min; x <= max; x++) {
                     list.add(new StringBuilder(s[0]).append(c3).append(x).append(c4).toString());
                 }
@@ -269,9 +277,8 @@ public class SplitUtil {
     }
 
     public static String[] splitByByteSize(String string, int size) {
-        if (size < 2)
-        {
-         return    new String[]{string};
+        if (size < 2) {
+            return new String[]{string};
         }
         byte[] bytes = string.getBytes();
         if (bytes.length <= size) {
@@ -291,10 +298,11 @@ public class SplitUtil {
                 break;
             }
             if (bytes[position - 1] > 0
-                    || (bytes[position - 1] < 0 && bytes[position - 2] < 0)){
+                    || (bytes[position - 1] < 0 && bytes[position - 2] < 0)) {
                 // 截断点是字母,或者是汉字
                 length = size;
-            } else {
+            }
+            else {
                 // 截断点在汉字中间
                 length = size - 1;
             }

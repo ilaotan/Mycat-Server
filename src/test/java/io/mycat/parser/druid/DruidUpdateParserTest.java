@@ -32,10 +32,11 @@ import static org.mockito.Mockito.when;
 public class DruidUpdateParserTest {
     /**
      * 测试单表更新分片字段
+     *
      * @throws NoSuchMethodException
      */
     @Test
-    public void testUpdateShardColumn() throws NoSuchMethodException{
+    public void testUpdateShardColumn() throws NoSuchMethodException {
         throwExceptionParse("update hotnews set id = 1 where name = 234;", true);
         throwExceptionParse("update hotnews set id = 1 where id = 3;", true);
         throwExceptionParse("update hotnews set id = 1, name = '123' where id = 1 and name = '234'", false);
@@ -46,37 +47,46 @@ public class DruidUpdateParserTest {
         throwExceptionParse("update hotnews set id = 1.5, name = '123' where id = 1.5 or name = '234'", true);
 
         throwExceptionParse("update hotnews set id = 1, name = '123' where name = '234' and (id = 1 or age > 3)", true);
-        throwExceptionParse("update hotnews set id = 1, name = '123' where id = 1 and (name = '234' or age > 3)", false);
+        throwExceptionParse("update hotnews set id = 1, name = '123' where id = 1 and (name = '234' or age > 3)",
+                false);
 
         // 子查询，特殊的运算符between等情况
-        throwExceptionParse("update hotnews set id = 1, name = '123' where id = 1 and name in (select name from test)", false);
-        throwExceptionParse("update hotnews set id = 1, name = '123' where name = '123' and id in (select id from test)", true);
+        throwExceptionParse("update hotnews set id = 1, name = '123' where id = 1 and name in (select name from test)" +
+                "", false);
+        throwExceptionParse("update hotnews set id = 1, name = '123' where name = '123' and id in (select id from " +
+                "test)", true);
         throwExceptionParse("update hotnews set id = 1, name = '123' where id between 1 and 3", true);
         throwExceptionParse("update hotnews set id = 1, name = '123' where id between 1 and 3 and name = '234'", true);
         throwExceptionParse("update hotnews set id = 1, name = '123' where id between 1 and 3 or name = '234'", true);
-        throwExceptionParse("update hotnews set id = 1, name = '123' where id = 1 and name between '124' and '234'", false);
+        throwExceptionParse("update hotnews set id = 1, name = '123' where id = 1 and name between '124' and '234'",
+                false);
     }
 
     /**
      * 测试单表别名更新分片字段
+     *
      * @throws NoSuchMethodException
      */
     @Test
-    public void testAliasUpdateShardColumn() throws NoSuchMethodException{
+    public void testAliasUpdateShardColumn() throws NoSuchMethodException {
         throwExceptionParse("update hotnews h set h.id = 1 where h.name = 234;", true);
         throwExceptionParse("update hotnews h set h.id = 1 where h.id = 3;", true);
         throwExceptionParse("update hotnews h set h.id = 1, h.name = '123' where h.id = 1 and h.name = '234'", false);
         throwExceptionParse("update hotnews h set h.id = 1, h.name = '123' where h.id = 1 or h.name = '234'", true);
-        throwExceptionParse("update hotnews h set h.id = 'A', h.name = '123' where h.id = 'A' and h.name = '234'", false);
+        throwExceptionParse("update hotnews h set h.id = 'A', h.name = '123' where h.id = 'A' and h.name = '234'",
+                false);
         throwExceptionParse("update hotnews h set h.id = 'A', h.name = '123' where h.id = 'A' or h.name = '234'", true);
-        throwExceptionParse("update hotnews h set h.id = 1.5, h.name = '123' where h.id = 1.5 and h.name = '234'", false);
+        throwExceptionParse("update hotnews h set h.id = 1.5, h.name = '123' where h.id = 1.5 and h.name = '234'",
+                false);
         throwExceptionParse("update hotnews h set h.id = 1.5, h.name = '123' where h.id = 1.5 or h.name = '234'", true);
 
         throwExceptionParse("update hotnews h set id = 1, h.name = '123' where h.id = 1 and h.name = '234'", false);
         throwExceptionParse("update hotnews h set h.id = 1, h.name = '123' where id = 1 or h.name = '234'", true);
 
-        throwExceptionParse("update hotnews h set h.id = 1, h.name = '123' where h.name = '234' and (h.id = 1 or h.age > 3)", true);
-        throwExceptionParse("update hotnews h set h.id = 1, h.name = '123' where h.id = 1 and (h.name = '234' or h.age > 3)", false);
+        throwExceptionParse("update hotnews h set h.id = 1, h.name = '123' where h.name = '234' and (h.id = 1 or h" +
+                ".age > 3)", true);
+        throwExceptionParse("update hotnews h set h.id = 1, h.name = '123' where h.id = 1 and (h.name = '234' or h" +
+                ".age > 3)", false);
     }
 
     public void throwExceptionParse(String sql, boolean throwException) throws NoSuchMethodException {
@@ -93,23 +103,27 @@ public class DruidUpdateParserTest {
         when(tableConfig.getParentTC()).thenReturn(null);
         RouteResultset routeResultset = new RouteResultset(sql, 11);
         Class c = DruidUpdateParser.class;
-        Method method = c.getDeclaredMethod("confirmShardColumnNotUpdated", new Class[]{SQLUpdateStatement.class, SchemaConfig.class, String.class, String.class, String.class, RouteResultset.class});
+        Method method = c.getDeclaredMethod("confirmShardColumnNotUpdated", new Class[]{SQLUpdateStatement.class,
+                SchemaConfig.class, String.class, String.class, String.class, RouteResultset.class});
         method.setAccessible(true);
         try {
             method.invoke(c.newInstance(), update, schemaConfig, tableName, "ID", "", routeResultset);
             if (throwException) {
                 System.out.println("未抛异常，解析通过则不对！");
                 Assert.assertTrue(false);
-            } else {
+            }
+            else {
                 System.out.println("未抛异常，解析通过，此情况分片字段可能在update语句中但是实际不会被更新");
                 Assert.assertTrue(true);
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             if (throwException) {
                 System.out.println(e.getCause().getClass());
                 Assert.assertTrue(e.getCause() instanceof SQLNonTransientException);
                 System.out.println("抛异常原因为SQLNonTransientException则正确");
-            } else {
+            }
+            else {
                 System.out.println("抛异常，需要检查");
                 Assert.assertTrue(false);
             }
@@ -150,7 +164,8 @@ public class DruidUpdateParserTest {
 
             if (iterExpr instanceof SQLBinaryOpExpr) {
                 System.out.print(((SQLBinaryOpExpr) iterExpr).getOperator());
-            } else {
+            }
+            else {
                 System.out.print(iterExpr.toString());
             }
             System.out.print("\t");

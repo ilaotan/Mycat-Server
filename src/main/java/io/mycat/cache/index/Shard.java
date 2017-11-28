@@ -17,7 +17,9 @@ import java.util.TreeMap;
 public class Shard<S> { // S类封装了机器节点的信息 ，如name、password、ip、port等
 
     private TreeMap<Long, S> nodes; // 虚拟节点
-    private List<S> shards; // 真实机器节点
+
+    private List<S>          shards; // 真实机器节点
+
     private static final int NODE_NUM = 100; // 每个机器节点关联的虚拟节点个数
 
     public Shard(List<S> shards) {
@@ -104,7 +106,7 @@ public class Shard<S> { // S类封装了机器节点的信息 ，如name、passw
         stringList.add("host5");
         Shard<String> stringShard = new Shard<>(stringList);
         for (int i = 0; i < 10; i++) {
-            System.out.println(i+":"+stringShard.getShardInfo(""+i));
+            System.out.println(i + ":" + stringShard.getShardInfo("" + i));
         }
         stringList = new ArrayList<>();
         stringList.add("host1");
@@ -113,7 +115,7 @@ public class Shard<S> { // S类封装了机器节点的信息 ，如name、passw
         stringList.add("host4");
         stringShard = new Shard<>(stringList);
         for (int i = 0; i < 10; i++) {
-            System.out.println(i+":"+stringShard.getShardInfo(""+i));
+            System.out.println(i + ":" + stringShard.getShardInfo("" + i));
         }
     }
 }

@@ -29,47 +29,50 @@ import io.mycat.backend.postgresql.utils.PIOUtils;
 
 /**
  * 解析sql语句
- * 
- * @author Coollf
  *
+ * @author Coollf
  */
 public class Parse extends PostgreSQLPacket {
 
-	private char marker = PacketMarker.F_Parse.getValue();
-	// private int length;
-	private String name;
-	private String sql;
-	private short parameterNumber;
-	private DateType[] parameterTypes;
+    private char marker = PacketMarker.F_Parse.getValue();
 
-	@Override
-	public int getLength() {
-		return 4 + name.getBytes(UTF8).length + sql.getBytes(UTF8).length + 2 + 4
-				* parameterNumber; //参数为空时仍然需要多个类型为0的int
-	}
+    // private int length;
+    private String     name;
 
-	@Override
-	public char getMarker() {
-		return marker;
-	}
+    private String     sql;
 
-	public Parse(String name, String sql, DateType... parameterTypes) {
-		this.name = (name == null) ? "\0" : (name.trim() + "\0");
-		this.sql = (sql == null) ? "\0" : (sql.trim() + "\0");
-		this.parameterNumber = (short) parameterTypes.length;
-		this.parameterTypes = parameterTypes;
+    private short      parameterNumber;
 
-	}
+    private DateType[] parameterTypes;
 
-	public void write(ByteBuffer buffer) throws IOException {
-		PIOUtils.SendChar(marker, buffer);
-		PIOUtils.SendInteger4(getLength(), buffer);
-		PIOUtils.SendString(name, buffer);
-		PIOUtils.SendString(sql, buffer);
-		PIOUtils.SendInteger2(parameterNumber, buffer);
-		for (DateType tp : parameterTypes) {
-			PIOUtils.SendInteger4(tp.getValue(), buffer);
-		}
-		
-	}
+    @Override
+    public int getLength() {
+        return 4 + name.getBytes(UTF8).length + sql.getBytes(UTF8).length + 2 + 4
+                * parameterNumber; //参数为空时仍然需要多个类型为0的int
+    }
+
+    @Override
+    public char getMarker() {
+        return marker;
+    }
+
+    public Parse(String name, String sql, DateType... parameterTypes) {
+        this.name = (name == null) ? "\0" : (name.trim() + "\0");
+        this.sql = (sql == null) ? "\0" : (sql.trim() + "\0");
+        this.parameterNumber = (short) parameterTypes.length;
+        this.parameterTypes = parameterTypes;
+
+    }
+
+    public void write(ByteBuffer buffer) throws IOException {
+        PIOUtils.SendChar(marker, buffer);
+        PIOUtils.SendInteger4(getLength(), buffer);
+        PIOUtils.SendString(name, buffer);
+        PIOUtils.SendString(sql, buffer);
+        PIOUtils.SendInteger2(parameterNumber, buffer);
+        for (DateType tp : parameterTypes) {
+            PIOUtils.SendInteger4(tp.getValue(), buffer);
+        }
+
+    }
 }

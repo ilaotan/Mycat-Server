@@ -4,7 +4,7 @@ import java.nio.ByteBuffer;
 
 /***
  * 等待查询包
- * 
+ *
  * @author Coollf
  *
  */
@@ -21,94 +21,94 @@ import java.nio.ByteBuffer;
 // 'E'（在事务块结束之前，任何查询都将被拒绝）。
 public class ReadyForQuery extends PostgreSQLPacket {
 
-	/*****
-	 * 消息长度
-	 */
-	private int length;
+    /*****
+     * 消息长度
+     */
+    private int length;
 
-	/***
-	 * 状态
-	 */
-	TransactionState state;
+    /***
+     * 状态
+     */
+    TransactionState state;
 
-	@Override
-	public int getLength() {
-		return length;
-	}
+    @Override
+    public int getLength() {
+        return length;
+    }
 
-	@Override
-	public char getMarker() {
-		return PacketMarker.B_ReadyForQuery.getValue();
-	}
+    @Override
+    public char getMarker() {
+        return PacketMarker.B_ReadyForQuery.getValue();
+    }
 
-	public static ReadyForQuery parse(ByteBuffer buffer, int offset) {
-		if (buffer.get(offset) != PacketMarker.B_ReadyForQuery.getValue()) {
-			throw new IllegalArgumentException("this packet not is ReadyForQuery");
-		}
-		ReadyForQuery readyForQuery = new ReadyForQuery();
-		readyForQuery.length = buffer.getInt(offset + 1);
-		readyForQuery.state = TransactionState.valueOf((char)buffer.get(offset+1+4));
-		return readyForQuery;
-	}
+    public static ReadyForQuery parse(ByteBuffer buffer, int offset) {
+        if (buffer.get(offset) != PacketMarker.B_ReadyForQuery.getValue()) {
+            throw new IllegalArgumentException("this packet not is ReadyForQuery");
+        }
+        ReadyForQuery readyForQuery = new ReadyForQuery();
+        readyForQuery.length = buffer.getInt(offset + 1);
+        readyForQuery.state = TransactionState.valueOf((char) buffer.get(offset + 1 + 4));
+        return readyForQuery;
+    }
 
-	/***
-	 * 后端事物状态
-	 * 
-	 * @author Coollf
-	 *
-	 */
-	public static enum TransactionState {
-		/***
-		 * 不在事物中
-		 */
-		NOT_IN('I'),
+    /***
+     * 后端事物状态
+     *
+     * @author Coollf
+     *
+     */
+    public static enum TransactionState {
+        /***
+         * 不在事物中
+         */
+        NOT_IN('I'),
 
-		/**
-		 * 在事物中
-		 */
-		IN('T'),
+        /**
+         * 在事物中
+         */
+        IN('T'),
 
-		/***
-		 * 错误
-		 */
-		ERR('E');
+        /***
+         * 错误
+         */
+        ERR('E');
 
-		private char vlaue;
+        private char vlaue;
 
-		public char getVlaue() {
-			return vlaue;
-		}
+        public char getVlaue() {
+            return vlaue;
+        }
 
-		TransactionState(char value) {
-			this.vlaue = value;
-		}
+        TransactionState(char value) {
+            this.vlaue = value;
+        }
 
-		public static TransactionState valueOf(char v) {
-			if (v == NOT_IN.getVlaue()) {
-				return NOT_IN;
-			}
-			if (v == IN.getVlaue()) {
-				return IN;
-			}
-			if (v == ERR.getVlaue()) {
-				return TransactionState.ERR;
-			}
-			return null;
-		}
-	}
+        public static TransactionState valueOf(char v) {
+            if (v == NOT_IN.getVlaue()) {
+                return NOT_IN;
+            }
+            if (v == IN.getVlaue()) {
+                return IN;
+            }
+            if (v == ERR.getVlaue()) {
+                return TransactionState.ERR;
+            }
+            return null;
+        }
+    }
 
-	/**
-	 * @return the state
-	 */
-	public TransactionState getState() {
-		return state;
-	}
+    /**
+     * @return the state
+     */
+    public TransactionState getState() {
+        return state;
+    }
 
-	/**
-	 * @param state the state to set
-	 */
-	public void setState(TransactionState state) {
-		this.state = state;
-	}
+    /**
+     * @param state the state to set
+     */
+    public void setState(TransactionState state) {
+        this.state = state;
+    }
 
 }

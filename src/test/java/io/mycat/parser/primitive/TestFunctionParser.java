@@ -16,10 +16,12 @@ public class TestFunctionParser {
 
     @Test
     public void testMultiFunctions() throws SQLNonTransientException {
-        Assert.assertEquals("[arg1, a.t]",testFunctionParse("function1(arg1,a.t)"));
-        Assert.assertEquals("[arg1, a.t]",testFunctionParse("function1(arg1,a.t,\"ast(,)\")"));
-        Assert.assertEquals("[arg1, a.t, c.t, x]",testFunctionParse("function1(arg1,a.t,\"ast(,)\",\",\",function2(c.t,function3(x)))"));
-        Assert.assertEquals("[arg1, a.t, c.t, x]",testFunctionParse("function1(arg1,a.t,\"ast(,)\",\",\",function2(c.t,\"(,)\",function3(function4(x))))"));
+        Assert.assertEquals("[arg1, a.t]", testFunctionParse("function1(arg1,a.t)"));
+        Assert.assertEquals("[arg1, a.t]", testFunctionParse("function1(arg1,a.t,\"ast(,)\")"));
+        Assert.assertEquals("[arg1, a.t, c.t, x]", testFunctionParse("function1(arg1,a.t,\"ast(,)\",\",\",function2(c" +
+                ".t,function3(x)))"));
+        Assert.assertEquals("[arg1, a.t, c.t, x]", testFunctionParse("function1(arg1,a.t,\"ast(,)\",\",\",function2(c" +
+                ".t,\"(,)\",function3(function4(x))))"));
     }
 
     public String testFunctionParse(String function) throws SQLNonTransientException {

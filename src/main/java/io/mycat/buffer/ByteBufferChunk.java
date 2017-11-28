@@ -2,6 +2,7 @@ package io.mycat.buffer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import sun.nio.ch.DirectBuffer;
 
 import java.nio.ByteBuffer;
@@ -15,26 +16,37 @@ import java.nio.ByteBuffer;
  * @time 17:19 2016/5/17
  * @see @https://github.com/netty/netty
  */
-public class ByteBufferChunk implements Comparable{
+public class ByteBufferChunk implements Comparable {
     private static final Logger LOGGER = LoggerFactory.getLogger(ByteBufferChunk.class);
-    private final byte[] memoryMap;
-    private final byte[] depthMap;
+
+    private final byte[]     memoryMap;
+
+    private final byte[]     depthMap;
+
     private final ByteBuffer buf;
 
     //in bytes
-    private final int pageSize;
+    private final int  pageSize;
+
     //in bytes
-    private final int chunkSize;
-    private final int chunkPageSize;
-    private final int maxOrder;
+    private final int  chunkSize;
+
+    private final int  chunkPageSize;
+
+    private final int  maxOrder;
+
     private final byte unusable;
-    private final int log2PageSize;
-    final long bufAddress;
+
+    private final int  log2PageSize;
+
+    final         long bufAddress;
 
     private int freeBytes;
 
-    ByteBufferChunk prev;
-    ByteBufferChunk next;
+    ByteBufferChunk     prev;
+
+    ByteBufferChunk     next;
+
     ByteBufferChunkList parent;
 
     public ByteBufferChunk(int pageSize, int chunkSize) {
@@ -84,7 +96,7 @@ public class ByteBufferChunk implements Comparable{
     }
 
     public synchronized ByteBuffer allocateRun(int normCapacity) {
-        if(normCapacity > chunkSize){
+        if (normCapacity > chunkSize) {
             LOGGER.warn("try to acquire a buffer with larger size than chunkSize!");
             return null;
         }
@@ -115,13 +127,16 @@ public class ByteBufferChunk implements Comparable{
         for (int i = 1; i < depthMap.length; i++) {
             if (depthMap[i] < depthMap[id]) {
                 continue;
-            } else if (depthMap[i] == depthMap[id]) {
+            }
+            else if (depthMap[i] == depthMap[id]) {
                 if (i == id) {
                     break;
-                } else {
+                }
+                else {
                     count += runLength(i);
                 }
-            } else {
+            }
+            else {
                 break;
             }
         }
@@ -208,7 +223,8 @@ public class ByteBufferChunk implements Comparable{
 
             if (val1 == logChild && val2 == logChild) {
                 memoryMap[parentId] = (byte) (logChild - 1);
-            } else {
+            }
+            else {
                 byte val = val1 < val2 ? val1 : val2;
                 memoryMap[parentId] = val;
             }

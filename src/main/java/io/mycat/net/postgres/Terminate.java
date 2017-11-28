@@ -25,11 +25,11 @@ package io.mycat.net.postgres;
 
 /**
  * <pre>
- * Terminate (F) 
+ * Terminate (F)
  * Byte1('X') Identifies the message as a termination.
  * Int32(4) Length of message contents in bytes, including self.
  * </pre>
- * 
+ *
  * @author mycat
  */
 public class Terminate extends PostgresPacket {

@@ -10,27 +10,31 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <readHost host="" url="" password="" user=""></readHost>
-* 源文件名：WriteHost.java
-* 文件版本：1.0.0
-* 创建作者：liujun
-* 创建日期：2016年9月15日
-* 修改作者：liujun
-* 修改日期：2016年9月15日
-* 文件描述：TODO
-* 版权所有：Copyright 2016 zjhz, Inc. All Rights Reserved.
-*/
+ * 源文件名：WriteHost.java
+ * 文件版本：1.0.0
+ * 创建作者：liujun
+ * 创建日期：2016年9月15日
+ * 修改作者：liujun
+ * 修改日期：2016年9月15日
+ * 文件描述：TODO
+ * 版权所有：Copyright 2016 zjhz, Inc. All Rights Reserved.
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "writeHost")
 public class WriteHost {
 
     @XmlAttribute(required = true)
-    protected String host;
+    protected String  host;
+
     @XmlAttribute(required = true)
-    protected String url;
+    protected String  url;
+
     @XmlAttribute(required = true)
-    protected String password;
+    protected String  password;
+
     @XmlAttribute(required = true)
-    protected String user;
+    protected String  user;
+
     @XmlAttribute
     protected Boolean usingDecrypt;
 

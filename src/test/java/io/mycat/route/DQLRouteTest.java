@@ -32,108 +32,115 @@ import junit.framework.Assert;
 
 public class DQLRouteTest {
 
-	protected Map<String, SchemaConfig> schemaMap;
-	protected LayerCachePool cachePool = new SimpleCachePool();
-	protected RouteStrategy routeStrategy = RouteStrategyFactory.getRouteStrategy("druidparser");
-	private Map<String, String> tableAliasMap = new HashMap<String, String>();
+    protected Map<String, SchemaConfig> schemaMap;
 
-	protected DruidShardingParseInfo ctx;
+    protected LayerCachePool      cachePool     = new SimpleCachePool();
 
-	public DQLRouteTest() {
-		String schemaFile = "/route/schema.xml";
-		String ruleFile = "/route/rule.xml";
-		SchemaLoader schemaLoader = new XMLSchemaLoader(schemaFile, ruleFile);
-		schemaMap = schemaLoader.getSchemas();
-		MycatServer.getInstance().getConfig().getSchemas().putAll(schemaMap);
-	}
+    protected RouteStrategy       routeStrategy = RouteStrategyFactory.getRouteStrategy("druidparser");
 
-	@Test
-	public void test() throws Exception {
-		String stmt = "select * from `offer` where id = 100";
-		SchemaConfig schema = schemaMap.get("mysqldb");
-		RouteResultset rrs = new RouteResultset(stmt, 7);
-		SQLStatementParser parser = null;
-		if (schema.isNeedSupportMultiDBType()) {
-			parser = new MycatStatementParser(stmt);
-		} else {
-			parser = new MySqlStatementParser(stmt);
-		}
-		SQLStatement statement;
-		MycatSchemaStatVisitor visitor = null;
+    private   Map<String, String> tableAliasMap = new HashMap<String, String>();
 
-		try {
-			statement = parser.parseStatement();
-			visitor = new MycatSchemaStatVisitor();
-		} catch (Exception t) {
-			throw new SQLSyntaxErrorException(t);
-		}
-		ctx = new DruidShardingParseInfo();
-		ctx.setSql(stmt);
+    protected DruidShardingParseInfo ctx;
 
-		List<RouteCalculateUnit> taskList = visitorParse(rrs, statement, visitor);
-		Assert.assertEquals(true, !taskList.get(0).getTablesAndConditions().isEmpty());
-	}
+    public DQLRouteTest() {
+        String schemaFile = "/route/schema.xml";
+        String ruleFile = "/route/rule.xml";
+        SchemaLoader schemaLoader = new XMLSchemaLoader(schemaFile, ruleFile);
+        schemaMap = schemaLoader.getSchemas();
+        MycatServer.getInstance().getConfig().getSchemas().putAll(schemaMap);
+    }
 
-	@SuppressWarnings("unchecked")
-	private List<RouteCalculateUnit> visitorParse(RouteResultset rrs, SQLStatement stmt, MycatSchemaStatVisitor visitor) throws Exception {
+    @Test
+    public void test() throws Exception {
+        String stmt = "select * from `offer` where id = 100";
+        SchemaConfig schema = schemaMap.get("mysqldb");
+        RouteResultset rrs = new RouteResultset(stmt, 7);
+        SQLStatementParser parser = null;
+        if (schema.isNeedSupportMultiDBType()) {
+            parser = new MycatStatementParser(stmt);
+        }
+        else {
+            parser = new MySqlStatementParser(stmt);
+        }
+        SQLStatement statement;
+        MycatSchemaStatVisitor visitor = null;
 
-		stmt.accept(visitor);
+        try {
+            statement = parser.parseStatement();
+            visitor = new MycatSchemaStatVisitor();
+        }
+        catch (Exception t) {
+            throw new SQLSyntaxErrorException(t);
+        }
+        ctx = new DruidShardingParseInfo();
+        ctx.setSql(stmt);
 
-		List<List<Condition>> mergedConditionList = new ArrayList<List<Condition>>();
-		if (visitor.hasOrCondition()) {// 包含or语句
-			// TODO
-			// 根据or拆分
-			mergedConditionList = visitor.splitConditions();
-		} else {// 不包含OR语句
-			mergedConditionList.add(visitor.getConditions());
-		}
+        List<RouteCalculateUnit> taskList = visitorParse(rrs, statement, visitor);
+        Assert.assertEquals(true, !taskList.get(0).getTablesAndConditions().isEmpty());
+    }
 
-		if (visitor.getAliasMap() != null) {
-			for (Map.Entry<String, String> entry : visitor.getAliasMap().entrySet()) {
-				String key = entry.getKey();
-				String value = entry.getValue();
-				if (key != null && key.indexOf("`") >= 0) {
-					key = key.replaceAll("`", "");
-				}
-				if (value != null && value.indexOf("`") >= 0) {
-					value = value.replaceAll("`", "");
-				}
-				// 表名前面带database的，去掉
-				if (key != null) {
-					int pos = key.indexOf(".");
-					if (pos > 0) {
-						key = key.substring(pos + 1);
-					}
-				}
+    @SuppressWarnings("unchecked")
+    private List<RouteCalculateUnit> visitorParse(RouteResultset rrs, SQLStatement stmt, MycatSchemaStatVisitor
+            visitor) throws Exception {
 
-				if (key.equals(value)) {
-					ctx.addTable(key.toUpperCase());
-				}
-				// else {
-				// tableAliasMap.put(key, value);
-				// }
-				tableAliasMap.put(key.toUpperCase(), value);
-			}
-			visitor.getAliasMap().putAll(tableAliasMap);
-			ctx.setTableAliasMap(tableAliasMap);
-		}
+        stmt.accept(visitor);
 
-		//利用反射机制单元测试DefaultDruidParser类的私有方法buildRouteCalculateUnits
-		Class<?> clazz = Class.forName("io.mycat.route.parser.druid.impl.DefaultDruidParser");
-		Method buildRouteCalculateUnits = clazz.getDeclaredMethod("buildRouteCalculateUnits",
-				new Class[] { SchemaStatVisitor.class, List.class });
-		//System.out.println("buildRouteCalculateUnits:\t" + buildRouteCalculateUnits);
-		Object newInstance = clazz.newInstance();
-		buildRouteCalculateUnits.setAccessible(true);
-		Object returnValue = buildRouteCalculateUnits.invoke(newInstance,
-				new Object[] { visitor, mergedConditionList });
-		List<RouteCalculateUnit> retList = new ArrayList<RouteCalculateUnit>();
-		if (returnValue instanceof ArrayList<?>) {
-			retList.add(((ArrayList<RouteCalculateUnit>)returnValue).get(0));
-			//retList = (ArrayList<RouteCalculateUnit>)returnValue;
-			//System.out.println(taskList.get(0).getTablesAndConditions().values());			
-		}
-		return retList;
-	}
+        List<List<Condition>> mergedConditionList = new ArrayList<List<Condition>>();
+        if (visitor.hasOrCondition()) {// 包含or语句
+            // TODO
+            // 根据or拆分
+            mergedConditionList = visitor.splitConditions();
+        }
+        else {// 不包含OR语句
+            mergedConditionList.add(visitor.getConditions());
+        }
+
+        if (visitor.getAliasMap() != null) {
+            for (Map.Entry<String, String> entry : visitor.getAliasMap().entrySet()) {
+                String key = entry.getKey();
+                String value = entry.getValue();
+                if (key != null && key.indexOf("`") >= 0) {
+                    key = key.replaceAll("`", "");
+                }
+                if (value != null && value.indexOf("`") >= 0) {
+                    value = value.replaceAll("`", "");
+                }
+                // 表名前面带database的，去掉
+                if (key != null) {
+                    int pos = key.indexOf(".");
+                    if (pos > 0) {
+                        key = key.substring(pos + 1);
+                    }
+                }
+
+                if (key.equals(value)) {
+                    ctx.addTable(key.toUpperCase());
+                }
+                // else {
+                // tableAliasMap.put(key, value);
+                // }
+                tableAliasMap.put(key.toUpperCase(), value);
+            }
+            visitor.getAliasMap().putAll(tableAliasMap);
+            ctx.setTableAliasMap(tableAliasMap);
+        }
+
+        //利用反射机制单元测试DefaultDruidParser类的私有方法buildRouteCalculateUnits
+        Class<?> clazz = Class.forName("io.mycat.route.parser.druid.impl.DefaultDruidParser");
+        Method buildRouteCalculateUnits = clazz.getDeclaredMethod("buildRouteCalculateUnits",
+                new Class[]{SchemaStatVisitor.class, List.class});
+        //System.out.println("buildRouteCalculateUnits:\t" + buildRouteCalculateUnits);
+        Object newInstance = clazz.newInstance();
+        buildRouteCalculateUnits.setAccessible(true);
+        Object returnValue = buildRouteCalculateUnits.invoke(newInstance,
+                new Object[]{visitor, mergedConditionList});
+        List<RouteCalculateUnit> retList = new ArrayList<RouteCalculateUnit>();
+        if (returnValue instanceof ArrayList<?>) {
+            retList.add(((ArrayList<RouteCalculateUnit>) returnValue).get(0));
+            //retList = (ArrayList<RouteCalculateUnit>)returnValue;
+            //System.out.println(taskList.get(0).getTablesAndConditions().values());
+        }
+        return retList;
+    }
 
 }

@@ -40,11 +40,10 @@ import java.math.BigInteger;
 import java.sql.SQLNonTransientException;
 import java.util.Map;
 
-public class PartitionByRangeModTest
-{
+public class PartitionByRangeModTest {
 
     @Test
-    public void test()  {
+    public void test() {
         PartitionByRangeMod autoPartition = new PartitionByRangeMod();
         autoPartition.setMapFile("partition-range-mod.txt");
         autoPartition.init();
@@ -61,29 +60,30 @@ public class PartitionByRangeModTest
         idVal = "5";
         Assert.assertEquals(true, 0 == autoPartition.calculate(idVal));
 
-        idVal="2000000";
-		Assert.assertEquals(true, 0==autoPartition.calculate(idVal));
+        idVal = "2000000";
+        Assert.assertEquals(true, 0 == autoPartition.calculate(idVal));
 
-		idVal="2000001";
-		Assert.assertEquals(true, 5==autoPartition.calculate(idVal));
+        idVal = "2000001";
+        Assert.assertEquals(true, 5 == autoPartition.calculate(idVal));
 
-		idVal="4000000";
-		Assert.assertEquals(true, 5==autoPartition.calculate(idVal));
+        idVal = "4000000";
+        Assert.assertEquals(true, 5 == autoPartition.calculate(idVal));
 
-		idVal="4000001";
-		Assert.assertEquals(true, 7==autoPartition.calculate(idVal));
+        idVal = "4000001";
+        Assert.assertEquals(true, 7 == autoPartition.calculate(idVal));
     }
 
 
-    private static int mod(long v, int size)
-    {
+    private static int mod(long v, int size) {
         BigInteger bigNum = BigInteger.valueOf(v).abs();
         return (bigNum.mod(BigInteger.valueOf(size))).intValue();
     }
 
     protected Map<String, SchemaConfig> schemaMap;
-    protected LayerCachePool cachePool = new SimpleCachePool();
-    protected RouteStrategy routeStrategy = RouteStrategyFactory.getRouteStrategy("druidparser");
+
+    protected LayerCachePool cachePool     = new SimpleCachePool();
+
+    protected RouteStrategy  routeStrategy = RouteStrategyFactory.getRouteStrategy("druidparser");
 
     public PartitionByRangeModTest() {
         String schemaFile = "/route/schema.xml";

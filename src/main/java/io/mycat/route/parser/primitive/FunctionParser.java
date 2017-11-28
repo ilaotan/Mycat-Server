@@ -50,7 +50,8 @@ public class FunctionParser {
                                 flag = 0;
                                 Identifier identifier = new Identifier(currentIdentifier);
                                 functions.peek().getArguments().add(identifier);
-                            } else {
+                            }
+                            else {
                                 Field field = new Field(currentIdentifier);
                                 functions.peek().getArguments().add(field);
                             }
@@ -68,7 +69,8 @@ public class FunctionParser {
                                 flag = 0;
                                 Identifier identifier = new Identifier(currentIdentifier);
                                 functions.peek().getArguments().add(identifier);
-                            } else {
+                            }
+                            else {
                                 Field field = new Field(currentIdentifier);
                                 functions.peek().getArguments().add(field);
                             }
@@ -76,7 +78,8 @@ public class FunctionParser {
                         if (flag == 0) {
                             if (functions.size() == 1) {
                                 return functions.pop();
-                            } else {
+                            }
+                            else {
                                 functions.pop();
                             }
                         }
@@ -87,13 +90,15 @@ public class FunctionParser {
                 case Commons.QUOTE:
                     if (flag == 0) {
                         flag = 1;
-                    } else if (flag == 1) {
+                    }
+                    else if (flag == 1) {
                         flag = 3;
                     }
                 case Commons.DOUBLE_QUOTE:
                     if (flag == 0) {
                         flag = 2;
-                    } else if (flag == 2) {
+                    }
+                    else if (flag == 2) {
                         flag = 3;
                     }
                 default:
@@ -103,17 +108,19 @@ public class FunctionParser {
         throw new SQLNonTransientException("Function is not in right format!");
     }
 
-    public static List<String> getFields(Function function){
+    public static List<String> getFields(Function function) {
         List<String> fields = new LinkedList<>();
-        for(Identifier identifier : function.getArguments()){
-            if(identifier instanceof Field){
+        for (Identifier identifier : function.getArguments()) {
+            if (identifier instanceof Field) {
                 fields.add(identifier.getName());
-            } else if (identifier instanceof Function){
+            }
+            else if (identifier instanceof Function) {
                 fields.addAll(getFields((Function) identifier));
             }
         }
         return fields;
     }
+
     public static void main(String[] args) throws SQLNonTransientException {
         Function function = FunctionParser.parseFunction("function1(arg1,a.t,\"ast()\",function2(c.t,function3(x)))");
         System.out.println(getFields(function));

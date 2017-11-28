@@ -42,16 +42,20 @@ import io.mycat.util.StringUtil;
 
 /**
  * 打印MycatServer所支持的语句
- * 
+ *
  * @author mycat
  * @author mycat
  */
 public final class ShowHelp {
 
-    private static final int FIELD_COUNT = 2;
-    private static final ResultSetHeaderPacket header = PacketUtil.getHeader(FIELD_COUNT);
-    private static final FieldPacket[] fields = new FieldPacket[FIELD_COUNT];
-    private static final EOFPacket eof = new EOFPacket();
+    private static final int                   FIELD_COUNT = 2;
+
+    private static final ResultSetHeaderPacket header      = PacketUtil.getHeader(FIELD_COUNT);
+
+    private static final FieldPacket[]         fields      = new FieldPacket[FIELD_COUNT];
+
+    private static final EOFPacket             eof         = new EOFPacket();
+
     static {
         int i = 0;
         byte packetId = 0;
@@ -70,28 +74,28 @@ public final class ShowHelp {
         ByteBuffer buffer = c.allocate();
 
         // write header
-        buffer = header.write(buffer, c,true);
+        buffer = header.write(buffer, c, true);
 
         // write fields
         for (FieldPacket field : fields) {
-            buffer = field.write(buffer, c,true);
+            buffer = field.write(buffer, c, true);
         }
 
         // write eof
-        buffer = eof.write(buffer, c,true);
+        buffer = eof.write(buffer, c, true);
 
         // write rows
         byte packetId = eof.packetId;
         for (String key : keys) {
             RowDataPacket row = getRow(key, helps.get(key), c.getCharset());
             row.packetId = ++packetId;
-            buffer = row.write(buffer, c,true);
+            buffer = row.write(buffer, c, true);
         }
 
         // write last eof
         EOFPacket lastEof = new EOFPacket();
         lastEof.packetId = ++packetId;
-        buffer = lastEof.write(buffer, c,true);
+        buffer = lastEof.write(buffer, c, true);
 
         // post write
         c.write(buffer);
@@ -105,7 +109,9 @@ public final class ShowHelp {
     }
 
     private static final Map<String, String> helps = new LinkedHashMap<String, String>();
-    private static final List<String> keys = new LinkedList<String>();
+
+    private static final List<String>        keys  = new LinkedList<String>();
+
     static {
         // show
         helps.put("show @@time.current", "Report current timestamp");
@@ -131,7 +137,7 @@ public final class ShowHelp {
         helps.put("show @@sql.execute", "Report execute status");
         helps.put("show @@sql.detail where id = ?", "Report execute detail status");
         helps.put("show @@sql", "Report SQL list");
-       // helps.put("show @@sql where id = ?", "Report  specify SQL");
+        // helps.put("show @@sql where id = ?", "Report  specify SQL");
         helps.put("show @@sql.high", "Report Hight Frequency SQL");
         helps.put("show @@sql.slow", "Report slow SQL");
         helps.put("show @@sql.resultset", "Report BIG RESULTSET SQL");
@@ -148,8 +154,8 @@ public final class ShowHelp {
         helps.put("show @@syslog limit=?", "Report system mycat.log");
         helps.put("show @@white", "show mycat white host ");
         helps.put("show @@white.set=?,?", "set mycat white host,[ip,user]");
-		helps.put("show @@directmemory=1 or 2", "show mycat direct memory usage");
-        
+        helps.put("show @@directmemory=1 or 2", "show mycat direct memory usage");
+
         // switch
         helps.put("switch @@datasource name:index", "Switch dataSource");
 
@@ -170,11 +176,11 @@ public final class ShowHelp {
         helps.put("rollback @@config", "Rollback all config from memory");
         helps.put("rollback @@route", "Rollback route config from memory");
         helps.put("rollback @@user", "Rollback user config from memory");
-        
+
         // open/close sql stat
         helps.put("reload @@sqlstat=open", "Open real-time sql stat analyzer");
         helps.put("reload @@sqlstat=close", "Close real-time sql stat analyzer");
-        
+
         // offline/online
         helps.put("offline", "Change MyCat status to OFF");
         helps.put("online", "Change MyCat status to ON");

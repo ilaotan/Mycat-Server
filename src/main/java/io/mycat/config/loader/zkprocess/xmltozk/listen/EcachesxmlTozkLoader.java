@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.curator.framework.CuratorFramework;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,61 +25,68 @@ import io.mycat.config.loader.zkprocess.zookeeper.process.ZkMultLoader;
 
 /**
  * 进行从ecache.xml加载到zk中加载
-* 源文件名：SchemasLoader.java
-* 文件版本：1.0.0
-* 创建作者：liujun
-* 创建日期：2016年9月15日
-* 修改作者：liujun
-* 修改日期：2016年9月15日
-* 文件描述：TODO
-* 版权所有：Copyright 2016 zjhz, Inc. All Rights Reserved.
-*/
+ * 源文件名：SchemasLoader.java
+ * 文件版本：1.0.0
+ * 创建作者：liujun
+ * 创建日期：2016年9月15日
+ * 修改作者：liujun
+ * 修改日期：2016年9月15日
+ * 文件描述：TODO
+ * 版权所有：Copyright 2016 zjhz, Inc. All Rights Reserved.
+ */
 public class EcachesxmlTozkLoader extends ZkMultLoader implements NotiflyService {
 
     /**
      * 日志
-    * @字段说明 LOGGER
-    */
+     *
+     * @字段说明 LOGGER
+     */
     private static final Logger LOGGER = LoggerFactory.getLogger(EcachesxmlTozkLoader.class);
 
     /**
-     * 当前文件中的zkpath信息 
-    * @字段说明 currZkPath
-    */
+     * 当前文件中的zkpath信息
+     *
+     * @字段说明 currZkPath
+     */
     private final String currZkPath;
 
     /**
      * Ehcache文件的路径信息
-    * @字段说明 SCHEMA_PATH
-    */
+     *
+     * @字段说明 SCHEMA_PATH
+     */
     private static final String EHCACHE_PATH = ZookeeperPath.ZK_LOCAL_CFG_PATH.getKey() + "ehcache.xml";
 
     /**
      * 缓存文件名称
-    * @字段说明 CACHESERVER_NAME
-    */
+     *
+     * @字段说明 CACHESERVER_NAME
+     */
     private static final String CACHESERVER_NAME = "cacheservice.properties";
 
     /**
      * 缓存的xml文件配制信息
-    * @字段说明 EHCACHE_NAME
-    */
+     *
+     * @字段说明 EHCACHE_NAME
+     */
     private static final String EHCACHE_NAME = "ehcache.xml";
 
     /**
      * ehcache的xml的转换信息
-    * @字段说明 parseEhcacheXMl
-    */
+     *
+     * @字段说明 parseEhcacheXMl
+     */
     private final ParseXmlServiceInf<Ehcache> parseEcacheXMl;
 
     /**
      * 表的路由信息
-    * @字段说明 parseJsonService
-    */
+     *
+     * @字段说明 parseJsonService
+     */
     private ParseJsonServiceInf<Ehcache> parseJsonEhcacheService = new EhcacheJsonParse();
 
     public EcachesxmlTozkLoader(ZookeeperProcessListen zookeeperListen, CuratorFramework curator,
-            XmlProcessBase xmlParseBase) {
+                                XmlProcessBase xmlParseBase) {
 
         this.setCurator(curator);
 
@@ -109,12 +117,13 @@ public class EcachesxmlTozkLoader extends ZkMultLoader implements NotiflyService
 
     /**
      * 将xml文件的信息写入到zk中
-    * 方法描述
-    * @param basePath 基本路径
-    * @param schema schema文件的信息
-    * @throws Exception 异常信息
-    * @创建日期 2016年9月17日
-    */
+     * 方法描述
+     *
+     * @param basePath 基本路径
+     * @param schema   schema文件的信息
+     * @throws Exception 异常信息
+     * @创建日期 2016年9月17日
+     */
     private void xmlTozkEhcacheJson(String basePath, Ehcache ehcache) throws Exception {
         // ehcache节点信息
         String ehcacheFile = ZookeeperPath.ZK_SEPARATOR.getKey() + EHCACHE_NAME;
@@ -129,11 +138,12 @@ public class EcachesxmlTozkLoader extends ZkMultLoader implements NotiflyService
 
     /**
      * 读取 mapFile文件的信息
-    * 方法描述
-    * @param name 名称信息
-    * @return
-    * @创建日期 2016年9月18日
-    */
+     * 方法描述
+     *
+     * @param name 名称信息
+     * @return
+     * @创建日期 2016年9月18日
+     */
     private String readSeqFile(String name) {
 
         StringBuilder mapFileStr = new StringBuilder();
@@ -152,10 +162,12 @@ public class EcachesxmlTozkLoader extends ZkMultLoader implements NotiflyService
             while ((readIndex = input.read(buffers)) != -1) {
                 mapFileStr.append(new String(buffers, 0, readIndex));
             }
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             e.printStackTrace();
             LOGGER.error("EhcachexmlTozkLoader readMapFile IOException", e);
-        } finally {
+        }
+        finally {
             IOUtils.close(input);
         }
 

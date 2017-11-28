@@ -32,11 +32,12 @@ import java.io.OutputStream;
  * @author mycat
  */
 public class StreamUtil {
-    private static final long NULL_LENGTH = -1;
+    private static final long   NULL_LENGTH = -1;
+
     private static final byte[] EMPTY_BYTES = new byte[0];
 
     public static final void read(InputStream in, byte[] b, int offset, int length) throws IOException {
-        for (int got = 0; length > 0;) {
+        for (int got = 0; length > 0; ) {
             got = in.read(b, offset, length);
             if (got < 0) {
                 throw new EOFException();
@@ -187,29 +188,32 @@ public class StreamUtil {
             throw new EOFException();
         }
         switch (length) {
-        case 251:
-            return NULL_LENGTH;
-        case 252:
-            return readUB2(in);
-        case 253:
-            return readUB3(in);
-        case 254:
-            return readLong(in);
-        default:
-            return length;
+            case 251:
+                return NULL_LENGTH;
+            case 252:
+                return readUB2(in);
+            case 253:
+                return readUB3(in);
+            case 254:
+                return readLong(in);
+            default:
+                return length;
         }
     }
 
     public static final void writeLength(OutputStream out, long length) throws IOException {
         if (length < 251) {
             out.write((byte) length);
-        } else if (length < 0x10000L) {
+        }
+        else if (length < 0x10000L) {
             out.write((byte) 252);
             writeUB2(out, (int) length);
-        } else if (length < 0x1000000L) {
+        }
+        else if (length < 0x1000000L) {
             out.write((byte) 253);
             writeUB3(out, (int) length);
-        } else {
+        }
+        else {
             out.write((byte) 254);
             writeLong(out, length);
         }
@@ -224,13 +228,16 @@ public class StreamUtil {
         int length = src.length;
         if (length < 251) {
             out.write((byte) length);
-        } else if (length < 0x10000L) {
+        }
+        else if (length < 0x10000L) {
             out.write((byte) 252);
             writeUB2(out, length);
-        } else if (length < 0x1000000L) {
+        }
+        else if (length < 0x1000000L) {
             out.write((byte) 253);
             writeUB3(out, length);
-        } else {
+        }
+        else {
             out.write((byte) 254);
             writeLong(out, length);
         }

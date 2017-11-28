@@ -15,6 +15,7 @@ import org.apache.curator.framework.state.ConnectionState;
 import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.apache.curator.utils.CloseableUtils;
 import org.apache.zookeeper.CreateMode;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +30,8 @@ import java.util.concurrent.TimeUnit;
 /**
  * 基于ZK与本地配置的分布式ID生成器(可以通过ZK获取集群（机房）唯一InstanceID，也可以通过配置文件配置InstanceID)
  * ID结构：long 64位，ID最大可占63位
- * |current time millis(微秒时间戳38位,可以使用17年)|clusterId（机房或者ZKid，通过配置文件配置5位）|instanceId（实例ID，可以通过ZK或者配置文件获取，5位）|threadId（线程ID，9位）|increment(自增,6位)
+ * |current time millis(微秒时间戳38位,可以使用17年)|clusterId（机房或者ZKid，通过配置文件配置5位）|instanceId（实例ID，可以通过ZK或者配置文件获取，5位）|threadId
+ * （线程ID，9位）|increment(自增,6位)
  * 一共63位，可以承受单机房单机器单线程1000*(2^6)=640000的并发。
  * 无悲观锁，无强竞争，吞吐量更高
  * <p/>
@@ -41,51 +43,76 @@ import java.util.concurrent.TimeUnit;
  * @time 00:08:03 2016/5/3
  */
 public class DistributedSequenceHandler extends LeaderSelectorListenerAdapter implements Closeable, SequenceHandler {
-    protected static final Logger LOGGER = LoggerFactory.getLogger(DistributedSequenceHandler.class);
-    private static final String SEQUENCE_DB_PROPS = "sequence_distributed_conf.properties";
+    protected static final Logger LOGGER            = LoggerFactory.getLogger(DistributedSequenceHandler.class);
+
+    private static final   String SEQUENCE_DB_PROPS = "sequence_distributed_conf.properties";
+
     private static DistributedSequenceHandler instance;
 
-    private final long timestampBits = 38L;
-    private final long clusterIdBits = 5L;
+    private final long timestampBits  = 38L;
+
+    private final long clusterIdBits  = 5L;
+
     private final long instanceIdBits = 5L;
-    private final long threadIdBits = 9L;
-    private final long incrementBits = 6L;
+
+    private final long threadIdBits   = 9L;
+
+    private final long incrementBits  = 6L;
 
     private final long timestampMask = (1L << timestampBits) - 1L;
 
-    private final long incrementShift = 0L;
-    private final long threadIdShift = incrementShift + incrementBits;
-    private final long instanceIdShift = threadIdShift + threadIdBits;
-    private final long clusterIdShift = instanceIdShift + instanceIdBits;
-    private final long timestampShift = clusterIdShift + clusterIdBits;
+    private final long incrementShift  = 0L;
 
-    private final long maxIncrement = 1L << incrementBits;
-    private final long maxThreadId = 1L << threadIdBits;
+    private final long threadIdShift   = incrementShift + incrementBits;
+
+    private final long instanceIdShift = threadIdShift + threadIdBits;
+
+    private final long clusterIdShift  = instanceIdShift + instanceIdBits;
+
+    private final long timestampShift  = clusterIdShift + clusterIdBits;
+
+    private final long maxIncrement  = 1L << incrementBits;
+
+    private final long maxThreadId   = 1L << threadIdBits;
+
     private final long maxinstanceId = 1L << instanceIdBits;
-    private final long maxclusterId = 1L << instanceIdBits;
+
+    private final long maxclusterId  = 1L << instanceIdBits;
 
     private volatile long instanceId;
-    private long clusterId;
 
-    private ThreadLocal<Long> threadInc = new ThreadLocal<>();
+    private          long clusterId;
+
+    private ThreadLocal<Long> threadInc      = new ThreadLocal<>();
+
     private ThreadLocal<Long> threadLastTime = new ThreadLocal<>();
-    private ThreadLocal<Long> threadID = new ThreadLocal<>();
-    private long nextID = 0L;
 
-    private final static String PATH = ZookeeperPath.ZK_SEPARATOR.getKey() + ZookeeperPath.FLOW_ZK_PATH_BASE.getKey()
+    private ThreadLocal<Long> threadID       = new ThreadLocal<>();
+
+    private long              nextID         = 0L;
+
+    private final static String PATH          = ZookeeperPath.ZK_SEPARATOR.getKey() + ZookeeperPath.FLOW_ZK_PATH_BASE
+            .getKey()
             + io.mycat.config.loader.zkprocess.comm.ZkConfig.getInstance().getValue(ZkParamCfg.ZK_CFG_CLUSTERID)
             + ZookeeperPath.ZK_SEPARATOR.getKey() + ZookeeperPath.FLOW_ZK_PATH_SEQUENCE.getKey();
+
     // private final static String PATH = "/mycat/sequence";
     private final static String INSTANCE_PATH = ZookeeperPath.ZK_SEPARATOR.getKey()
             + ZookeeperPath.FLOW_ZK_PATH_SEQUENCE_INSTANCE.getKey();
-    private final static String LEADER_PATH = ZookeeperPath.ZK_SEPARATOR.getKey()
+
+    private final static String LEADER_PATH   = ZookeeperPath.ZK_SEPARATOR.getKey()
             + ZookeeperPath.FLOW_ZK_PATH_SEQUENCE_LEADER.getKey();
+
     private SystemConfig mycatConfig;
-    private String ID;
+
+    private String       ID;
 
     private int mark[];
+
     private volatile boolean isLeader = false;
+
     private volatile String slavePath;
+
     // 配置是否载入好
     private volatile boolean ready = false;
 
@@ -94,7 +121,9 @@ public class DistributedSequenceHandler extends LeaderSelectorListenerAdapter im
     private LeaderSelector leaderSelector;
 
     private final ScheduledExecutorService timerExecutor = Executors.newSingleThreadScheduledExecutor();
+
     private ScheduledExecutorService leaderExecutor;
+
     private final long SELF_CHECK_PERIOD = 10L;
 
     public static DistributedSequenceHandler getInstance(SystemConfig systemConfig) {
@@ -142,7 +171,8 @@ public class DistributedSequenceHandler extends LeaderSelectorListenerAdapter im
         Properties props = PropertiesUtil.loadProps(SEQUENCE_DB_PROPS);
         if ("ZK".equals(props.getProperty("INSTANCEID"))) {
             initializeZK(ZkConfig.getInstance().getZkURL());
-        } else {
+        }
+        else {
             this.instanceId = Long.parseLong(props.getProperty("INSTANCEID"));
             this.ready = true;
         }
@@ -157,7 +187,8 @@ public class DistributedSequenceHandler extends LeaderSelectorListenerAdapter im
             if (client.checkExists().forPath(PATH.concat(INSTANCE_PATH)) == null) {
                 client.create().creatingParentContainersIfNeeded().forPath(PATH.concat(INSTANCE_PATH));
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             // do nothing
         }
         this.leaderSelector = new LeaderSelector(client, PATH.concat(LEADER_PATH), this);
@@ -183,7 +214,8 @@ public class DistributedSequenceHandler extends LeaderSelectorListenerAdapter im
                         instanceId = Long.parseLong(new String(client.getData().forPath(slavePath)));
                         ready = true;
                     }
-                } catch (Exception e) {
+                }
+                catch (Exception e) {
                     LOGGER.warn("Caught exception while handling zk!", e);
                 }
             }
@@ -197,7 +229,8 @@ public class DistributedSequenceHandler extends LeaderSelectorListenerAdapter im
         while (!ready) {
             try {
                 Thread.sleep(50);
-            } catch (InterruptedException e) {
+            }
+            catch (InterruptedException e) {
                 LOGGER.warn("Unexpected thread interruption!");
                 Thread.currentThread().interrupt();
             }
@@ -218,7 +251,8 @@ public class DistributedSequenceHandler extends LeaderSelectorListenerAdapter im
                 time = blockUntilNextMillis(time);
             }
             threadInc.set(0L);
-        } else {
+        }
+        else {
             threadInc.set(a + 1L);
         }
         threadLastTime.set(time);
@@ -270,7 +304,8 @@ public class DistributedSequenceHandler extends LeaderSelectorListenerAdapter im
                     }
                 }
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             LOGGER.warn("Caught exception while handling zk!", e);
         }
 
@@ -291,12 +326,14 @@ public class DistributedSequenceHandler extends LeaderSelectorListenerAdapter im
                             client.setData().forPath(PATH.concat(INSTANCE_PATH.concat("/").concat(child)),
                                     ("" + i).getBytes());
                             mark2[i] = 1;
-                        } else {
+                        }
+                        else {
                             mark2[Integer.parseInt(data)] = 1;
                         }
                     }
                     mark = mark2;
-                } catch (Exception e) {
+                }
+                catch (Exception e) {
                     LOGGER.warn("Caught exception while handling zk!", e);
                 }
             }

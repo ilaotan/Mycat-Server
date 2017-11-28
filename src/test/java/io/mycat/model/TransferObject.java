@@ -28,6 +28,7 @@ package io.mycat.model;
  */
 public class TransferObject {
     long handleCount;
+
     long compeleteCount;
 
     public void handle() {

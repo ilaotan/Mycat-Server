@@ -27,7 +27,8 @@ import static io.mycat.server.parser.ServerParseSet.CHARACTER_SET_CLIENT;
 import static io.mycat.server.parser.ServerParseSet.CHARACTER_SET_CONNECTION;
 import static io.mycat.server.parser.ServerParseSet.CHARACTER_SET_RESULTS;
 
-import org.slf4j.Logger; import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import io.mycat.config.ErrorCode;
 import io.mycat.net.mysql.OkPacket;
@@ -39,6 +40,7 @@ import io.mycat.util.SplitUtil;
 /**
  * 字符集属性设置
  */
+
 /**
  * @author mycat
  */
@@ -50,7 +52,8 @@ public class CharacterSet {
         if (-1 == stmt.indexOf(',')) {
             /* 单个属性 */
             oneSetResponse(stmt, c, rs);
-        } else {
+        }
+        else {
             /* 多个属性 ,但是只关注CHARACTER_SET_RESULTS，CHARACTER_SET_CONNECTION */
             multiSetResponse(stmt, c, rs);
         }
@@ -60,7 +63,8 @@ public class CharacterSet {
         if ((rs & 0xff) == CHARACTER_SET_CLIENT) {
             /* 忽略client属性设置 */
             c.write(c.writeToBuffer(OkPacket.OK, c.allocate()));
-        } else {
+        }
+        else {
             String charset = stmt.substring(rs >>> 8).trim();
             if (charset.endsWith(";")) {
                 /* 结尾为 ; 标识符 */
@@ -84,12 +88,12 @@ public class CharacterSet {
 
         // check first
         switch (rs & 0xff) {
-        case CHARACTER_SET_RESULTS:
-            charResult = sqlList[0].substring(rs >>> 8).trim();
-            break;
-        case CHARACTER_SET_CONNECTION:
-            charConnection = sqlList[0].substring(rs >>> 8).trim();
-            break;
+            case CHARACTER_SET_RESULTS:
+                charResult = sqlList[0].substring(rs >>> 8).trim();
+                break;
+            case CHARACTER_SET_CONNECTION:
+                charConnection = sqlList[0].substring(rs >>> 8).trim();
+                break;
         }
 
         // check remaining
@@ -101,20 +105,20 @@ public class CharacterSet {
             }
             int rs2 = ServerParseSet.parse(sql, "set".length());
             switch (rs2 & 0xff) {
-            case CHARACTER_SET_RESULTS:
-                charResult = sql.substring(rs2 >>> 8).trim();
-                break;
-            case CHARACTER_SET_CONNECTION:
-                charConnection = sql.substring(rs2 >>> 8).trim();
-                break;
-            case CHARACTER_SET_CLIENT:
-                break;
-            default:
-            	boolean ignore = SetIgnoreUtil.isIgnoreStmt( sql );
-            	if ( !ignore ) {
-	                StringBuilder s = new StringBuilder();
-	                logger.warn(s.append(c).append(sql).append(" is not executed").toString());
-            	}
+                case CHARACTER_SET_RESULTS:
+                    charResult = sql.substring(rs2 >>> 8).trim();
+                    break;
+                case CHARACTER_SET_CONNECTION:
+                    charConnection = sql.substring(rs2 >>> 8).trim();
+                    break;
+                case CHARACTER_SET_CLIENT:
+                    break;
+                default:
+                    boolean ignore = SetIgnoreUtil.isIgnoreStmt(sql);
+                    if (!ignore) {
+                        StringBuilder s = new StringBuilder();
+                        logger.warn(s.append(c).append(sql).append(" is not executed").toString());
+                    }
             }
         }
 
@@ -136,7 +140,8 @@ public class CharacterSet {
         }
         if (charConnection.equalsIgnoreCase(charResult)) {
             setCharset(charConnection, c);
-        } else {
+        }
+        else {
             StringBuilder sb = new StringBuilder();
             sb.append("charset is not consistent:[connection=").append(charConnection);
             sb.append(",results=").append(charResult).append(']');
@@ -148,16 +153,20 @@ public class CharacterSet {
         if ("null".equalsIgnoreCase(charset)) {
             /* 忽略字符集为null的属性设置 */
             c.write(c.writeToBuffer(OkPacket.OK, c.allocate()));
-        } else if (c.setCharset(charset)) {
+        }
+        else if (c.setCharset(charset)) {
             c.write(c.writeToBuffer(OkPacket.OK, c.allocate()));
-        } else {
+        }
+        else {
             try {
                 if (c.setCharsetIndex(Integer.parseInt(charset))) {
                     c.write(c.writeToBuffer(OkPacket.OK, c.allocate()));
-                } else {
+                }
+                else {
                     c.writeErrMessage(ErrorCode.ER_UNKNOWN_CHARACTER_SET, "Unknown charset :" + charset);
                 }
-            } catch (RuntimeException e) {
+            }
+            catch (RuntimeException e) {
                 c.writeErrMessage(ErrorCode.ER_UNKNOWN_CHARACTER_SET, "Unknown charset :" + charset);
             }
         }

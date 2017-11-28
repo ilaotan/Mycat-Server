@@ -18,8 +18,10 @@
 package io.mycat.memory.unsafe;
 
 import io.mycat.memory.unsafe.utils.BytesTools;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import sun.misc.Cleaner;
 import sun.misc.Unsafe;
 import sun.nio.ch.DirectBuffer;
@@ -37,9 +39,11 @@ import java.util.regex.Pattern;
 
 public final class Platform {
 
-    private final static Logger logger = LoggerFactory.getLogger(Platform.class);
+    private final static Logger  logger                             = LoggerFactory.getLogger(Platform.class);
+
     private static final Pattern MAX_DIRECT_MEMORY_SIZE_ARG_PATTERN =
             Pattern.compile("\\s*-XX:MaxDirectMemorySize\\s*=\\s*([0-9]+)\\s*([kKmMgG]?)\\s*$");
+
     private static final Unsafe _UNSAFE;
 
     public static final int BYTE_ARRAY_OFFSET;
@@ -70,7 +74,8 @@ public final class Platform {
             Method unalignedMethod = bitsClass.getDeclaredMethod("unaligned");
             unalignedMethod.setAccessible(true);
             _unaligned = Boolean.TRUE.equals(unalignedMethod.invoke(null));
-        } catch (Throwable t) {
+        }
+        catch (Throwable t) {
             // We at least know x86 and x64 support unaligned access.
             String arch = System.getProperty("os.arch", "");
             //noinspection DynamicRegexReplaceableByCompiledPattern
@@ -83,7 +88,9 @@ public final class Platform {
 
 
     private static ClassLoader getSystemClassLoader() {
-        return System.getSecurityManager() == null ? ClassLoader.getSystemClassLoader() : (ClassLoader) AccessController.doPrivileged(new PrivilegedAction() {
+        return System.getSecurityManager() == null ? ClassLoader.getSystemClassLoader() : (ClassLoader)
+                AccessController.doPrivileged(new PrivilegedAction() {
+            @Override
             public ClassLoader run() {
                 return ClassLoader.getSystemClassLoader();
             }
@@ -100,18 +107,22 @@ public final class Platform {
             t = Class.forName("sun.misc.VM", true, getSystemClassLoader());
             Method runtimeClass = t.getDeclaredMethod("maxDirectMemory", new Class[0]);
             maxDirectMemory = ((Number) runtimeClass.invoke((Object) null, new Object[0])).longValue();
-        } catch (Throwable var8) {
+        }
+        catch (Throwable var8) {
             ;
         }
 
         if (maxDirectMemory > 0L) {
             return maxDirectMemory;
-        } else {
+        }
+        else {
             try {
                 t = Class.forName("java.lang.management.ManagementFactory", true, getSystemClassLoader());
                 Class var10 = Class.forName("java.lang.management.RuntimeMXBean", true, getSystemClassLoader());
-                Object runtime = t.getDeclaredMethod("getRuntimeMXBean", new Class[0]).invoke((Object) null, new Object[0]);
-                List vmArgs = (List) var10.getDeclaredMethod("getInputArguments", new Class[0]).invoke(runtime, new Object[0]);
+                Object runtime = t.getDeclaredMethod("getRuntimeMXBean", new Class[0]).invoke((Object) null, new
+                        Object[0]);
+                List vmArgs = (List) var10.getDeclaredMethod("getInputArguments", new Class[0]).invoke(runtime, new
+                        Object[0]);
 
                 label41:
                 for (int i = vmArgs.size() - 1; i >= 0; --i) {
@@ -135,14 +146,16 @@ public final class Platform {
                         }
                     }
                 }
-            } catch (Throwable var9) {
+            }
+            catch (Throwable var9) {
                 logger.error(var9.getMessage());
             }
 
             if (maxDirectMemory <= 0L) {
                 maxDirectMemory = Runtime.getRuntime().maxMemory();
                 //System.out.println("maxDirectMemory: {} bytes (maybe)" + Long.valueOf(maxDirectMemory));
-            } else {
+            }
+            else {
                 //System.out.println("maxDirectMemory: {} bytes" + Long.valueOf(maxDirectMemory));
             }
             return maxDirectMemory;
@@ -268,7 +281,8 @@ public final class Platform {
             });
             cleanerField.set(buffer, cleaner);
             return buffer;
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             throwException(e);
         }
         throw new IllegalStateException("unreachable");
@@ -290,7 +304,8 @@ public final class Platform {
                 srcOffset += size;
                 dstOffset += size;
             }
-        } else {
+        }
+        else {
             srcOffset += length;
             dstOffset += length;
             while (length > 0) {
@@ -323,7 +338,8 @@ public final class Platform {
             Field unsafeField = Unsafe.class.getDeclaredField("theUnsafe");
             unsafeField.setAccessible(true);
             unsafe = (Unsafe) unsafeField.get(null);
-        } catch (Throwable cause) {
+        }
+        catch (Throwable cause) {
             unsafe = null;
         }
         _UNSAFE = unsafe;
@@ -335,7 +351,8 @@ public final class Platform {
             LONG_ARRAY_OFFSET = _UNSAFE.arrayBaseOffset(long[].class);
             FLOAT_ARRAY_OFFSET = _UNSAFE.arrayBaseOffset(float[].class);
             DOUBLE_ARRAY_OFFSET = _UNSAFE.arrayBaseOffset(double[].class);
-        } else {
+        }
+        else {
             BYTE_ARRAY_OFFSET = 0;
             SHORT_ARRAY_OFFSET = 0;
             INT_ARRAY_OFFSET = 0;

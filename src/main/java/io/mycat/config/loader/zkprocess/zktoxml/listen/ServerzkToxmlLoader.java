@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.apache.curator.framework.CuratorFramework;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,67 +37,75 @@ import io.mycat.manager.response.ReloadConfig;
 
 /**
  * 进行server的文件从zk中加载
-* 源文件名：ServerzkToxmlLoader.java
-* 文件版本：1.0.0
-* 创建作者：liujun
-* 创建日期：2016年9月15日
-* 修改作者：liujun
-* 修改日期：2016年9月15日
-* 文件描述：TODO
-* 版权所有：Copyright 2016 zjhz, Inc. All Rights Reserved.
-*/
+ * 源文件名：ServerzkToxmlLoader.java
+ * 文件版本：1.0.0
+ * 创建作者：liujun
+ * 创建日期：2016年9月15日
+ * 修改作者：liujun
+ * 修改日期：2016年9月15日
+ * 文件描述：TODO
+ * 版权所有：Copyright 2016 zjhz, Inc. All Rights Reserved.
+ */
 public class ServerzkToxmlLoader extends ZkMultLoader implements NotiflyService {
 
     /**
      * 日志
-    * @字段说明 LOGGER
-    */
+     *
+     * @字段说明 LOGGER
+     */
     private static final Logger LOGGER = LoggerFactory.getLogger(ServerzkToxmlLoader.class);
 
     /**
-     * 当前文件中的zkpath信息 
-    * @字段说明 currZkPath
-    */
+     * 当前文件中的zkpath信息
+     *
+     * @字段说明 currZkPath
+     */
     private final String currZkPath;
 
     /**
      * 写入本地的文件路径
-    * @字段说明 WRITEPATH
-    */
+     *
+     * @字段说明 WRITEPATH
+     */
     private static final String WRITEPATH = "server.xml";
 
     /**
      * index_to_charset文件的路径信息
+     *
      * @字段说明 SCHEMA_PATH
      */
     private static final String INDEX_TOCHARSET_PATH = "index_to_charset.properties";
 
     /**
      * server的xml的转换信息
-    * @字段说明 parseServerXMl
-    */
+     *
+     * @字段说明 parseServerXMl
+     */
     private ParseXmlServiceInf<Server> parseServerXMl;
 
     /**
      * system信息
-    * @字段说明 parseJsonserver
-    */
+     *
+     * @字段说明 parseJsonserver
+     */
     private ParseJsonServiceInf<System> parseJsonSystem = new SystemJsonParse();
 
     /**
      * system信息
+     *
      * @字段说明 parseJsonserver
      */
     private ParseJsonServiceInf<List<User>> parseJsonUser = new UserJsonParse();
 
     /**
      * zk监控路径
-    * @字段说明 zookeeperListen
-    */
+     *
+     * @字段说明 zookeeperListen
+     */
     private ZookeeperProcessListen zookeeperListen;
 
     public ServerzkToxmlLoader(ZookeeperProcessListen zookeeperListen, CuratorFramework curator,
-            XmlProcessBase xmlParseBase) {
+                               XmlProcessBase xmlParseBase) {
 
         this.setCurator(curator);
 
@@ -160,18 +169,20 @@ public class ServerzkToxmlLoader extends ZkMultLoader implements NotiflyService 
 
             LOGGER.info("ServerzkToxmlLoader notiflyProcess zk to write index_to_charset.properties is success");
         }
-        if (MycatServer.getInstance().getProcessors() != null)
+        if (MycatServer.getInstance().getProcessors() != null) {
             ReloadConfig.reload();
+        }
         return true;
     }
 
     /**
      * 将zk上面的信息转换为javabean对象
-    * 方法描述
-    * @param zkDirectory
-    * @return
-    * @创建日期 2016年9月17日
-    */
+     * 方法描述
+     *
+     * @param zkDirectory
+     * @return
+     * @创建日期 2016年9月17日
+     */
     private Server zktoServerBean(DiretoryInf zkDirectory) {
         Server server = new Server();
 
@@ -195,11 +206,12 @@ public class ServerzkToxmlLoader extends ZkMultLoader implements NotiflyService 
 
     /**
      * 加载当前节点的特殊配制信息
-    * 方法描述
-    * @param zkDirectory
-    * @return
-    * @创建日期 2016年9月17日
-    */
+     * 方法描述
+     *
+     * @param zkDirectory
+     * @return
+     * @创建日期 2016年9月17日
+     */
     private Server zktoServerBeanByCurrNode(DiretoryInf zkDirectory) {
 
         Server server = null;
@@ -239,11 +251,12 @@ public class ServerzkToxmlLoader extends ZkMultLoader implements NotiflyService 
 
     /**
      * 写入本地文件配制信息
-    * 方法描述
-    * @param name 名称信息
-    * @return
-    * @创建日期 2016年9月18日
-    */
+     * 方法描述
+     *
+     * @param name 名称信息
+     * @return
+     * @创建日期 2016年9月18日
+     */
     private void writeProperties(String name, String value) {
 
         // 加载数据
@@ -258,7 +271,8 @@ public class ServerzkToxmlLoader extends ZkMultLoader implements NotiflyService 
         // 进行数据写入
         try {
             Files.write(value.getBytes(), new File(path));
-        } catch (IOException e1) {
+        }
+        catch (IOException e1) {
             e1.printStackTrace();
         }
     }

@@ -23,8 +23,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PartitionByRangeDateHashTest
-{
+public class PartitionByRangeDateHashTest {
 
     @Test
     public void test() throws ParseException {
@@ -40,14 +39,14 @@ public class PartitionByRangeDateHashTest
         Integer calculate = partition.calculate("2014-01-01 00:00:00");
         Assert.assertEquals(true, 3 == calculate);
 
-         calculate = partition.calculate("2014-01-01 00:00:01");
+        calculate = partition.calculate("2014-01-01 00:00:01");
         Assert.assertEquals(true, 1 == calculate);
 
         calculate = partition.calculate("2014-01-04 00:00:00");
         Assert.assertEquals(true, 7 == calculate);
 
         calculate = partition.calculate("2014-01-04 00:00:01");
-        Assert.assertEquals(true, 11== calculate);
+        Assert.assertEquals(true, 11 == calculate);
 
 
         Date beginDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2014-01-01 00:00:00");
@@ -55,21 +54,21 @@ public class PartitionByRangeDateHashTest
         cal.setTime(beginDate);
 
 
-        for (int i = 0; i < 60*60*24*3-1; i++)
-        {
-              cal.add(Calendar.SECOND, 1);
-        int v=    partition.calculate(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(cal.getTime()))     ;
-            Assert.assertTrue(v<6);
+        for (int i = 0; i < 60 * 60 * 24 * 3 - 1; i++) {
+            cal.add(Calendar.SECOND, 1);
+            int v = partition.calculate(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(cal.getTime()));
+            Assert.assertTrue(v < 6);
         }
 
 
     }
 
 
-
     protected Map<String, SchemaConfig> schemaMap;
-    protected LayerCachePool cachePool = new SimpleCachePool();
-    protected RouteStrategy routeStrategy = RouteStrategyFactory.getRouteStrategy("druidparser");
+
+    protected LayerCachePool cachePool     = new SimpleCachePool();
+
+    protected RouteStrategy  routeStrategy = RouteStrategyFactory.getRouteStrategy("druidparser");
 
     public PartitionByRangeDateHashTest() {
         String schemaFile = "/route/schema.xml";
@@ -80,18 +79,21 @@ public class PartitionByRangeDateHashTest
 
     @Test
     public void testRange() throws SQLNonTransientException {
-        String sql = "select * from offer1  where col_date between '2014-01-01 00:00:00'  and '2014-01-03 23:59:59'     order by id desc limit 100";
+        String sql = "select * from offer1  where col_date between '2014-01-01 00:00:00'  and '2014-01-03 23:59:59'  " +
+                "   order by id desc limit 100";
         SchemaConfig schema = schemaMap.get("TESTDB");
         RouteResultset rrs = routeStrategy.route(new SystemConfig(), schema, -1, sql, null,
                 null, cachePool);
         junit.framework.Assert.assertEquals(6, rrs.getNodes().length);
 
-        sql = "select * from offer1  where col_date between '2014-01-01 00:00:00'  and '2014-01-04 00:00:59'      order by id desc limit 100";
+        sql = "select * from offer1  where col_date between '2014-01-01 00:00:00'  and '2014-01-04 00:00:59'      " +
+                "order by id desc limit 100";
         rrs = routeStrategy.route(new SystemConfig(), schema, -1, sql, null,
                 null, cachePool);
         junit.framework.Assert.assertEquals(12, rrs.getNodes().length);
 
-        sql = "select * from offer1  where col_date between '2014-01-04 00:00:00'  and '2014-01-06 23:59:59'      order by id desc limit 100";
+        sql = "select * from offer1  where col_date between '2014-01-04 00:00:00'  and '2014-01-06 23:59:59'      " +
+                "order by id desc limit 100";
         rrs = routeStrategy.route(new SystemConfig(), schema, -1, sql, null,
                 null, cachePool);
         junit.framework.Assert.assertEquals(6, rrs.getNodes().length);
@@ -99,33 +101,29 @@ public class PartitionByRangeDateHashTest
 
     }
 
-     public static int hash(long str,int size)
-     {
-     return     Hashing.consistentHash(str,size)      ;
-     }
+    public static int hash(long str, int size) {
+        return Hashing.consistentHash(str, size);
+    }
 
-    public static void main(String[] args) throws ParseException
-    {
+    public static void main(String[] args) throws ParseException {
 
-        Map map=new HashMap<>()  ;
+        Map map = new HashMap<>();
         Date beginDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2014-01-04 00:00:01");
-        for (int i = 0; i < 60*60*24*10; i++)
-        {
+        for (int i = 0; i < 60 * 60 * 24 * 10; i++) {
 
 
             Calendar cal = Calendar.getInstance();
             cal.setTime(beginDate);
-           cal.add(Calendar.SECOND, 1);
+            cal.add(Calendar.SECOND, 1);
             beginDate = cal.getTime();
             int hash = hash(beginDate.getTime(), 3);
-            if(map.containsKey(hash))
-            {
-            map.put(hash,    (int)map.get(hash)+1);
-            } else
-            {
-                map.put(hash,1);
+            if (map.containsKey(hash)) {
+                map.put(hash, (int) map.get(hash) + 1);
             }
-          //  System.out.println(hash);
+            else {
+                map.put(hash, 1);
+            }
+            //  System.out.println(hash);
         }
 
 

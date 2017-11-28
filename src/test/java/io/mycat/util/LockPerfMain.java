@@ -40,7 +40,8 @@ public class LockPerfMain {
             if (lock.tryLock()) {
                 try {
                     // ...
-                } finally {
+                }
+                finally {
                     lock.unlock();
                 }
             }
@@ -59,7 +60,8 @@ public class LockPerfMain {
             if (atomic.compareAndSet(false, true)) {
                 try {
                     // ...
-                } finally {
+                }
+                finally {
                     atomic.set(false);
                 }
             }

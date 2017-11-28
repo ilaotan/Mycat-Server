@@ -41,10 +41,14 @@ import io.mycat.util.StringUtil;
  */
 public final class ShowVariables {
 
-    private static final int FIELD_COUNT = 2;
-    private static final ResultSetHeaderPacket header = PacketUtil.getHeader(FIELD_COUNT);
-    private static final FieldPacket[] fields = new FieldPacket[FIELD_COUNT];
-    private static final EOFPacket eof = new EOFPacket();
+    private static final int                   FIELD_COUNT = 2;
+
+    private static final ResultSetHeaderPacket header      = PacketUtil.getHeader(FIELD_COUNT);
+
+    private static final FieldPacket[]         fields      = new FieldPacket[FIELD_COUNT];
+
+    private static final EOFPacket             eof         = new EOFPacket();
+
     static {
         int i = 0;
         byte packetId = 0;
@@ -63,28 +67,28 @@ public final class ShowVariables {
         ByteBuffer buffer = c.allocate();
 
         // write header
-        buffer = header.write(buffer, c,true);
+        buffer = header.write(buffer, c, true);
 
         // write fields
         for (FieldPacket field : fields) {
-            buffer = field.write(buffer, c,true);
+            buffer = field.write(buffer, c, true);
         }
 
         // write eof
-        buffer = eof.write(buffer, c,true);
+        buffer = eof.write(buffer, c, true);
 
         // write rows
         byte packetId = eof.packetId;
         for (Map.Entry<String, String> e : variables.entrySet()) {
             RowDataPacket row = getRow(e.getKey(), e.getValue(), c.getCharset());
             row.packetId = ++packetId;
-            buffer = row.write(buffer, c,true);
+            buffer = row.write(buffer, c, true);
         }
 
         // write lastEof
         EOFPacket lastEof = new EOFPacket();
         lastEof.packetId = ++packetId;
-        buffer = lastEof.write(buffer, c,true);
+        buffer = lastEof.write(buffer, c, true);
 
         // write buffer
         c.write(buffer);
@@ -98,6 +102,7 @@ public final class ShowVariables {
     }
 
     private static final Map<String, String> variables = new HashMap<String, String>();
+
     static {
         variables.put("character_set_client", "utf8");
         variables.put("character_set_connection", "utf8");

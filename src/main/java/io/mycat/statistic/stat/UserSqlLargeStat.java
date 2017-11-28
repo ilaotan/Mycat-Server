@@ -6,9 +6,10 @@ import java.util.SortedSet;
 import java.util.concurrent.ConcurrentSkipListSet;
 
 public class UserSqlLargeStat {
-	
-    private final int count;
-    private SortedSet<SqlLarge> sqls;
+
+    private final int                 count;
+
+    private       SortedSet<SqlLarge> sqls;
 
     public UserSqlLargeStat(int count) {
         this.count = count;
@@ -21,16 +22,16 @@ public class UserSqlLargeStat {
     }
 
     public void add(String sql, long sqlRows, long executeTime, long startTime, long endTime) {
-    	SqlLarge sqlLarge = new SqlLarge(sql, sqlRows, executeTime, startTime, endTime);
-    	this.add( sqlLarge );
+        SqlLarge sqlLarge = new SqlLarge(sql, sqlRows, executeTime, startTime, endTime);
+        this.add(sqlLarge);
     }
-    
+
     public void add(SqlLarge sql) {
         sqls.add(sql);
     }
-    
+
     public void reset() {
-    	this.clear();
+        this.clear();
     }
 
     public void clear() {
@@ -38,12 +39,12 @@ public class UserSqlLargeStat {
     }
 
     public void recycle() {
-        if(sqls.size() > count){
+        if (sqls.size() > count) {
             SortedSet<SqlLarge> sqls2 = new ConcurrentSkipListSet<>();
             List<SqlLarge> keyList = new ArrayList<SqlLarge>(sqls);
             int i = 0;
-            for(SqlLarge key : keyList){
-                if(i == count) {
+            for (SqlLarge key : keyList) {
+                if (i == count) {
                     break;
                 }
                 sqls2.add(key);
@@ -52,61 +53,65 @@ public class UserSqlLargeStat {
             sqls = sqls2;
         }
     }
-    
+
     /**
      * 记录 SQL 及返回行数
      */
     public static class SqlLarge implements Comparable<SqlLarge> {
-    	
-    	private String sql;
-    	private long sqlRows;
-    	private long executeTime;
-    	private long startTime;
-    	private long endTime;
-    	
-		public SqlLarge(String sql, long sqlRows, long executeTime, long startTime, long endTime) {
-			super();
-			this.sql = sql;
-			this.sqlRows = sqlRows;
-			this.executeTime = executeTime;
-			this.startTime = startTime;
-			this.endTime = endTime;
-		}
 
-		public String getSql() {
-			return sql;
-		}
+        private String sql;
 
-		public long getSqlRows() {
-			return sqlRows;
-		}
+        private long   sqlRows;
 
-		public long getStartTime() {
-			return startTime;
-		}
+        private long   executeTime;
 
-		public long getExecuteTime() {
-			return executeTime;
-		}
+        private long   startTime;
 
-		public long getEndTime() {
-			return endTime;
-		}
-		
-		@Override
-	    public int compareTo(SqlLarge o) {
+        private long   endTime;
+
+        public SqlLarge(String sql, long sqlRows, long executeTime, long startTime, long endTime) {
+            super();
+            this.sql = sql;
+            this.sqlRows = sqlRows;
+            this.executeTime = executeTime;
+            this.startTime = startTime;
+            this.endTime = endTime;
+        }
+
+        public String getSql() {
+            return sql;
+        }
+
+        public long getSqlRows() {
+            return sqlRows;
+        }
+
+        public long getStartTime() {
+            return startTime;
+        }
+
+        public long getExecuteTime() {
+            return executeTime;
+        }
+
+        public long getEndTime() {
+            return endTime;
+        }
+
+        @Override
+        public int compareTo(SqlLarge o) {
             long para = o.sqlRows - sqlRows;
-	        return para == 0 ? (o.sql.hashCode() - sql.hashCode()) :(int) (para);
-	    }
+            return para == 0 ? (o.sql.hashCode() - sql.hashCode()) : (int) (para);
+        }
 
-	    @Override
-	    public boolean equals(Object arg0) {
-	        return super.equals(arg0);
-	    }
+        @Override
+        public boolean equals(Object arg0) {
+            return super.equals(arg0);
+        }
 
-	    @Override
-	    public int hashCode() {
-	        return super.hashCode();
-	    }
-    }	
+        @Override
+        public int hashCode() {
+            return super.hashCode();
+        }
+    }
 }

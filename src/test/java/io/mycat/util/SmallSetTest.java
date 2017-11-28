@@ -59,7 +59,8 @@ public class SmallSetTest extends TestCase {
         try {
             iter.next();
             Assert.assertTrue(false);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
         }
 
         sut = new SmallSet<Object>();

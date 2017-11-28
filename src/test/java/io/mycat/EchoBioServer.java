@@ -48,8 +48,9 @@ public class EchoBioServer implements Runnable {
             try {
                 Socket socket = serverSocket.accept();
                 new Thread(new BioConnection(socket)).start();
-            } catch (IOException e) {
-                
+            }
+            catch (IOException e) {
+
                 e.printStackTrace();
             }
         }
@@ -57,11 +58,15 @@ public class EchoBioServer implements Runnable {
 
     private class BioConnection implements Runnable {
 
-        private Socket socket;
-        private InputStream input;
+        private Socket       socket;
+
+        private InputStream  input;
+
         private OutputStream output;
-        private byte[] readBuffer;
-        private byte[] writeBuffer;
+
+        private byte[]       readBuffer;
+
+        private byte[]       writeBuffer;
 
         private BioConnection(Socket socket) throws IOException {
             this.socket = socket;
@@ -81,13 +86,15 @@ public class EchoBioServer implements Runnable {
                     output.write(writeBuffer, 0, got);
                     // output.flush();
                 }
-            } catch (IOException e) {
-                
+            }
+            catch (IOException e) {
+
                 e.printStackTrace();
                 if (socket != null) {
                     try {
                         socket.close();
-                    } catch (IOException e1) {
+                    }
+                    catch (IOException e1) {
 
                         e1.printStackTrace();
                     }

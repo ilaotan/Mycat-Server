@@ -19,36 +19,39 @@ import io.mycat.backend.postgresql.utils.PIOUtils;
 
 /***
  * 取消请求
- * 
+ *
  * @author Coollf
  *
  */
 public class CancelRequest extends PostgreSQLPacket {
-	private int length = 16;
-	private int cancelCode = 80877102;
-	private int pid;
-	private int secretKey;
+    private int length     = 16;
 
-	public CancelRequest(int pid, int secretKey) {
-		this.pid = pid;
-		this.secretKey = secretKey;
-	}
+    private int cancelCode = 80877102;
 
-	@Override
-	public int getLength() {
-		return length;
-	}
+    private int pid;
 
-	@Override
-	public char getMarker() {
-		return 0;
-	}
+    private int secretKey;
 
-	public void write(ByteBuffer buffer) {
-		PIOUtils.SendInteger4(length, buffer);
-		PIOUtils.SendInteger4(cancelCode, buffer);
-		PIOUtils.SendInteger4(pid, buffer);
-		PIOUtils.SendInteger4(secretKey, buffer);
-	}
+    public CancelRequest(int pid, int secretKey) {
+        this.pid = pid;
+        this.secretKey = secretKey;
+    }
+
+    @Override
+    public int getLength() {
+        return length;
+    }
+
+    @Override
+    public char getMarker() {
+        return 0;
+    }
+
+    public void write(ByteBuffer buffer) {
+        PIOUtils.SendInteger4(length, buffer);
+        PIOUtils.SendInteger4(cancelCode, buffer);
+        PIOUtils.SendInteger4(pid, buffer);
+        PIOUtils.SendInteger4(secretKey, buffer);
+    }
 
 }

@@ -13,6 +13,7 @@ import java.math.BigInteger;
  */
 public class PartitionByHashMod extends AbstractPartitionAlgorithm implements RuleAlgorithm {
     private boolean watch = false;
+
     private int count;
 
     public void setCount(int count) {
@@ -56,10 +57,10 @@ public class PartitionByHashMod extends AbstractPartitionAlgorithm implements Ru
         super.init();
     }
 
-	@Override
-	public int getPartitionNum() {
-		int count = this.count;
-		return count;
-	}
+    @Override
+    public int getPartitionNum() {
+        int count = this.count;
+        return count;
+    }
 
 }

@@ -41,11 +41,11 @@ public final class UseHandler {
         String schema = sql.substring(offset).trim();
         int length = schema.length();
         if (length > 0) {
-        	if(schema.endsWith(";")) {
+            if (schema.endsWith(";")) {
                 schema = schema.substring(0, schema.length() - 1);
             }
-        	schema = StringUtil.replaceChars(schema, "`", null);
-        	length=schema.length();
+            schema = StringUtil.replaceChars(schema, "`", null);
+            length = schema.length();
             if (schema.charAt(0) == '\'' && schema.charAt(length - 1) == '\'') {
                 schema = schema.substring(1, length - 1);
             }
@@ -66,7 +66,8 @@ public final class UseHandler {
             c.setSchema(schema);
             ByteBuffer buffer = c.allocate();
             c.write(c.writeToBuffer(OkPacket.OK, buffer));
-        } else {
+        }
+        else {
             String msg = "Access denied for user '" + c.getUser() + "' to database '" + schema + "'";
             c.writeErrMessage(ErrorCode.ER_DBACCESS_DENIED_ERROR, msg);
         }

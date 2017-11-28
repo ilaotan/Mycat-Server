@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.concurrent.GuardedBy;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -15,10 +16,10 @@ import java.util.concurrent.ConcurrentMap;
 public class ResultSetMemoryPool extends MemoryPool {
     private static final Logger LOG = LoggerFactory.getLogger(ResultSetMemoryPool.class);
 
-    private  MemoryMode memoryMode ;
+    private MemoryMode memoryMode;
 
     /**
-     * @param lock a [[MemoryManager]] instance to synchronize on
+     * @param lock       a [[MemoryManager]] instance to synchronize on
      * @param memoryMode the type of memory tracked by this pool (on- or off-heap)
      */
     public ResultSetMemoryPool(Object lock, MemoryMode memoryMode) {
@@ -27,11 +28,11 @@ public class ResultSetMemoryPool extends MemoryPool {
     }
 
 
-    private String poolName(){
+    private String poolName() {
 
-        switch (memoryMode){
+        switch (memoryMode) {
             case ON_HEAP:
-                return  "on-heap memory";
+                return "on-heap memory";
             case OFF_HEAP:
                 return "off-heap memory";
         }
@@ -42,15 +43,16 @@ public class ResultSetMemoryPool extends MemoryPool {
     public ConcurrentHashMap<Long, Long> getMemoryForConnection() {
         return memoryForConnection;
     }
+
     /**
      * Map from taskAttemptId -> memory consumption in bytes
      */
-    private ConcurrentHashMap<Long,Long> memoryForConnection = new ConcurrentHashMap<Long,Long>();
+    private ConcurrentHashMap<Long, Long> memoryForConnection = new ConcurrentHashMap<Long, Long>();
 
     @Override
     protected long memoryUsed() {
         synchronized (lock) {
-            long used =0;
+            long used = 0;
             for (Map.Entry<Long, Long> entry : memoryForConnection.entrySet()) {
                 used += entry.getValue();
             }
@@ -62,7 +64,7 @@ public class ResultSetMemoryPool extends MemoryPool {
     /**
      * Returns the memory consumption, in bytes, for the given task.
      */
-    public  long getMemoryUsageConnection(long taskAttemptId) {
+    public long getMemoryUsageConnection(long taskAttemptId) {
         synchronized (lock) {
             if (!memoryForConnection.containsKey(taskAttemptId)) {
                 memoryForConnection.put(taskAttemptId, 0L);
@@ -75,17 +77,17 @@ public class ResultSetMemoryPool extends MemoryPool {
     /**
      * Try to acquire up to `numBytes` of memory for the given task and return the number of bytes
      * obtained, or 0 if none can be allocated.
-     *
+     * <p>
      * This call may block until there is enough free memory in some situations, to make sure each
      * task has a chance to ramp up to at least 1 / 8N of the total memory pool (where N is the # of
      * active tasks) before it is forced to spill. This can happen if the number of tasks increase
      * but an older task had a lot of memory already.
      *
-     * @param numBytes number of bytes to acquire
+     * @param numBytes      number of bytes to acquire
      * @param connAttemptId the task attempt acquiring memory
      * @return the number of bytes granted to the task.
      */
-    public  long acquireMemory(long numBytes, long connAttemptId) throws InterruptedException {
+    public long acquireMemory(long numBytes, long connAttemptId) throws InterruptedException {
 
         synchronized (lock) {
             assert (numBytes > 0);
@@ -115,9 +117,11 @@ public class ResultSetMemoryPool extends MemoryPool {
                 // if we can't give it this much now, wait for other tasks to free up memory
                 // (this happens if older tasks allocated lots of memory before N grew)
                 if (toGrant < numBytes && curMem + toGrant < minMemoryPerTask) {
-                    LOG.info("Thread " + connAttemptId + " waiting for at least 1/8N of " + poolName() + " pool to be free");
+                    LOG.info("Thread " + connAttemptId + " waiting for at least 1/8N of " + poolName() + " pool to be" +
+                            " free");
                     lock.wait();
-                } else {
+                }
+                else {
                     long temp = memoryForConnection.get(connAttemptId);
                     memoryForConnection.put(connAttemptId, (temp + toGrant));
                     return toGrant;
@@ -129,7 +133,7 @@ public class ResultSetMemoryPool extends MemoryPool {
     /**
      * Release `numBytes` of memory acquired by the given task.
      */
-    public  void releaseMemory(long numBytes, long connAttemptId) {
+    public void releaseMemory(long numBytes, long connAttemptId) {
 
         synchronized (lock) {
             long curMem = memoryForConnection.get(connAttemptId);
@@ -137,11 +141,12 @@ public class ResultSetMemoryPool extends MemoryPool {
             long memoryToFree = 0L;
 
             if (curMem < numBytes) {
-                 LOG.error(
+                LOG.error(
                         "Internal error: release called on $numBytes bytes but task only has $curMem bytes " +
                                 "of memory from the " + poolName() + "  pool");
                 memoryToFree = curMem;
-            } else {
+            }
+            else {
                 memoryToFree = numBytes;
             }
 
@@ -159,12 +164,13 @@ public class ResultSetMemoryPool extends MemoryPool {
 
     /**
      * Release all memory for the given task and mark it as inactive (e.g. when a task ends).
+     *
      * @return the number of bytes freed.
      */
-    public  long releaseAllMemoryForeConnection(long connAttemptId) {
-        synchronized (lock){
+    public long releaseAllMemoryForeConnection(long connAttemptId) {
+        synchronized (lock) {
             long numBytesToFree = getMemoryUsageConnection(connAttemptId);
-            releaseMemory(numBytesToFree,connAttemptId);
+            releaseMemory(numBytesToFree, connAttemptId);
             return numBytesToFree;
         }
     }

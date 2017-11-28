@@ -24,15 +24,16 @@ public class SelectorUtil {
         final Selector newSelector;
         try {
             newSelector = Selector.open();
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             logger.warn("Failed to create a new Selector.", e);
             return null;
         }
 
         int nChannels = 0;
-        for (;;) {
+        for (; ; ) {
             try {
-                for (SelectionKey key: oldSelector.keys()) {
+                for (SelectionKey key : oldSelector.keys()) {
                     Object a = key.attachment();
                     try {
                         if (!key.isValid() || key.channel().keyFor(newSelector) != null) {
@@ -41,12 +42,14 @@ public class SelectorUtil {
                         int interestOps = key.interestOps();
                         key.cancel();
                         key.channel().register(newSelector, interestOps, a);
-                        nChannels ++;
-                    } catch (Exception e) {
+                        nChannels++;
+                    }
+                    catch (Exception e) {
                         logger.warn("Failed to re-register a Channel to the new Selector.", e);
                     }
                 }
-            } catch (ConcurrentModificationException e) {
+            }
+            catch (ConcurrentModificationException e) {
                 // Probably due to concurrent modification of the key set.
                 continue;
             }

@@ -10,190 +10,208 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import io.mycat.util.TimeUtil;
 
 public class NIOSocketWR extends SocketWR {
-	private SelectionKey processKey;
-	private static final int OP_NOT_READ = ~SelectionKey.OP_READ;
-	private static final int OP_NOT_WRITE = ~SelectionKey.OP_WRITE;
-	private final AbstractConnection con;
-	private final SocketChannel channel;
-	private final AtomicBoolean writing = new AtomicBoolean(false);
+    private SelectionKey processKey;
 
-	public NIOSocketWR(AbstractConnection con) {
-		this.con = con;
-		this.channel = (SocketChannel) con.channel;
-	}
+    private static final int OP_NOT_READ  = ~SelectionKey.OP_READ;
 
-	public void register(Selector selector) throws IOException {
-		try {
-			processKey = channel.register(selector, SelectionKey.OP_READ, con);
-		} finally {
-			if (con.isClosed.get()) {
-				clearSelectionKey();
-			}
-		}
-	}
+    private static final int OP_NOT_WRITE = ~SelectionKey.OP_WRITE;
 
-	public void doNextWriteCheck() {
+    private final AbstractConnection con;
 
-		if (!writing.compareAndSet(false, true)) {
-			return;
-		}
+    private final SocketChannel      channel;
 
-		try {
-			boolean noMoreData = write0();
-			writing.set(false);
-			if (noMoreData && con.writeQueue.isEmpty()) {
-				if ((processKey.isValid() && (processKey.interestOps() & SelectionKey.OP_WRITE) != 0)) {
-					disableWrite();
-				}
+    private final AtomicBoolean writing = new AtomicBoolean(false);
 
-			} else {
+    public NIOSocketWR(AbstractConnection con) {
+        this.con = con;
+        this.channel = (SocketChannel) con.channel;
+    }
 
-				if ((processKey.isValid() && (processKey.interestOps() & SelectionKey.OP_WRITE) == 0)) {
-					enableWrite(false);
-				}
-			}
+    public void register(Selector selector) throws IOException {
+        try {
+            processKey = channel.register(selector, SelectionKey.OP_READ, con);
+        }
+        finally {
+            if (con.isClosed.get()) {
+                clearSelectionKey();
+            }
+        }
+    }
 
-		} catch (IOException e) {
-			if (AbstractConnection.LOGGER.isDebugEnabled()) {
-				AbstractConnection.LOGGER.debug("caught err:", e);
-			}
-			con.close("err:" + e);
-		}
+    @Override
+    public void doNextWriteCheck() {
 
-	}
+        if (!writing.compareAndSet(false, true)) {
+            return;
+        }
 
-	private boolean write0() throws IOException {
+        try {
+            boolean noMoreData = write0();
+            writing.set(false);
+            if (noMoreData && con.writeQueue.isEmpty()) {
+                if ((processKey.isValid() && (processKey.interestOps() & SelectionKey.OP_WRITE) != 0)) {
+                    disableWrite();
+                }
 
-		int written = 0;
-		ByteBuffer buffer = con.writeBuffer;
-		if (buffer != null) {
-			while (buffer.hasRemaining()) {
-				written = channel.write(buffer);
-				if (written > 0) {
-					con.netOutBytes += written;
-					con.processor.addNetOutBytes(written);
-					con.lastWriteTime = TimeUtil.currentTimeMillis();
-				} else {
-					break;
-				}
-			}
+            }
+            else {
 
-			if (buffer.hasRemaining()) {
-				con.writeAttempts++;
-				return false;
-			} else {
-				con.writeBuffer = null;
-				con.recycle(buffer);
-			}
-		}
-		while ((buffer = con.writeQueue.poll()) != null) {
-			if (buffer.limit() == 0) {
-				con.recycle(buffer);
-				con.close("quit send");
-				return true;
-			}
+                if ((processKey.isValid() && (processKey.interestOps() & SelectionKey.OP_WRITE) == 0)) {
+                    enableWrite(false);
+                }
+            }
 
-			buffer.flip();
-			try {
-				while (buffer.hasRemaining()) {
-					written = channel.write(buffer);// java.io.IOException:
-									// Connection reset by peer
-					if (written > 0) {
-						con.lastWriteTime = TimeUtil.currentTimeMillis();
-						con.netOutBytes += written;
-						con.processor.addNetOutBytes(written);
-						con.lastWriteTime = TimeUtil.currentTimeMillis();
-					} else {
-						break;
-					}
-				}
-			} catch (IOException e) {
-				con.recycle(buffer);
-				throw e;
-			}
-			if (buffer.hasRemaining()) {
-				con.writeBuffer = buffer;
-				con.writeAttempts++;
-				return false;
-			} else {
-				con.recycle(buffer);
-			}
-		}
-		return true;
-	}
+        }
+        catch (IOException e) {
+            if (AbstractConnection.LOGGER.isDebugEnabled()) {
+                AbstractConnection.LOGGER.debug("caught err:", e);
+            }
+            con.close("err:" + e);
+        }
 
-	private void disableWrite() {
-		try {
-			SelectionKey key = this.processKey;
-			key.interestOps(key.interestOps() & OP_NOT_WRITE);
-		} catch (Exception e) {
-			AbstractConnection.LOGGER.warn("can't disable write " + e + " con "
-					+ con);
-		}
+    }
 
-	}
+    private boolean write0() throws IOException {
 
-	private void enableWrite(boolean wakeup) {
-		boolean needWakeup = false;
-		try {
-			SelectionKey key = this.processKey;
-			key.interestOps(key.interestOps() | SelectionKey.OP_WRITE);
-			needWakeup = true;
-		} catch (Exception e) {
-			AbstractConnection.LOGGER.warn("can't enable write " + e);
+        int written = 0;
+        ByteBuffer buffer = con.writeBuffer;
+        if (buffer != null) {
+            while (buffer.hasRemaining()) {
+                written = channel.write(buffer);
+                if (written > 0) {
+                    con.netOutBytes += written;
+                    con.processor.addNetOutBytes(written);
+                    con.lastWriteTime = TimeUtil.currentTimeMillis();
+                }
+                else {
+                    break;
+                }
+            }
 
-		}
-		if (needWakeup && wakeup) {
-			processKey.selector().wakeup();
-		}
-	}
+            if (buffer.hasRemaining()) {
+                con.writeAttempts++;
+                return false;
+            }
+            else {
+                con.writeBuffer = null;
+                con.recycle(buffer);
+            }
+        }
+        while ((buffer = con.writeQueue.poll()) != null) {
+            if (buffer.limit() == 0) {
+                con.recycle(buffer);
+                con.close("quit send");
+                return true;
+            }
 
-	public void disableRead() {
+            buffer.flip();
+            try {
+                while (buffer.hasRemaining()) {
+                    written = channel.write(buffer);// java.io.IOException:
+                    // Connection reset by peer
+                    if (written > 0) {
+                        con.lastWriteTime = TimeUtil.currentTimeMillis();
+                        con.netOutBytes += written;
+                        con.processor.addNetOutBytes(written);
+                        con.lastWriteTime = TimeUtil.currentTimeMillis();
+                    }
+                    else {
+                        break;
+                    }
+                }
+            }
+            catch (IOException e) {
+                con.recycle(buffer);
+                throw e;
+            }
+            if (buffer.hasRemaining()) {
+                con.writeBuffer = buffer;
+                con.writeAttempts++;
+                return false;
+            }
+            else {
+                con.recycle(buffer);
+            }
+        }
+        return true;
+    }
 
-		SelectionKey key = this.processKey;
-		key.interestOps(key.interestOps() & OP_NOT_READ);
-	}
+    private void disableWrite() {
+        try {
+            SelectionKey key = this.processKey;
+            key.interestOps(key.interestOps() & OP_NOT_WRITE);
+        }
+        catch (Exception e) {
+            AbstractConnection.LOGGER.warn("can't disable write " + e + " con "
+                    + con);
+        }
 
-	public void enableRead() {
+    }
 
-		boolean needWakeup = false;
-		try {
-			SelectionKey key = this.processKey;
-			key.interestOps(key.interestOps() | SelectionKey.OP_READ);
-			needWakeup = true;
-		} catch (Exception e) {
-			AbstractConnection.LOGGER.warn("enable read fail " + e);
-		}
-		if (needWakeup) {
-			processKey.selector().wakeup();
-		}
-	}
+    private void enableWrite(boolean wakeup) {
+        boolean needWakeup = false;
+        try {
+            SelectionKey key = this.processKey;
+            key.interestOps(key.interestOps() | SelectionKey.OP_WRITE);
+            needWakeup = true;
+        }
+        catch (Exception e) {
+            AbstractConnection.LOGGER.warn("can't enable write " + e);
 
-	private void clearSelectionKey() {
-		try {
-			SelectionKey key = this.processKey;
-			if (key != null && key.isValid()) {
-				key.attach(null);
-				key.cancel();
-			}
-		} catch (Exception e) {
-			AbstractConnection.LOGGER.warn("clear selector keys err:" + e);
-		}
-	}
+        }
+        if (needWakeup && wakeup) {
+            processKey.selector().wakeup();
+        }
+    }
 
-	@Override
-	public void asynRead() throws IOException {
-		ByteBuffer theBuffer = con.readBuffer;
-		if (theBuffer == null) {
+    public void disableRead() {
 
-			theBuffer = con.processor.getBufferPool().allocate(con.processor.getBufferPool().getChunkSize());
+        SelectionKey key = this.processKey;
+        key.interestOps(key.interestOps() & OP_NOT_READ);
+    }
 
-			con.readBuffer = theBuffer;
-		}
+    public void enableRead() {
 
-		int got = channel.read(theBuffer);
+        boolean needWakeup = false;
+        try {
+            SelectionKey key = this.processKey;
+            key.interestOps(key.interestOps() | SelectionKey.OP_READ);
+            needWakeup = true;
+        }
+        catch (Exception e) {
+            AbstractConnection.LOGGER.warn("enable read fail " + e);
+        }
+        if (needWakeup) {
+            processKey.selector().wakeup();
+        }
+    }
 
-		con.onReadData(got);
-	}
+    private void clearSelectionKey() {
+        try {
+            SelectionKey key = this.processKey;
+            if (key != null && key.isValid()) {
+                key.attach(null);
+                key.cancel();
+            }
+        }
+        catch (Exception e) {
+            AbstractConnection.LOGGER.warn("clear selector keys err:" + e);
+        }
+    }
+
+    @Override
+    public void asynRead() throws IOException {
+        ByteBuffer theBuffer = con.readBuffer;
+        if (theBuffer == null) {
+
+            theBuffer = con.processor.getBufferPool().allocate(con.processor.getBufferPool().getChunkSize());
+
+            con.readBuffer = theBuffer;
+        }
+
+        int got = channel.read(theBuffer);
+
+        con.onReadData(got);
+    }
 
 }

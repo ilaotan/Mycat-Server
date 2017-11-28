@@ -35,6 +35,7 @@ import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.apache.curator.utils.ZKPaths;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.data.Stat;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,15 +61,20 @@ import java.util.concurrent.ConcurrentHashMap;
  * @time 23:35 2016/5/6
  */
 public class IncrSequenceZKHandler extends IncrSequenceHandler {
-    protected static final Logger LOGGER = LoggerFactory.getLogger(IncrSequenceHandler.class);
-    private final static String PATH = ZookeeperPath.ZK_SEPARATOR.getKey() + ZookeeperPath.FLOW_ZK_PATH_BASE.getKey()
+    protected static final Logger                LOGGER   = LoggerFactory.getLogger(IncrSequenceHandler.class);
+
+    private final static   String                PATH     = ZookeeperPath.ZK_SEPARATOR.getKey() + ZookeeperPath
+            .FLOW_ZK_PATH_BASE.getKey()
             + ZookeeperPath.ZK_SEPARATOR.getKey()
             + io.mycat.config.loader.zkprocess.comm.ZkConfig.getInstance().getValue(ZkParamCfg.ZK_CFG_CLUSTERID)
             + ZookeeperPath.ZK_SEPARATOR.getKey() + ZookeeperPath.FLOW_ZK_PATH_SEQUENCE.getKey()
             + ZookeeperPath.ZK_SEPARATOR.getKey() + ZookeeperPath.FLOW_ZK_PATH_SEQUENCE_INCREMENT_SEQ.getKey();
-    private final static String LOCK = "/lock";
-    private final static String SEQ = "/seq";
-    private final static IncrSequenceZKHandler instance = new IncrSequenceZKHandler();
+
+    private final static   String                LOCK     = "/lock";
+
+    private final static   String                SEQ      = "/seq";
+
+    private final static   IncrSequenceZKHandler instance = new IncrSequenceZKHandler();
 
     public static IncrSequenceZKHandler getInstance() {
         return instance;
@@ -77,7 +83,9 @@ public class IncrSequenceZKHandler extends IncrSequenceHandler {
     private ThreadLocal<Map<String, Map<String, String>>> tableParaValMapThreadLocal = new ThreadLocal<>();
 
     private CuratorFramework client;
+
     private ThreadLocal<InterProcessSemaphoreMutex> interProcessSemaphoreMutexThreadLocal = new ThreadLocal<>();
+
     private Properties props;
 
     public void load() {
@@ -85,7 +93,8 @@ public class IncrSequenceZKHandler extends IncrSequenceHandler {
         String zkAddress = ZkConfig.getInstance().getZkURL();
         try {
             initializeZK(props, zkAddress);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             LOGGER.error("Error caught while initializing ZK:" + e.getCause());
         }
     }
@@ -142,7 +151,8 @@ public class IncrSequenceZKHandler extends IncrSequenceHandler {
                     String val = props.getProperty(table + KEY_MIN_NAME);
                     client.create().creatingParentsIfNeeded().withMode(CreateMode.PERSISTENT)
                             .forPath(PATH + "/" + table + SEQ, val.getBytes());
-                } catch (Exception e) {
+                }
+                catch (Exception e) {
                     LOGGER.debug("Node exists! Maybe other instance is initializing!");
                 }
             }
@@ -156,7 +166,8 @@ public class IncrSequenceZKHandler extends IncrSequenceHandler {
         if (tableParaValMap == null) {
             try {
                 threadLocalLoad();
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 LOGGER.error("Error caught while loding configuration within current thread:" + e.getCause());
             }
             tableParaValMap = tableParaValMapThreadLocal.get();
@@ -199,12 +210,15 @@ public class IncrSequenceZKHandler extends IncrSequenceHandler {
             paraValMap.put(prefixName + KEY_MIN_NAME, (now + 1) + "");
             paraValMap.put(prefixName + KEY_CUR_NAME, (now) + "");
 
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             LOGGER.error("Error caught while updating period from ZK:" + e.getCause());
-        } finally {
+        }
+        finally {
             try {
                 interProcessSemaphoreMutex.release();
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 LOGGER.error("Error caught while realeasing distributed lock" + e.getCause());
             }
         }

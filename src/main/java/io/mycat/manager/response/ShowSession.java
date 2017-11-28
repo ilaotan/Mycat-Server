@@ -20,88 +20,91 @@ import io.mycat.util.StringUtil;
 
 /**
  * show front session detail info
- * 
+ *
  * @author wuzhih
- * 
  */
 public class ShowSession {
-	private static final int FIELD_COUNT = 3;
-	private static final ResultSetHeaderPacket header = PacketUtil
-			.getHeader(FIELD_COUNT);
-	private static final FieldPacket[] fields = new FieldPacket[FIELD_COUNT];
-	private static final EOFPacket eof = new EOFPacket();
-	static {
-		int i = 0;
-		byte packetId = 0;
-		header.packetId = ++packetId;
+    private static final int                   FIELD_COUNT = 3;
 
-		fields[i] = PacketUtil.getField("SESSION", Fields.FIELD_TYPE_VARCHAR);
-		fields[i++].packetId = ++packetId;
+    private static final ResultSetHeaderPacket header      = PacketUtil
+            .getHeader(FIELD_COUNT);
 
-		fields[i] = PacketUtil.getField("DN_COUNT", Fields.FIELD_TYPE_VARCHAR);
-		fields[i++].packetId = ++packetId;
+    private static final FieldPacket[]         fields      = new FieldPacket[FIELD_COUNT];
 
-		fields[i] = PacketUtil.getField("DN_LIST", Fields.FIELD_TYPE_VARCHAR);
-		fields[i++].packetId = ++packetId;
-		eof.packetId = ++packetId;
-	}
+    private static final EOFPacket             eof         = new EOFPacket();
 
-	public static void execute(ManagerConnection c) {
-		ByteBuffer buffer = c.allocate();
+    static {
+        int i = 0;
+        byte packetId = 0;
+        header.packetId = ++packetId;
 
-		// write header
-		buffer = header.write(buffer, c, true);
+        fields[i] = PacketUtil.getField("SESSION", Fields.FIELD_TYPE_VARCHAR);
+        fields[i++].packetId = ++packetId;
 
-		// write fields
-		for (FieldPacket field : fields) {
-			buffer = field.write(buffer, c, true);
-		}
+        fields[i] = PacketUtil.getField("DN_COUNT", Fields.FIELD_TYPE_VARCHAR);
+        fields[i++].packetId = ++packetId;
 
-		// write eof
-		buffer = eof.write(buffer, c, true);
+        fields[i] = PacketUtil.getField("DN_LIST", Fields.FIELD_TYPE_VARCHAR);
+        fields[i++].packetId = ++packetId;
+        eof.packetId = ++packetId;
+    }
 
-		// write rows
-		byte packetId = eof.packetId;
-		for (NIOProcessor process : MycatServer.getInstance().getProcessors()) {
-			for (FrontendConnection front : process.getFrontends().values()) {
+    public static void execute(ManagerConnection c) {
+        ByteBuffer buffer = c.allocate();
 
-				if (!(front instanceof ServerConnection)) {
-					continue;
-				}
-				ServerConnection sc = (ServerConnection) front;
-				RowDataPacket row = getRow(sc, c.getCharset());
-				if (row != null) {
-					row.packetId = ++packetId;
-					buffer = row.write(buffer, c, true);
-				}
-			}
-		}
+        // write header
+        buffer = header.write(buffer, c, true);
 
-		// write last eof
-		EOFPacket lastEof = new EOFPacket();
-		lastEof.packetId = ++packetId;
-		buffer = lastEof.write(buffer, c, true);
+        // write fields
+        for (FieldPacket field : fields) {
+            buffer = field.write(buffer, c, true);
+        }
 
-		// write buffer
-		c.write(buffer);
-	}
+        // write eof
+        buffer = eof.write(buffer, c, true);
 
-	private static RowDataPacket getRow(ServerConnection sc, String charset) {
-		StringBuilder sb = new StringBuilder();
-		NonBlockingSession ssesion = sc.getSession2();
-		Collection<BackendConnection> backConnections = ssesion.getTargetMap()
-				.values();
-		int cncount = backConnections.size();
-		if (cncount == 0) {
-			return null;
-		}
-		for (BackendConnection backCon : backConnections) {
-			sb.append(backCon).append("\r\n");
-		}
-		RowDataPacket row = new RowDataPacket(FIELD_COUNT);
-		row.add(StringUtil.encode(sc.getId() + "", charset));
-		row.add(StringUtil.encode(cncount + "", charset));
-		row.add(StringUtil.encode(sb.toString(), charset));
-		return row;
-	}
+        // write rows
+        byte packetId = eof.packetId;
+        for (NIOProcessor process : MycatServer.getInstance().getProcessors()) {
+            for (FrontendConnection front : process.getFrontends().values()) {
+
+                if (!(front instanceof ServerConnection)) {
+                    continue;
+                }
+                ServerConnection sc = (ServerConnection) front;
+                RowDataPacket row = getRow(sc, c.getCharset());
+                if (row != null) {
+                    row.packetId = ++packetId;
+                    buffer = row.write(buffer, c, true);
+                }
+            }
+        }
+
+        // write last eof
+        EOFPacket lastEof = new EOFPacket();
+        lastEof.packetId = ++packetId;
+        buffer = lastEof.write(buffer, c, true);
+
+        // write buffer
+        c.write(buffer);
+    }
+
+    private static RowDataPacket getRow(ServerConnection sc, String charset) {
+        StringBuilder sb = new StringBuilder();
+        NonBlockingSession ssesion = sc.getSession2();
+        Collection<BackendConnection> backConnections = ssesion.getTargetMap()
+                .values();
+        int cncount = backConnections.size();
+        if (cncount == 0) {
+            return null;
+        }
+        for (BackendConnection backCon : backConnections) {
+            sb.append(backCon).append("\r\n");
+        }
+        RowDataPacket row = new RowDataPacket(FIELD_COUNT);
+        row.add(StringUtil.encode(sc.getId() + "", charset));
+        row.add(StringUtil.encode(cncount + "", charset));
+        row.add(StringUtil.encode(sb.toString(), charset));
+        return row;
+    }
 }

@@ -22,7 +22,8 @@ import java.util.Map;
 
 public class DruidUpdateParser extends DefaultDruidParser {
     @Override
-    public void statementParse(SchemaConfig schema, RouteResultset rrs, SQLStatement stmt) throws SQLNonTransientException {
+    public void statementParse(SchemaConfig schema, RouteResultset rrs, SQLStatement stmt) throws
+            SQLNonTransientException {
         //这里限制了update分片表的个数只能有一个
         if (ctx.getTables() != null && getUpdateTableCount() > 1 && !schema.isNoSharding()) {
             String msg = "multi table related update not supported,tables:" + ctx.getTables();
@@ -65,28 +66,31 @@ public class DruidUpdateParser extends DefaultDruidParser {
 //		}
 //		System.out.println();
 
-        if (schema.getTables().get(tableName).isGlobalTable() && ctx.getRouteCalculateUnit().getTablesAndConditions().size() > 1) {
-            throw new SQLNonTransientException("global table is not supported in multi table related update " + tableName);
+        if (schema.getTables().get(tableName).isGlobalTable() && ctx.getRouteCalculateUnit().getTablesAndConditions()
+                .size() > 1) {
+            throw new SQLNonTransientException("global table is not supported in multi table related update " +
+                    tableName);
         }
     }
-    
+
     /**
      * 获取更新的表数
+     *
+     * @return
      * @author lian
      * @date 2016年11月2日
-     * @return
      */
-    private int getUpdateTableCount(){
-    	Map<Name, TableStat> tableMap = this.ctx.getVisitor().getTables();
-    	int updateTableCount = 0;
-    	for(Name _name : tableMap.keySet()){
-    		
-    		TableStat ts = tableMap.get(_name);
-    		updateTableCount += ts.getUpdateCount();
-    	}
-    	return updateTableCount;
+    private int getUpdateTableCount() {
+        Map<Name, TableStat> tableMap = this.ctx.getVisitor().getTables();
+        int updateTableCount = 0;
+        for (Name _name : tableMap.keySet()) {
+
+            TableStat ts = tableMap.get(_name);
+            updateTableCount += ts.getUpdateCount();
+        }
+        return updateTableCount;
     }
-    
+
     /*
     * 判断字段是否在SQL AST的节点中，比如 col 在 col = 'A' 中，这里要注意，一些子句中可能会在字段前加上表的别名，
     * 比如 t.col = 'A'，这两种情况， 操作符(=)左边被druid解析器解析成不同的对象SQLIdentifierExpr(无表别名)和
@@ -96,9 +100,11 @@ public class DruidUpdateParser extends DefaultDruidParser {
         String column;
         if (sqlExpr instanceof SQLIdentifierExpr) {
             column = StringUtil.removeBackquote(((SQLIdentifierExpr) sqlExpr).getName()).toUpperCase();
-        } else if (sqlExpr instanceof SQLPropertyExpr) {
+        }
+        else if (sqlExpr instanceof SQLPropertyExpr) {
             column = StringUtil.removeBackquote(((SQLPropertyExpr) sqlExpr).getName()).toUpperCase();
-        } else {
+        }
+        else {
             throw new SQLNonTransientException("Unhandled SQL AST node type encountered: " + sqlExpr.getClass());
         }
 
@@ -139,8 +145,9 @@ public class DruidUpdateParser extends DefaultDruidParser {
         boolean canUpdate = false;
         boolean parentHasOR = false;
 
-        if (whereClauseExpr == null)
+        if (whereClauseExpr == null) {
             return false;
+        }
 
         if (whereClauseExpr instanceof SQLBinaryOpExpr) {
             SQLBinaryOpExpr nodeOpExpr = (SQLBinaryOpExpr) whereClauseExpr;
@@ -168,7 +175,8 @@ public class DruidUpdateParser extends DefaultDruidParser {
 
                     canUpdate = rightExpr.toString().equals(value.toString()) && (!hasOR) && (!parentHasOR);
                 }
-            } else if (nodeOpExpr.getOperator().isLogical()) {
+            }
+            else if (nodeOpExpr.getOperator().isLogical()) {
                 if (nodeOpExpr.getLeft() != null) {
                     if (nodeOpExpr.getLeft() instanceof SQLBinaryOpExpr) {
                         canUpdate = shardColCanBeUpdated(nodeOpExpr.getLeft(), column, value, parentHasOR);
@@ -185,7 +193,8 @@ public class DruidUpdateParser extends DefaultDruidParser {
                     // 此子语句不是 =,>,<等关系运算符(对应的类是SQLBinaryOpExpr)。比如between X and Y
                     // 或者 NOT，或者单独的子查询，这些情况，我们不做处理
                 }
-            } else if (isSubQueryClause(nodeOpExpr)){
+            }
+            else if (isSubQueryClause(nodeOpExpr)) {
                 // 对于子查询的检查有点复杂，这里暂时不支持
                 return false;
             }
@@ -199,7 +208,9 @@ public class DruidUpdateParser extends DefaultDruidParser {
         return canUpdate;
     }
 
-    private void confirmShardColumnNotUpdated(SQLUpdateStatement update,SchemaConfig schema,String tableName,String partitionColumn,String joinKey,RouteResultset rrs) throws SQLNonTransientException {
+    private void confirmShardColumnNotUpdated(SQLUpdateStatement update, SchemaConfig schema, String tableName,
+                                              String partitionColumn, String joinKey, RouteResultset rrs) throws
+            SQLNonTransientException {
         List<SQLUpdateSetItem> updateSetItem = update.getItems();
         if (updateSetItem != null && updateSetItem.size() > 0) {
             boolean hasParent = (schema.getTables().get(tableName).getParentTC() != null);

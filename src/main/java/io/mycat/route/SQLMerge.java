@@ -30,58 +30,63 @@ import java.util.Map;
 import io.mycat.sqlengine.mpp.HavingCols;
 
 public class SQLMerge implements Serializable {
-	private LinkedHashMap<String, Integer> orderByCols;
-	private HavingCols havingCols;
-	private Object[] havingColsName;			// Added by winbill, 20160314, for having clause
-	private Map<String, Integer> mergeCols;
-	private String[] groupByCols;
-	private boolean hasAggrColumn;
+    private LinkedHashMap<String, Integer> orderByCols;
 
-	public LinkedHashMap<String, Integer> getOrderByCols() {
-		return orderByCols;
-	}
+    private HavingCols                     havingCols;
 
-	public void setOrderByCols(LinkedHashMap<String, Integer> orderByCols) {
-		this.orderByCols = orderByCols;
-	}
+    private Object[]                       havingColsName;            // Added by winbill, 20160314, for having clause
 
-	public Map<String, Integer> getMergeCols() {
-		return mergeCols;
-	}
+    private Map<String, Integer>           mergeCols;
 
-	public void setMergeCols(Map<String, Integer> mergeCols) {
-		this.mergeCols = mergeCols;
-	}
+    private String[]                       groupByCols;
 
-	public String[] getGroupByCols() {
-		return groupByCols;
-	}
+    private boolean                        hasAggrColumn;
 
-	public void setGroupByCols(String[] groupByCols) {
-		this.groupByCols = groupByCols;
-	}
+    public LinkedHashMap<String, Integer> getOrderByCols() {
+        return orderByCols;
+    }
 
-	public boolean isHasAggrColumn() {
-		return hasAggrColumn;
-	}
+    public void setOrderByCols(LinkedHashMap<String, Integer> orderByCols) {
+        this.orderByCols = orderByCols;
+    }
 
-	public void setHasAggrColumn(boolean hasAggrColumn) {
-		this.hasAggrColumn = hasAggrColumn;
-	}
+    public Map<String, Integer> getMergeCols() {
+        return mergeCols;
+    }
 
-	public HavingCols getHavingCols() {
-		return havingCols;
-	}
+    public void setMergeCols(Map<String, Integer> mergeCols) {
+        this.mergeCols = mergeCols;
+    }
 
-	public void setHavingCols(HavingCols havingCols) {
-		this.havingCols = havingCols;
-	}
+    public String[] getGroupByCols() {
+        return groupByCols;
+    }
 
-	public Object[] getHavingColsName() {
-		return havingColsName;
-	}
+    public void setGroupByCols(String[] groupByCols) {
+        this.groupByCols = groupByCols;
+    }
 
-	public void setHavingColsName(Object[] havingColsName) {
-		this.havingColsName = havingColsName;
-	}
+    public boolean isHasAggrColumn() {
+        return hasAggrColumn;
+    }
+
+    public void setHasAggrColumn(boolean hasAggrColumn) {
+        this.hasAggrColumn = hasAggrColumn;
+    }
+
+    public HavingCols getHavingCols() {
+        return havingCols;
+    }
+
+    public void setHavingCols(HavingCols havingCols) {
+        this.havingCols = havingCols;
+    }
+
+    public Object[] getHavingColsName() {
+        return havingColsName;
+    }
+
+    public void setHavingColsName(Object[] havingColsName) {
+        this.havingColsName = havingColsName;
+    }
 }

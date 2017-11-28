@@ -12,10 +12,10 @@ import io.mycat.memory.unsafe.ringbuffer.exception.TimeoutException;
  */
 public interface WaitStrategy {
     /**
-     * @param sequence 需要等待available的sequence
-     * @param cursor 对应RingBuffer的Cursor
+     * @param sequence          需要等待available的sequence
+     * @param cursor            对应RingBuffer的Cursor
      * @param dependentSequence 需要等待（依赖）的Sequence
-     * @param barrier 多消费者注册的SequenceBarrier
+     * @param barrier           多消费者注册的SequenceBarrier
      * @return 已经available的sequence
      * @throws AlertException
      * @throws InterruptedException

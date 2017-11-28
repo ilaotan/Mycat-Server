@@ -33,17 +33,20 @@ import java.util.Map;
  */
 public class JVMInfo {
     private static final float DEFAULT_JAVA_VERSION = 1.3f;
+
     private static final boolean reverseFieldOrder;
+
     private static final float majorJavaVersion = getMajorJavaVersion(System.getProperty("java.specification.version"));
 
     private ReflectionProvider reflectionProvider;
+
     private Map<String, Class<?>> loaderCache = new HashMap<String, Class<?>>();
 
     static {
         boolean reverse = false;
         final Field[] fields = AttributedString.class.getDeclaredFields();
         for (int i = 0; i < fields.length; i++) {
-            if (fields[i].getName().equals("text")) {
+            if ("text".equals(fields[i].getName())) {
                 reverse = i > 3;
             }
         }
@@ -53,15 +56,15 @@ public class JVMInfo {
     /**
      * Parses the java version system property to determine the major java
      * version, ie 1.x
-     * 
-     * @param javaVersion
-     *            the system property 'java.specification.version'
+     *
+     * @param javaVersion the system property 'java.specification.version'
      * @return A float of the form 1.x
      */
     public static final float getMajorJavaVersion(String javaVersion) {
         try {
             return Float.parseFloat(javaVersion.substring(0, 3));
-        } catch (NumberFormatException e) {
+        }
+        catch (NumberFormatException e) {
             // Some JVMs may not conform to the x.y.z java.version format
             return DEFAULT_JAVA_VERSION;
         }
@@ -145,7 +148,8 @@ public class JVMInfo {
                 loaderCache.put(name, clazz);
             }
             return clazz;
-        } catch (ClassNotFoundException e) {
+        }
+        catch (ClassNotFoundException e) {
             return null;
         }
     }

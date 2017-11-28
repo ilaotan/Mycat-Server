@@ -50,7 +50,8 @@ public class PacketUtil {
         }
         try {
             return src.getBytes(charset);
-        } catch (UnsupportedEncodingException e) {
+        }
+        catch (UnsupportedEncodingException e) {
             return src.getBytes();
         }
     }

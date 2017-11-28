@@ -19,19 +19,19 @@ public abstract class AbstractSequencer implements Sequencer {
     private static final AtomicReferenceFieldUpdater<AbstractSequencer, Sequence[]> SEQUENCE_UPDATER =
             AtomicReferenceFieldUpdater.newUpdater(AbstractSequencer.class, Sequence[].class, "gatingSequences");
 
-    protected final int bufferSize;
+    protected final int          bufferSize;
+
     protected final WaitStrategy waitStrategy;
-    protected final Sequence cursor = new Sequence(Sequencer.INITIAL_CURSOR_VALUE);
+
+    protected final    Sequence   cursor          = new Sequence(Sequencer.INITIAL_CURSOR_VALUE);
+
     protected volatile Sequence[] gatingSequences = new Sequence[0];
 
-    public AbstractSequencer(int bufferSize, WaitStrategy waitStrategy)
-    {
-        if (bufferSize < 1)
-        {
+    public AbstractSequencer(int bufferSize, WaitStrategy waitStrategy) {
+        if (bufferSize < 1) {
             throw new IllegalArgumentException("bufferSize must not be less than 1");
         }
-        if (Integer.bitCount(bufferSize) != 1)
-        {
+        if (Integer.bitCount(bufferSize) != 1) {
             throw new IllegalArgumentException("bufferSize must be a power of 2");
         }
 
@@ -40,15 +40,13 @@ public abstract class AbstractSequencer implements Sequencer {
     }
 
     @Override
-    public final long getCursor()
-    {
+    public final long getCursor() {
         return cursor.get();
     }
 
 
     @Override
-    public final int getBufferSize()
-    {
+    public final int getBufferSize() {
         return bufferSize;
     }
 
@@ -67,8 +65,8 @@ public abstract class AbstractSequencer implements Sequencer {
         return Util.getMinimumSequence(gatingSequences, cursor.get());
     }
 
-    public SequenceBarrier newBarrier(Sequence... sequencesToTrack)
-    {
+    @Override
+    public SequenceBarrier newBarrier(Sequence... sequencesToTrack) {
         return null;
         //TODO 完成SequenceBarrier
 //        return new ProcessingSequenceBarrier(this, waitStrategy, cursor, sequencesToTrack);

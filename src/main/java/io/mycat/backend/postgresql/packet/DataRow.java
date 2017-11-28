@@ -22,124 +22,124 @@ import io.mycat.backend.postgresql.utils.PIOUtils;
 //		Byten
 //		一个字段的数值，以相关的格式代码表示的格式展现。 n 是上面的长度。
 public class DataRow extends PostgreSQLPacket {
-	public static class DataColumn {
-		/**
-		 * 字段值的长度，以字节记（这个长度不包括它自己）。 可以为零。一个特殊的情况是，-1 表示一个 NULL 的字段值。 在 NULL
-		 * 的情况下就没有跟着数据字段。
-		 */
-		private int length;
-		private byte[] data;
+    public static class DataColumn {
+        /**
+         * 字段值的长度，以字节记（这个长度不包括它自己）。 可以为零。一个特殊的情况是，-1 表示一个 NULL 的字段值。 在 NULL
+         * 的情况下就没有跟着数据字段。
+         */
+        private int    length;
 
-		private boolean isNull;
+        private byte[] data;
 
-		/**
-		 * @return the isNull
-		 */
-		public boolean isNull() {
-			return isNull;
-		}
+        private boolean isNull;
 
-		/**
-		 * @return the length
-		 */
-		public int getLength() {
-			return length;
-		}
+        /**
+         * @return the isNull
+         */
+        public boolean isNull() {
+            return isNull;
+        }
 
-		/**
-		 * @param length
-		 *            the length to set
-		 */
-		public void setLength(int length) {
-			this.length = length;
-		}
+        /**
+         * @return the length
+         */
+        public int getLength() {
+            return length;
+        }
 
-		/**
-		 * @return the data
-		 */
-		public byte[] getData() {
-			return data;
-		}
+        /**
+         * @param length the length to set
+         */
+        public void setLength(int length) {
+            this.length = length;
+        }
 
-		/**
-		 * @param data
-		 *            the data to set
-		 */
-		public void setData(byte[] data) {
-			this.data = data;
-		}
+        /**
+         * @return the data
+         */
+        public byte[] getData() {
+            return data;
+        }
 
-	}
+        /**
+         * @param data the data to set
+         */
+        public void setData(byte[] data) {
+            this.data = data;
+        }
 
-	/**
-	 * 标准
-	 */
-	private char marker = PacketMarker.B_DataRow.getValue();
+    }
 
-	/**
-	 * 长度
-	 */
-	private int length;
+    /**
+     * 标准
+     */
+    private char marker = PacketMarker.B_DataRow.getValue();
 
-	/**
-	 * 列数
-	 */
-	private short columnNumber;
+    /**
+     * 长度
+     */
+    private int length;
 
-	/**
-	 * @return the columnNumber
-	 */
-	public short getColumnNumber() {
-		return columnNumber;
-	}
+    /**
+     * 列数
+     */
+    private short columnNumber;
 
-	/**
-	 * @return the columns
-	 */
-	public DataColumn[] getColumns() {
-		return columns;
-	}
+    /**
+     * @return the columnNumber
+     */
+    public short getColumnNumber() {
+        return columnNumber;
+    }
 
-	/**
-	 * 数据列
-	 */
-	private DataColumn[] columns;
+    /**
+     * @return the columns
+     */
+    public DataColumn[] getColumns() {
+        return columns;
+    }
 
-	@Override
-	public int getLength() {
-		return length;
-	}
+    /**
+     * 数据列
+     */
+    private DataColumn[] columns;
 
-	@Override
-	public char getMarker() {
-		return marker;
-	}
+    @Override
+    public int getLength() {
+        return length;
+    }
 
-	public static DataRow parse(ByteBuffer buffer, int offset) {
+    @Override
+    public char getMarker() {
+        return marker;
+    }
 
-		if (buffer.get(offset) != PacketMarker.B_DataRow.getValue()) {
-			throw new IllegalArgumentException("this packetData not is DataRow");
-		}
-		int _offset = offset + 1;
-		DataRow pack = new DataRow();
-		pack.length = PIOUtils.redInteger4(buffer, _offset);
-		_offset += 4;
-		pack.columnNumber = PIOUtils.redInteger2(buffer, _offset);
-		_offset += 2;
-		pack.columns = new DataColumn[pack.columnNumber];
-		for (int i = 0; i < pack.columns.length; i++) {
-			DataColumn col = new DataColumn();
-			col.length = PIOUtils.redInteger4(buffer, _offset);
-			_offset += 4;
-			if (col.length == -1) {
-				// 数据为空
-				col.isNull = true;
-			} else {
-				col.data = PIOUtils.redByteArray(buffer, _offset, col.length);
-				_offset += col.length;
-			}
-			pack.columns[i] = col;
-		}
-		return pack;
-	}
+    public static DataRow parse(ByteBuffer buffer, int offset) {
+
+        if (buffer.get(offset) != PacketMarker.B_DataRow.getValue()) {
+            throw new IllegalArgumentException("this packetData not is DataRow");
+        }
+        int _offset = offset + 1;
+        DataRow pack = new DataRow();
+        pack.length = PIOUtils.redInteger4(buffer, _offset);
+        _offset += 4;
+        pack.columnNumber = PIOUtils.redInteger2(buffer, _offset);
+        _offset += 2;
+        pack.columns = new DataColumn[pack.columnNumber];
+        for (int i = 0; i < pack.columns.length; i++) {
+            DataColumn col = new DataColumn();
+            col.length = PIOUtils.redInteger4(buffer, _offset);
+            _offset += 4;
+            if (col.length == -1) {
+                // 数据为空
+                col.isNull = true;
+            }
+            else {
+                col.data = PIOUtils.redByteArray(buffer, _offset, col.length);
+                _offset += col.length;
+            }
+            pack.columns[i] = col;
+        }
+        return pack;
+    }
 }

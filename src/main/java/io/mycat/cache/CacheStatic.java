@@ -25,117 +25,123 @@ package io.mycat.cache;
 
 /**
  * cache static information
- * 
+ *
  * @author wuzhih
- * 
  */
 public class CacheStatic {
-	private long maxSize;
-	private long memorySize;
-	private long itemSize;
-	private long accessTimes;
-	private long putTimes;
-	private long hitTimes;
-	private long lastAccesTime;
-	private long lastPutTime;
+    private long maxSize;
 
-	public long getMemorySize() {
-		return memorySize;
-	}
+    private long memorySize;
 
-	public void setMemorySize(long memorySize) {
-		this.memorySize = memorySize;
-	}
+    private long itemSize;
 
-	public long getItemSize() {
-		return itemSize;
-	}
+    private long accessTimes;
 
-	public void setItemSize(long itemSize) {
-		this.itemSize = itemSize;
-	}
+    private long putTimes;
 
-	public long getAccessTimes() {
-		return accessTimes;
-	}
+    private long hitTimes;
 
-	public void setAccessTimes(long accessTimes) {
-		this.accessTimes = accessTimes;
-	}
+    private long lastAccesTime;
 
-	public long getHitTimes() {
-		return hitTimes;
-	}
+    private long lastPutTime;
 
-	public void setHitTimes(long hitTimes) {
-		this.hitTimes = hitTimes;
-	}
+    public long getMemorySize() {
+        return memorySize;
+    }
 
-	public long getLastAccesTime() {
-		return lastAccesTime;
-	}
+    public void setMemorySize(long memorySize) {
+        this.memorySize = memorySize;
+    }
 
-	public void setLastAccesTime(long lastAccesTime) {
-		this.lastAccesTime = lastAccesTime;
-	}
+    public long getItemSize() {
+        return itemSize;
+    }
 
-	public long getPutTimes() {
-		return putTimes;
-	}
+    public void setItemSize(long itemSize) {
+        this.itemSize = itemSize;
+    }
 
-	public void setPutTimes(long putTimes) {
-		this.putTimes = putTimes;
-	}
+    public long getAccessTimes() {
+        return accessTimes;
+    }
 
-	public void incAccessTimes() {
-		this.accessTimes++;
-		this.lastAccesTime = System.currentTimeMillis();
-	}
+    public void setAccessTimes(long accessTimes) {
+        this.accessTimes = accessTimes;
+    }
 
-	public void incHitTimes() {
-		this.hitTimes++;
-		this.accessTimes++;
-		this.lastAccesTime = System.currentTimeMillis();
-	}
+    public long getHitTimes() {
+        return hitTimes;
+    }
 
-	public void incPutTimes() {
-		this.putTimes++;
-		this.lastPutTime = System.currentTimeMillis();
-	}
+    public void setHitTimes(long hitTimes) {
+        this.hitTimes = hitTimes;
+    }
 
-	public long getLastPutTime() {
-		return lastPutTime;
-	}
+    public long getLastAccesTime() {
+        return lastAccesTime;
+    }
 
-	public void setLastPutTime(long lastPutTime) {
-		this.lastPutTime = lastPutTime;
-	}
+    public void setLastAccesTime(long lastAccesTime) {
+        this.lastAccesTime = lastAccesTime;
+    }
 
-	public long getMaxSize() {
-		return maxSize;
-	}
+    public long getPutTimes() {
+        return putTimes;
+    }
 
-	public void setMaxSize(long maxSize) {
-		this.maxSize = maxSize;
-	}
+    public void setPutTimes(long putTimes) {
+        this.putTimes = putTimes;
+    }
 
-	public void reset() {
-		this.accessTimes = 0;
-		this.hitTimes = 0;
-		this.itemSize = 0;
-		this.lastAccesTime = 0;
-		this.lastPutTime = 0;
-		this.memorySize = 0;
-		this.putTimes = 0;
+    public void incAccessTimes() {
+        this.accessTimes++;
+        this.lastAccesTime = System.currentTimeMillis();
+    }
 
-	}
+    public void incHitTimes() {
+        this.hitTimes++;
+        this.accessTimes++;
+        this.lastAccesTime = System.currentTimeMillis();
+    }
 
-	@Override
-	public String toString() {
-		return "CacheStatic [memorySize=" + memorySize + ", itemSize="
-				+ itemSize + ", accessTimes=" + accessTimes + ", putTimes="
-				+ putTimes + ", hitTimes=" + hitTimes + ", lastAccesTime="
-				+ lastAccesTime + ", lastPutTime=" + lastPutTime + "]";
-	}
+    public void incPutTimes() {
+        this.putTimes++;
+        this.lastPutTime = System.currentTimeMillis();
+    }
+
+    public long getLastPutTime() {
+        return lastPutTime;
+    }
+
+    public void setLastPutTime(long lastPutTime) {
+        this.lastPutTime = lastPutTime;
+    }
+
+    public long getMaxSize() {
+        return maxSize;
+    }
+
+    public void setMaxSize(long maxSize) {
+        this.maxSize = maxSize;
+    }
+
+    public void reset() {
+        this.accessTimes = 0;
+        this.hitTimes = 0;
+        this.itemSize = 0;
+        this.lastAccesTime = 0;
+        this.lastPutTime = 0;
+        this.memorySize = 0;
+        this.putTimes = 0;
+
+    }
+
+    @Override
+    public String toString() {
+        return "CacheStatic [memorySize=" + memorySize + ", itemSize="
+                + itemSize + ", accessTimes=" + accessTimes + ", putTimes="
+                + putTimes + ", hitTimes=" + hitTimes + ", lastAccesTime="
+                + lastAccesTime + ", lastPutTime=" + lastPutTime + "]";
+    }
 
 }

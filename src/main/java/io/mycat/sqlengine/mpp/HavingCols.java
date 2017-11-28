@@ -6,46 +6,49 @@ import java.io.Serializable;
  * Created by v1.lion on 2015/6/10.
  */
 public class HavingCols implements Serializable {
-	String left;
-	String right;
-	String operator;
-	public ColMeta colMeta;
+    String left;
 
-	public HavingCols(String left, String right, String operator) {
-		this.left = left;
-		this.right = right;
-		this.operator = operator;
-	}
+    String right;
 
-	public String getLeft() {
-		return left;
-	}
+    String operator;
 
-	public void setLeft(String left) {
-		this.left = left;
-	}
+    public ColMeta colMeta;
 
-	public String getRight() {
-		return right;
-	}
+    public HavingCols(String left, String right, String operator) {
+        this.left = left;
+        this.right = right;
+        this.operator = operator;
+    }
 
-	public void setRight(String right) {
-		this.right = right;
-	}
+    public String getLeft() {
+        return left;
+    }
 
-	public String getOperator() {
-		return operator;
-	}
+    public void setLeft(String left) {
+        this.left = left;
+    }
 
-	public void setOperator(String operator) {
-		this.operator = operator;
-	}
+    public String getRight() {
+        return right;
+    }
 
-	public ColMeta getColMeta() {
-		return colMeta;
-	}
+    public void setRight(String right) {
+        this.right = right;
+    }
 
-	public void setColMeta(ColMeta colMeta) {
-		this.colMeta = colMeta;
-	}
+    public String getOperator() {
+        return operator;
+    }
+
+    public void setOperator(String operator) {
+        this.operator = operator;
+    }
+
+    public ColMeta getColMeta() {
+        return colMeta;
+    }
+
+    public void setColMeta(ColMeta colMeta) {
+        this.colMeta = colMeta;
+    }
 }

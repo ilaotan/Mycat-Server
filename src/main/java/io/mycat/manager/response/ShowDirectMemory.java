@@ -36,20 +36,28 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 
 public class ShowDirectMemory {
-    private static final int DETAILl_FIELD_COUNT = 3;
-    private static final ResultSetHeaderPacket detailHeader = PacketUtil.getHeader(DETAILl_FIELD_COUNT);
-    private static final FieldPacket[] detailFields = new FieldPacket[DETAILl_FIELD_COUNT];
-    private static final EOFPacket detailEof = new EOFPacket();
+    private static final int                   DETAILl_FIELD_COUNT = 3;
+
+    private static final ResultSetHeaderPacket detailHeader        = PacketUtil.getHeader(DETAILl_FIELD_COUNT);
+
+    private static final FieldPacket[]         detailFields        = new FieldPacket[DETAILl_FIELD_COUNT];
+
+    private static final EOFPacket             detailEof           = new EOFPacket();
 
 
-    private static final int TOTAL_FIELD_COUNT = 5;
-    private static final ResultSetHeaderPacket totalHeader = PacketUtil.getHeader(TOTAL_FIELD_COUNT);
-    private static final FieldPacket[] totalFields = new FieldPacket[TOTAL_FIELD_COUNT];
-    private static final EOFPacket totalEof = new EOFPacket();
+    private static final int                   TOTAL_FIELD_COUNT = 5;
 
-    private static int useOffHeapForMerge ;
-    private static int processorBufferPoolType;
-    private static BufferPool bufferPool ;
+    private static final ResultSetHeaderPacket totalHeader       = PacketUtil.getHeader(TOTAL_FIELD_COUNT);
+
+    private static final FieldPacket[]         totalFields       = new FieldPacket[TOTAL_FIELD_COUNT];
+
+    private static final EOFPacket             totalEof          = new EOFPacket();
+
+    private static int        useOffHeapForMerge;
+
+    private static int        processorBufferPoolType;
+
+    private static BufferPool bufferPool;
 
     static {
         int i = 0;
@@ -100,7 +108,8 @@ public class ShowDirectMemory {
 
         if (showtype == 1) {
             showDirectMemoryTotal(c);
-        } else if (showtype == 2) {
+        }
+        else if (showtype == 2) {
             showDirectMemoryDetail(c);
         }
     }
@@ -149,10 +158,11 @@ public class ShowDirectMemory {
                 }
             }
 
-            if(processorBufferPoolType == 2){
+            if (processorBufferPoolType == 2) {
 
 
-            } else  {
+            }
+            else {
                 for (Long key : bufferpoolUsageMap.keySet()) {
                     RowDataPacket row = new RowDataPacket(DETAILl_FIELD_COUNT);
                     Long value = bufferpoolUsageMap.get(key);
@@ -168,7 +178,8 @@ public class ShowDirectMemory {
                 }
             }
 
-        } catch (UnsupportedEncodingException e) {
+        }
+        catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
 
@@ -236,7 +247,8 @@ public class ShowDirectMemory {
                 }
                 List<PoolSubpageMetric> smallSubpages = pool.smallSubpages();
                 for (PoolSubpageMetric small : smallSubpages) {
-                    chunksUsedBytes -= (pageSize - (small.maxNumElements() - small.numAvailable()) * small.elementSize());
+                    chunksUsedBytes -= (pageSize - (small.maxNumElements() - small.numAvailable()) * small
+                            .elementSize());
                 }
             }
 
@@ -272,7 +284,8 @@ public class ShowDirectMemory {
              */
             if (processorBufferPoolType == 2) {
                 usedforNetwork = chunkSizeBytes * chunkCount;
-            } else {
+            }
+            else {
                 for (Map.Entry<Long, Long> entry : bufferpoolUsageMap.entrySet()) {
                     usedforNetwork += entry.getValue();
                 }
@@ -290,7 +303,8 @@ public class ShowDirectMemory {
                  * DIRECT_SAFETY_FRACTION为安全系数，为OS，Heap预留空间，避免因大结果集造成系统物理内存被耗尽！
                  */
                 totalAvailable = (long) (Platform.getMaxDirectMemory() * MyCatMemory.DIRECT_SAFETY_FRACTION);
-            } else {
+            }
+            else {
                 totalAvailable = Platform.getMaxDirectMemory();
             }
 
@@ -303,7 +317,8 @@ public class ShowDirectMemory {
                  */
                 row.add(("" + MyCatMemory.DIRECT_SAFETY_FRACTION)
                         .getBytes(c.getCharset()));
-            } else {
+            }
+            else {
                 row.add(("1.0")
                         .getBytes(c.getCharset()));
             }
@@ -320,12 +335,14 @@ public class ShowDirectMemory {
                                 2 * MycatServer.getInstance().getTotalNetWorkBufferSize()));
             }
 
-            row.add(resevedForOs > 0 ? JavaUtils.bytesToString2(resevedForOs).getBytes(c.getCharset()) : "0".getBytes(c.getCharset()));
+            row.add(resevedForOs > 0 ? JavaUtils.bytesToString2(resevedForOs).getBytes(c.getCharset()) : "0".getBytes
+                    (c.getCharset()));
 
             row.packetId = ++packetId;
             buffer = row.write(buffer, c, true);
 
-        } catch (UnsupportedEncodingException e) {
+        }
+        catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
 

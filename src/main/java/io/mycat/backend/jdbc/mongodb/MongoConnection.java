@@ -23,379 +23,384 @@ import java.util.concurrent.Executor;
 import com.mongodb.DB;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
-/**  
+
+/**
  * 功能详细描述
+ *
  * @author sohudo[http://blog.csdn.net/wind520]
- * @create 2014年12月19日 下午6:50:23 
  * @version 0.0.1
+ * @create 2014年12月19日 下午6:50:23
  */
 
 public class MongoConnection implements Connection {
-	
-	//private String url = null;
-	private MongoClient mc = null;	
-	private boolean isClosed = false;	
-	private String _schema;
-	private Properties _clientInfo;
 
-	public MongoConnection(MongoClientURI mcu, String url) throws UnknownHostException {
-	//	this.url = url;
-		this._schema = mcu.getDatabase();		
-		mc = new MongoClient(mcu);
-	}
-	
-	public DB getDB()  {
-		if (this._schema!=null) {
-	      return this.mc.getDB(this._schema);
-		}
-		else {
-			return null;
-		}
-	}
-	   
-	@Override
-	public <T> T unwrap(Class<T> iface) throws SQLException {
-		
-		return null;
-	}
+    //private String url = null;
+    private MongoClient mc       = null;
 
-	@Override
-	public boolean isWrapperFor(Class<?> iface) throws SQLException {
-		
-		return false;
-	}
+    private boolean     isClosed = false;
 
-	@Override
-	public String nativeSQL(String sql) throws SQLException {
-		
-		return sql;
-	}
+    private String     _schema;
 
-	@Override
-	public void setAutoCommit(boolean autoCommit) throws SQLException {		
-	   //if (!autoCommit)  
-		//  throw new RuntimeException("autoCommit has to be on");	
-	}
+    private Properties _clientInfo;
 
-	@Override
-	public boolean getAutoCommit() throws SQLException {
-		
-		return true;//return false;
-	}
+    public MongoConnection(MongoClientURI mcu, String url) throws UnknownHostException {
+        //	this.url = url;
+        this._schema = mcu.getDatabase();
+        mc = new MongoClient(mcu);
+    }
 
-	@Override
-	public void commit() throws SQLException {
-		
-		
-	}
+    public DB getDB() {
+        if (this._schema != null) {
+            return this.mc.getDB(this._schema);
+        }
+        else {
+            return null;
+        }
+    }
 
-	@Override
-	public void rollback() throws SQLException {
-		
-		//throw new RuntimeException("can't rollback");
-	}
+    @Override
+    public <T> T unwrap(Class<T> iface) throws SQLException {
 
-	@Override
-	public void close() throws SQLException {
-		
-		this.mc=null;
-	    isClosed=true;	
-	}
+        return null;
+    }
 
-	@Override
-	public boolean isClosed() throws SQLException {
-		
-		return isClosed;//return false;
-	}
+    @Override
+    public boolean isWrapperFor(Class<?> iface) throws SQLException {
 
-	@Override
-	public DatabaseMetaData getMetaData() throws SQLException {
-		// 获取一个 DatabaseMetaData 对象，该对象包含关于此 Connection 对象所连接的数据库的元数据。
-		return null;
-	}
+        return false;
+    }
 
-	@Override
-	public void setReadOnly(boolean readOnly) throws SQLException {
-		
-		//if (readOnly)
-		//    throw new RuntimeException("no read only mode");		
-	}
+    @Override
+    public String nativeSQL(String sql) throws SQLException {
 
-	@Override
-	public boolean isReadOnly() throws SQLException {
-		// 查询此 Connection 对象是否处于只读模式。
-		return false;
-	}
+        return sql;
+    }
 
-	@Override
-	public void setCatalog(String catalog) throws SQLException {
-		
-		this._schema=catalog;
-	}
+    @Override
+    public void setAutoCommit(boolean autoCommit) throws SQLException {
+        //if (!autoCommit)
+        //  throw new RuntimeException("autoCommit has to be on");
+    }
 
-	@Override
-	public String getCatalog() throws SQLException {
-		// 获取此 Connection 对象的当前目录名称
-		return this._schema;
-	}
+    @Override
+    public boolean getAutoCommit() throws SQLException {
 
-	@Override
-	public void setTransactionIsolation(int level) throws SQLException {
-		
-	   //throw new RuntimeException("no TransactionIsolation");
-	}
+        return true;//return false;
+    }
 
-	@Override
-	public int getTransactionIsolation() throws SQLException {
-		
-		return 0;
-	}
+    @Override
+    public void commit() throws SQLException {
 
-	@Override
-	public SQLWarning getWarnings() throws SQLException {
-		
-		return null;//throw new RuntimeException("should do get last error");
-	}
 
-	@Override
-	public void clearWarnings() throws SQLException {
-		
-	   
-	}
+    }
 
-	@Override
-	public Map<String, Class<?>> getTypeMap() throws SQLException {
-		
-		return null;
-	}
+    @Override
+    public void rollback() throws SQLException {
 
-	@Override
-	public void setTypeMap(Map<String, Class<?>> map) throws SQLException {
-		
-		
-	}
+        //throw new RuntimeException("can't rollback");
+    }
 
-	@Override
-	public void setHoldability(int holdability) throws SQLException {
-		// 将使用此 Connection 对象创建的 ResultSet 对象的默认可保存性 (holdability) 更改为给定可保存性。
-		
-	}
+    @Override
+    public void close() throws SQLException {
 
-	@Override
-	public int getHoldability() throws SQLException {
-		// 获取使用此 Connection 对象创建的 ResultSet 对象的当前可保存性。
-		return 0;
-	}
+        this.mc = null;
+        isClosed = true;
+    }
 
-	@Override
-	public Savepoint setSavepoint() throws SQLException {
-		
-		return null;//throw new RuntimeException("no savepoints");
-	}
+    @Override
+    public boolean isClosed() throws SQLException {
 
-	@Override
-	public Savepoint setSavepoint(String name) throws SQLException {
-		
-		return null;
-	}
+        return isClosed;//return false;
+    }
 
-	@Override
-	public void rollback(Savepoint savepoint) throws SQLException {
-		
-		// throw new RuntimeException("can't rollback");
-	}
+    @Override
+    public DatabaseMetaData getMetaData() throws SQLException {
+        // 获取一个 DatabaseMetaData 对象，该对象包含关于此 Connection 对象所连接的数据库的元数据。
+        return null;
+    }
 
-	@Override
-	public void releaseSavepoint(Savepoint savepoint) throws SQLException {
-		
-		
-	}
+    @Override
+    public void setReadOnly(boolean readOnly) throws SQLException {
 
-	@Override
-	public Statement createStatement() throws SQLException {
-		// 创建一个 Statement 对象来将 SQL 语句发送到数据库。
-		return createStatement(0, 0, 0);
-	}
+        //if (readOnly)
+        //    throw new RuntimeException("no read only mode");
+    }
 
-	@Override
-	public Statement createStatement(int resultSetType, int resultSetConcurrency)
-			throws SQLException {
-		// 创建一个 Statement 对象，该对象将生成具有给定类型和并发性的 ResultSet 对象。
-		return createStatement(resultSetType, resultSetConcurrency, 0);
-	}	
-	
-	@Override
-	public Statement createStatement(int resultSetType,
-			int resultSetConcurrency, int resultSetHoldability)
-			throws SQLException {
-		// 创建一个 Statement 对象，该对象将生成具有给定类型、并发性和可保存性的 ResultSet 对象。
-		return new MongoStatement(this, resultSetType, resultSetConcurrency, resultSetHoldability);
-	}
-	
-	@Override
-	public CallableStatement prepareCall(String sql) throws SQLException {
-		
-		return prepareCall(sql, 0, 0, 0);
-	}
-	
-	@Override
-	public CallableStatement prepareCall(String sql, int resultSetType,
-			int resultSetConcurrency) throws SQLException {
-		
-		return prepareCall(sql, resultSetType, resultSetConcurrency, 0);
-	}
+    @Override
+    public boolean isReadOnly() throws SQLException {
+        // 查询此 Connection 对象是否处于只读模式。
+        return false;
+    }
 
-	@Override
-	public CallableStatement prepareCall(String sql, int resultSetType,
-			int resultSetConcurrency, int resultSetHoldability)
-			throws SQLException {
-		
-		//return null;
-		throw new RuntimeException("CallableStatement not supported");
-	}
-	
-	@Override
-	public PreparedStatement prepareStatement(String sql) throws SQLException {
-		
-		return prepareStatement(sql, 0, 0, 0);
-	}
+    @Override
+    public void setCatalog(String catalog) throws SQLException {
 
-	@Override
-	public PreparedStatement prepareStatement(String sql, int resultSetType,
-			int resultSetConcurrency) throws SQLException {
-		
-		return prepareStatement(sql, resultSetType, resultSetConcurrency, 0);
-	}
+        this._schema = catalog;
+    }
 
-	@Override
-	public PreparedStatement prepareStatement(String sql, int resultSetType,
-			int resultSetConcurrency, int resultSetHoldability)
-			throws SQLException {
-		
-		return new MongoPreparedStatement(this, resultSetType, resultSetConcurrency, resultSetHoldability,sql);
-	}
-	
-	@Override
-	public PreparedStatement prepareStatement(String sql, int autoGeneratedKeys)
-			throws SQLException {
-		
-		return null;
-	}
+    @Override
+    public String getCatalog() throws SQLException {
+        // 获取此 Connection 对象的当前目录名称
+        return this._schema;
+    }
 
-	@Override
-	public PreparedStatement prepareStatement(String sql, int[] columnIndexes)
-			throws SQLException {
-		
-		return null;
-	}
+    @Override
+    public void setTransactionIsolation(int level) throws SQLException {
 
-	@Override
-	public PreparedStatement prepareStatement(String sql, String[] columnNames)
-			throws SQLException {
-		
-		return null;
-	}
+        //throw new RuntimeException("no TransactionIsolation");
+    }
 
-	@Override
-	public Clob createClob() throws SQLException {
-		
-		return null;
-	}
+    @Override
+    public int getTransactionIsolation() throws SQLException {
 
-	@Override
-	public Blob createBlob() throws SQLException {
-		
-		return null;
-	}
+        return 0;
+    }
 
-	@Override
-	public NClob createNClob() throws SQLException {
-		
-		return null;
-	}
+    @Override
+    public SQLWarning getWarnings() throws SQLException {
 
-	@Override
-	public SQLXML createSQLXML() throws SQLException {
-		
-		return null;
-	}
+        return null;//throw new RuntimeException("should do get last error");
+    }
 
-	@Override
-	public boolean isValid(int timeout) throws SQLException {
-		
-		return this.mc.getDB(_schema) != null;
-	}
+    @Override
+    public void clearWarnings() throws SQLException {
 
-	@Override
-	public void setClientInfo(String name, String value)
-			throws SQLClientInfoException {
-		
-		this._clientInfo.put(name, value);
-	}
 
-	@Override
-	public void setClientInfo(Properties properties)
-			throws SQLClientInfoException {
-		
-		this._clientInfo = properties;
-	}
+    }
 
-	@Override
-	public String getClientInfo(String name) throws SQLException {
-		// 返回通过名称指定的客户端信息属性的值。
-		return (String)this._clientInfo.get(name);
-	}
+    @Override
+    public Map<String, Class<?>> getTypeMap() throws SQLException {
 
-	@Override
-	public Properties getClientInfo() throws SQLException {
-		// 返回一个列表，它包含驱动程序支持的每个客户端信息属性的名称和当前值。
-		return this._clientInfo;
-	}
+        return null;
+    }
 
-	@Override
-	public Array createArrayOf(String typeName, Object[] elements)
-			throws SQLException {
-		
-		return null;
-	}
+    @Override
+    public void setTypeMap(Map<String, Class<?>> map) throws SQLException {
 
-	@Override
-	public Struct createStruct(String typeName, Object[] attributes)
-			throws SQLException {
-		
-		return null;
-	}
 
-	@Override
-	public void setSchema(String schema) throws SQLException {
-		
-		//this._schema=schema;
-	}
+    }
 
-	@Override
-	public String getSchema() throws SQLException {
-		
-		return this._schema;
-	}
+    @Override
+    public void setHoldability(int holdability) throws SQLException {
+        // 将使用此 Connection 对象创建的 ResultSet 对象的默认可保存性 (holdability) 更改为给定可保存性。
 
-	@Override
-	public void abort(Executor executor) throws SQLException {
-		
-		
-	}
+    }
 
-	@Override
-	public void setNetworkTimeout(Executor executor, int milliseconds)
-			throws SQLException {
-		
-		
-	}
+    @Override
+    public int getHoldability() throws SQLException {
+        // 获取使用此 Connection 对象创建的 ResultSet 对象的当前可保存性。
+        return 0;
+    }
 
-	@Override
-	public int getNetworkTimeout() throws SQLException {
-		
-		return 0;
-	}
+    @Override
+    public Savepoint setSavepoint() throws SQLException {
 
- }
+        return null;//throw new RuntimeException("no savepoints");
+    }
+
+    @Override
+    public Savepoint setSavepoint(String name) throws SQLException {
+
+        return null;
+    }
+
+    @Override
+    public void rollback(Savepoint savepoint) throws SQLException {
+
+        // throw new RuntimeException("can't rollback");
+    }
+
+    @Override
+    public void releaseSavepoint(Savepoint savepoint) throws SQLException {
+
+
+    }
+
+    @Override
+    public Statement createStatement() throws SQLException {
+        // 创建一个 Statement 对象来将 SQL 语句发送到数据库。
+        return createStatement(0, 0, 0);
+    }
+
+    @Override
+    public Statement createStatement(int resultSetType, int resultSetConcurrency)
+            throws SQLException {
+        // 创建一个 Statement 对象，该对象将生成具有给定类型和并发性的 ResultSet 对象。
+        return createStatement(resultSetType, resultSetConcurrency, 0);
+    }
+
+    @Override
+    public Statement createStatement(int resultSetType,
+                                     int resultSetConcurrency, int resultSetHoldability)
+            throws SQLException {
+        // 创建一个 Statement 对象，该对象将生成具有给定类型、并发性和可保存性的 ResultSet 对象。
+        return new MongoStatement(this, resultSetType, resultSetConcurrency, resultSetHoldability);
+    }
+
+    @Override
+    public CallableStatement prepareCall(String sql) throws SQLException {
+
+        return prepareCall(sql, 0, 0, 0);
+    }
+
+    @Override
+    public CallableStatement prepareCall(String sql, int resultSetType,
+                                         int resultSetConcurrency) throws SQLException {
+
+        return prepareCall(sql, resultSetType, resultSetConcurrency, 0);
+    }
+
+    @Override
+    public CallableStatement prepareCall(String sql, int resultSetType,
+                                         int resultSetConcurrency, int resultSetHoldability)
+            throws SQLException {
+
+        //return null;
+        throw new RuntimeException("CallableStatement not supported");
+    }
+
+    @Override
+    public PreparedStatement prepareStatement(String sql) throws SQLException {
+
+        return prepareStatement(sql, 0, 0, 0);
+    }
+
+    @Override
+    public PreparedStatement prepareStatement(String sql, int resultSetType,
+                                              int resultSetConcurrency) throws SQLException {
+
+        return prepareStatement(sql, resultSetType, resultSetConcurrency, 0);
+    }
+
+    @Override
+    public PreparedStatement prepareStatement(String sql, int resultSetType,
+                                              int resultSetConcurrency, int resultSetHoldability)
+            throws SQLException {
+
+        return new MongoPreparedStatement(this, resultSetType, resultSetConcurrency, resultSetHoldability, sql);
+    }
+
+    @Override
+    public PreparedStatement prepareStatement(String sql, int autoGeneratedKeys)
+            throws SQLException {
+
+        return null;
+    }
+
+    @Override
+    public PreparedStatement prepareStatement(String sql, int[] columnIndexes)
+            throws SQLException {
+
+        return null;
+    }
+
+    @Override
+    public PreparedStatement prepareStatement(String sql, String[] columnNames)
+            throws SQLException {
+
+        return null;
+    }
+
+    @Override
+    public Clob createClob() throws SQLException {
+
+        return null;
+    }
+
+    @Override
+    public Blob createBlob() throws SQLException {
+
+        return null;
+    }
+
+    @Override
+    public NClob createNClob() throws SQLException {
+
+        return null;
+    }
+
+    @Override
+    public SQLXML createSQLXML() throws SQLException {
+
+        return null;
+    }
+
+    @Override
+    public boolean isValid(int timeout) throws SQLException {
+
+        return this.mc.getDB(_schema) != null;
+    }
+
+    @Override
+    public void setClientInfo(String name, String value)
+            throws SQLClientInfoException {
+
+        this._clientInfo.put(name, value);
+    }
+
+    @Override
+    public void setClientInfo(Properties properties)
+            throws SQLClientInfoException {
+
+        this._clientInfo = properties;
+    }
+
+    @Override
+    public String getClientInfo(String name) throws SQLException {
+        // 返回通过名称指定的客户端信息属性的值。
+        return (String) this._clientInfo.get(name);
+    }
+
+    @Override
+    public Properties getClientInfo() throws SQLException {
+        // 返回一个列表，它包含驱动程序支持的每个客户端信息属性的名称和当前值。
+        return this._clientInfo;
+    }
+
+    @Override
+    public Array createArrayOf(String typeName, Object[] elements)
+            throws SQLException {
+
+        return null;
+    }
+
+    @Override
+    public Struct createStruct(String typeName, Object[] attributes)
+            throws SQLException {
+
+        return null;
+    }
+
+    @Override
+    public void setSchema(String schema) throws SQLException {
+
+        //this._schema=schema;
+    }
+
+    @Override
+    public String getSchema() throws SQLException {
+
+        return this._schema;
+    }
+
+    @Override
+    public void abort(Executor executor) throws SQLException {
+
+
+    }
+
+    @Override
+    public void setNetworkTimeout(Executor executor, int milliseconds)
+            throws SQLException {
+
+
+    }
+
+    @Override
+    public int getNetworkTimeout() throws SQLException {
+
+        return 0;
+    }
+
+}
 

@@ -27,11 +27,13 @@ import java.sql.SQLNonTransientException;
 import java.util.List;
 import java.util.Map;
 
-public class DruidMysqlCreateTableTest
-{
-	protected Map<String, SchemaConfig> schemaMap;
-	protected LayerCachePool cachePool = new SimpleCachePool();
+public class DruidMysqlCreateTableTest {
+    protected Map<String, SchemaConfig> schemaMap;
+
+    protected LayerCachePool cachePool = new SimpleCachePool();
+
     protected RouteStrategy routeStrategy;
+
     private static final String originSql1 = "CREATE TABLE autoslot"
             + "("
             + "	ID BIGINT AUTO_INCREMENT,"
@@ -42,56 +44,51 @@ public class DruidMysqlCreateTableTest
 
 
     public DruidMysqlCreateTableTest() {
-		String schemaFile = "/route/schema.xml";
-		String ruleFile = "/route/rule.xml";
-		SchemaLoader schemaLoader = new XMLSchemaLoader(schemaFile, ruleFile);
-		schemaMap = schemaLoader.getSchemas();
-		MycatServer.getInstance().getConfig().getSchemas().putAll(schemaMap);
+        String schemaFile = "/route/schema.xml";
+        String ruleFile = "/route/rule.xml";
+        SchemaLoader schemaLoader = new XMLSchemaLoader(schemaFile, ruleFile);
+        schemaMap = schemaLoader.getSchemas();
+        MycatServer.getInstance().getConfig().getSchemas().putAll(schemaMap);
         RouteStrategyFactory.init();
         routeStrategy = RouteStrategyFactory.getRouteStrategy("druidparser");
-	}
+    }
 
-	@Test
-	public void testCreate() throws SQLNonTransientException {
+    @Test
+    public void testCreate() throws SQLNonTransientException {
 
-		SchemaConfig schema = schemaMap.get("mysqldb");
+        SchemaConfig schema = schemaMap.get("mysqldb");
         RouteResultset rrs = routeStrategy.route(new SystemConfig(), schema, -1, originSql1, null,
                 null, cachePool);
         Assert.assertEquals(2, rrs.getNodes().length);
-      String sql=  rrs.getNodes()[0].getStatement();
+        String sql = rrs.getNodes()[0].getStatement();
 
         Assert.assertTrue(parseSql(sql));
 
 
-		
+    }
 
-
-	}
-
-   // @Test
+    // @Test
     public void testInsert() throws SQLNonTransientException {
 
         SchemaConfig schema = schemaMap.get("mysqldb");
-        RouteResultset rrs = routeStrategy.route(new SystemConfig(), schema, -1, "insert into autoslot (id,sid) values(1,2) ", null,
+        RouteResultset rrs = routeStrategy.route(new SystemConfig(), schema, -1, "insert into autoslot (id,sid) " +
+                        "values(1,2) ", null,
                 null, cachePool);
         Assert.assertEquals(1, rrs.getNodes().length);
 
         Assert.assertTrue(isInsertHasSlot(rrs.getStatement()));
 
 
-
-
-
     }
 
-    private boolean isInsertHasSlot(String sql)
-    {
+    private boolean isInsertHasSlot(String sql) {
         MySqlStatementParser parser = new MySqlStatementParser(sql);
-        MySqlInsertStatement insertStatement= (MySqlInsertStatement)parser.parseStatement();
-     List<SQLExpr> cc= insertStatement.getColumns();
+        MySqlInsertStatement insertStatement = (MySqlInsertStatement) parser.parseStatement();
+        List<SQLExpr> cc = insertStatement.getColumns();
         for (SQLExpr sqlExpr : cc) {
-            SQLIdentifierExpr c= (SQLIdentifierExpr) sqlExpr;
-            if("_slot".equalsIgnoreCase(c.getName())   &&cc.size()==insertStatement.getValues().getValues().size())    return true;
+            SQLIdentifierExpr c = (SQLIdentifierExpr) sqlExpr;
+            if ("_slot".equalsIgnoreCase(c.getName()) && cc.size() == insertStatement.getValues().getValues().size())
+                return true;
         }
         return false;
     }
@@ -102,11 +99,11 @@ public class DruidMysqlCreateTableTest
         return hasColumn(statement);
     }
 
-    private static boolean hasColumn(SQLStatement statement){
-        for (SQLTableElement tableElement : ((SQLCreateTableStatement)statement).getTableElementList()) {
+    private static boolean hasColumn(SQLStatement statement) {
+        for (SQLTableElement tableElement : ((SQLCreateTableStatement) statement).getTableElementList()) {
             SQLName sqlName = null;
             if (tableElement instanceof SQLColumnDefinition) {
-                sqlName = ((SQLColumnDefinition)tableElement).getName();
+                sqlName = ((SQLColumnDefinition) tableElement).getName();
             }
             if (sqlName != null) {
                 String simpleName = sqlName.getSimpleName();

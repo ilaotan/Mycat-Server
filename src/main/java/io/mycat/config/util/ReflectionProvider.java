@@ -48,7 +48,8 @@ public class ReflectionProvider {
 
     private transient Map<Class<?>, byte[]> serializedDataCache = Collections
             .synchronizedMap(new HashMap<Class<?>, byte[]>());
-    private transient FieldDictionary fieldDictionary = new FieldDictionary();
+
+    private transient FieldDictionary       fieldDictionary     = new FieldDictionary();
 
     public Object newInstance(Class<?> type) {
         try {
@@ -63,20 +64,26 @@ public class ReflectionProvider {
             }
             if (Serializable.class.isAssignableFrom(type)) {
                 return instantiateUsingSerialization(type);
-            } else {
+            }
+            else {
                 throw new ObjectAccessException("Cannot construct " + type.getName()
                         + " as it does not have a no-args constructor");
             }
-        } catch (InstantiationException e) {
+        }
+        catch (InstantiationException e) {
             throw new ObjectAccessException("Cannot construct " + type.getName(), e);
-        } catch (IllegalAccessException e) {
+        }
+        catch (IllegalAccessException e) {
             throw new ObjectAccessException("Cannot construct " + type.getName(), e);
-        } catch (InvocationTargetException e) {
+        }
+        catch (InvocationTargetException e) {
             if (e.getTargetException() instanceof RuntimeException) {
                 throw (RuntimeException) e.getTargetException();
-            } else if (e.getTargetException() instanceof Error) {
+            }
+            else if (e.getTargetException() instanceof Error) {
                 throw (Error) e.getTargetException();
-            } else {
+            }
+            else {
                 throw new ObjectAccessException("Constructor for " + type.getName() + " threw an exception",
                         e.getTargetException());
             }
@@ -84,7 +91,8 @@ public class ReflectionProvider {
     }
 
     public void visitSerializableFields(Object object, Visitor visitor) {
-        for (Iterator<Field> iterator = fieldDictionary.serializableFieldsFor(object.getClass()); iterator.hasNext();) {
+        for (Iterator<Field> iterator = fieldDictionary.serializableFieldsFor(object.getClass()); iterator.hasNext();
+                ) {
             Field field = iterator.next();
             if (!fieldModifiersSupported(field)) {
                 continue;
@@ -93,9 +101,11 @@ public class ReflectionProvider {
             try {
                 Object value = field.get(object);
                 visitor.visit(field.getName(), field.getType(), field.getDeclaringClass(), value);
-            } catch (IllegalArgumentException e) {
+            }
+            catch (IllegalArgumentException e) {
                 throw new ObjectAccessException("Could not get field " + field.getClass() + "." + field.getName(), e);
-            } catch (IllegalAccessException e) {
+            }
+            catch (IllegalAccessException e) {
                 throw new ObjectAccessException("Could not get field " + field.getClass() + "." + field.getName(), e);
             }
         }
@@ -106,18 +116,21 @@ public class ReflectionProvider {
         validateFieldAccess(field);
         try {
             field.set(object, value);
-        } catch (IllegalArgumentException e) {
+        }
+        catch (IllegalArgumentException e) {
             throw new ObjectAccessException("Could not set field " + field.getName() + "@" + object.getClass(), e);
-        } catch (IllegalAccessException e) {
+        }
+        catch (IllegalAccessException e) {
             throw new ObjectAccessException("Could not set field " + field.getName() + "@" + object.getClass(), e);
         }
     }
 
     public void invokeMethod(Object object, String methodName, Object value, Class<?> definedIn) {
         try {
-            Method method = object.getClass().getMethod(methodName, new Class[] { value.getClass() });
-            method.invoke(object, new Object[] { value });
-        } catch (Exception e) {
+            Method method = object.getClass().getMethod(methodName, new Class[]{value.getClass()});
+            method.invoke(object, new Object[]{value});
+        }
+        catch (Exception e) {
             throw new ObjectAccessException("Could not invoke " + object.getClass() + "." + methodName, e);
         }
     }
@@ -130,7 +143,8 @@ public class ReflectionProvider {
         try {
             Field field = fieldDictionary.field(type, fieldName, null);
             return fieldModifiersSupported(field);
-        } catch (ObjectAccessException e) {
+        }
+        catch (ObjectAccessException e) {
             return false;
         }
     }
@@ -144,7 +158,8 @@ public class ReflectionProvider {
             byte[] data;
             if (serializedDataCache.containsKey(type)) {
                 data = serializedDataCache.get(type);
-            } else {
+            }
+            else {
                 ByteArrayOutputStream bytes = new ByteArrayOutputStream();
                 DataOutputStream stream = new DataOutputStream(bytes);
                 stream.writeShort(ObjectStreamConstants.STREAM_MAGIC);
@@ -163,9 +178,11 @@ public class ReflectionProvider {
 
             ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(data));
             return in.readObject();
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             throw new ObjectAccessException("Cannot create " + type.getName() + " by JDK serialization", e);
-        } catch (ClassNotFoundException e) {
+        }
+        catch (ClassNotFoundException e) {
             throw new ObjectAccessException("Cannot find class " + e.getMessage());
         }
     }
@@ -178,7 +195,8 @@ public class ReflectionProvider {
         if (Modifier.isFinal(field.getModifiers())) {
             if (JVMInfo.is15()) {
                 field.setAccessible(true);
-            } else {
+            }
+            else {
                 throw new ObjectAccessException("Invalid final field " + field.getDeclaringClass().getName() + "."
                         + field.getName());
             }

@@ -21,20 +21,23 @@ import io.mycat.route.factory.RouteStrategyFactory;
 import io.mycat.server.parser.ServerParse;
 
 public class HintTest {
-	protected Map<String, SchemaConfig> schemaMap;
-	protected LayerCachePool cachePool = new SimpleCachePool();
-	protected RouteStrategy routeStrategy;
+    protected Map<String, SchemaConfig> schemaMap;
 
-	public HintTest() {
-		String schemaFile = "/route/schema.xml";
-		String ruleFile = "/route/rule.xml";
-		SchemaLoader schemaLoader = new XMLSchemaLoader(schemaFile, ruleFile);
-		schemaMap = schemaLoader.getSchemas();
-		MycatServer.getInstance().getConfig().getSchemas().putAll(schemaMap);
+    protected LayerCachePool cachePool = new SimpleCachePool();
+
+    protected RouteStrategy routeStrategy;
+
+    public HintTest() {
+        String schemaFile = "/route/schema.xml";
+        String ruleFile = "/route/rule.xml";
+        SchemaLoader schemaLoader = new XMLSchemaLoader(schemaFile, ruleFile);
+        schemaMap = schemaLoader.getSchemas();
+        MycatServer.getInstance().getConfig().getSchemas().putAll(schemaMap);
         RouteStrategyFactory.init();
         routeStrategy = RouteStrategyFactory.getRouteStrategy("fdbparser");
-	}
-	/**
+    }
+
+    /**
      * 测试注解
      *
      * @throws Exception
@@ -42,7 +45,7 @@ public class HintTest {
     @Test
     public void testHint() throws Exception {
         SchemaConfig schema = schemaMap.get("TESTDB");
-       //使用注解（新注解，/*后面没有空格），路由到1个节点
+        //使用注解（新注解，/*后面没有空格），路由到1个节点
         String sql = "/*!mycat: sql = select * from employee where sharding_id = 10010 */select * from employee";
         CacheService cacheService = new CacheService();
         RouteService routerService = new RouteService(cacheService);
@@ -53,7 +56,7 @@ public class HintTest {
         sql = "/*#mycat: sql = select * from employee where sharding_id = 10000 */select * from employee";
         rrs = routerService.route(new SystemConfig(), schema, ServerParse.SELECT, sql, "UTF-8", null);
         Assert.assertTrue(rrs.getNodes().length == 1);
-        
+
         //不用注解，路由到2个节点
         sql = "select * from employee";
         rrs = routerService.route(new SystemConfig(), schema, ServerParse.SELECT, sql, "UTF-8", null);

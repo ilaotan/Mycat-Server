@@ -2,6 +2,7 @@ package io.mycat.config.loader.zkprocess.xmltozk.listen;
 
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.utils.ZKPaths;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,31 +14,33 @@ import io.mycat.config.loader.zkprocess.zookeeper.process.ZkMultLoader;
 
 /**
  * 其他一些信息加载到zk中
-* 源文件名：SchemasLoader.java
-* 文件版本：1.0.0
-* 创建作者：liujun
-* 创建日期：2016年9月15日
-* 修改作者：liujun
-* 修改日期：2016年9月15日
-* 文件描述：TODO
-* 版权所有：Copyright 2016 zjhz, Inc. All Rights Reserved.
-*/
+ * 源文件名：SchemasLoader.java
+ * 文件版本：1.0.0
+ * 创建作者：liujun
+ * 创建日期：2016年9月15日
+ * 修改作者：liujun
+ * 修改日期：2016年9月15日
+ * 文件描述：TODO
+ * 版权所有：Copyright 2016 zjhz, Inc. All Rights Reserved.
+ */
 public class OthermsgTozkLoader extends ZkMultLoader implements NotiflyService {
 
     /**
      * 日志
-    * @字段说明 LOGGER
-    */
+     *
+     * @字段说明 LOGGER
+     */
     private static final Logger LOGGER = LoggerFactory.getLogger(OthermsgTozkLoader.class);
 
     /**
-     * 当前文件中的zkpath信息 
-    * @字段说明 currZkPath
-    */
+     * 当前文件中的zkpath信息
+     *
+     * @字段说明 currZkPath
+     */
     private final String currZkPath;
 
     public OthermsgTozkLoader(ZookeeperProcessListen zookeeperListen, CuratorFramework curator,
-            XmlProcessBase xmlParseBase) {
+                              XmlProcessBase xmlParseBase) {
 
         this.setCurator(curator);
 

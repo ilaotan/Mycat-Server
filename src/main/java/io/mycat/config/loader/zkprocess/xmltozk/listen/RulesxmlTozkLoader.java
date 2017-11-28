@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.curator.framework.CuratorFramework;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,55 +32,61 @@ import io.mycat.config.loader.zkprocess.zookeeper.process.ZkMultLoader;
 
 /**
  * 进行从rule.xml加载到zk中加载
-* 源文件名：SchemasLoader.java
-* 文件版本：1.0.0
-* 创建作者：liujun
-* 创建日期：2016年9月15日
-* 修改作者：liujun
-* 修改日期：2016年9月15日
-* 文件描述：TODO
-* 版权所有：Copyright 2016 zjhz, Inc. All Rights Reserved.
-*/
+ * 源文件名：SchemasLoader.java
+ * 文件版本：1.0.0
+ * 创建作者：liujun
+ * 创建日期：2016年9月15日
+ * 修改作者：liujun
+ * 修改日期：2016年9月15日
+ * 文件描述：TODO
+ * 版权所有：Copyright 2016 zjhz, Inc. All Rights Reserved.
+ */
 public class RulesxmlTozkLoader extends ZkMultLoader implements NotiflyService {
 
     /**
      * 日志
-    * @字段说明 LOGGER
-    */
+     *
+     * @字段说明 LOGGER
+     */
     private static final Logger LOGGER = LoggerFactory.getLogger(RulesxmlTozkLoader.class);
 
     /**
-     * 当前文件中的zkpath信息 
-    * @字段说明 currZkPath
-    */
+     * 当前文件中的zkpath信息
+     *
+     * @字段说明 currZkPath
+     */
     private final String currZkPath;
 
     /**
      * Rules文件的路径信息
-    * @字段说明 SCHEMA_PATH
-    */
+     *
+     * @字段说明 SCHEMA_PATH
+     */
     private static final String RULE_PATH = ZookeeperPath.ZK_LOCAL_CFG_PATH.getKey() + "rule.xml";
 
     /**
      * Rules的xml的转换信息
-    * @字段说明 parseRulesXMl
-    */
+     *
+     * @字段说明 parseRulesXMl
+     */
     private ParseXmlServiceInf<Rules> parseRulesXMl;
 
     /**
      * 表的路由信息
-    * @字段说明 parseJsonService
-    */
+     *
+     * @字段说明 parseJsonService
+     */
     private ParseJsonServiceInf<List<TableRule>> parseJsonTableRuleService = new TableRuleJsonParse();
 
     /**
      * 表对应的字段信息
-    * @字段说明 parseJsonFunctionService
-    */
+     *
+     * @字段说明 parseJsonFunctionService
+     */
     private ParseJsonServiceInf<List<Function>> parseJsonFunctionService = new FunctionJsonParse();
 
     public RulesxmlTozkLoader(ZookeeperProcessListen zookeeperListen, CuratorFramework curator,
-            XmlProcessBase xmlParseBase) {
+                              XmlProcessBase xmlParseBase) {
 
         this.setCurator(curator);
 
@@ -110,12 +117,13 @@ public class RulesxmlTozkLoader extends ZkMultLoader implements NotiflyService {
 
     /**
      * 将xml文件的信息写入到zk中
-    * 方法描述
-    * @param basePath 基本路径
-    * @param schema schema文件的信息
-    * @throws Exception 异常信息
-    * @创建日期 2016年9月17日
-    */
+     * 方法描述
+     *
+     * @param basePath 基本路径
+     * @param schema   schema文件的信息
+     * @throws Exception 异常信息
+     * @创建日期 2016年9月17日
+     */
     private void xmlTozkRulesJson(String basePath, Rules Rules) throws Exception {
         // tablerune节点信息
         String tableRulePath = ZookeeperPath.ZK_SEPARATOR.getKey() + ZookeeperPath.FLOW_ZK_PATH_RULE_TABLERULE.getKey();
@@ -132,11 +140,12 @@ public class RulesxmlTozkLoader extends ZkMultLoader implements NotiflyService {
     }
 
     /**
-     *  读取序列配制文件便利店  
-    * 方法描述
-    * @param functionList
-    * @创建日期 2016年9月18日
-    */
+     * 读取序列配制文件便利店
+     * 方法描述
+     *
+     * @param functionList
+     * @创建日期 2016年9月18日
+     */
     private void readMapFileAddFunction(List<Function> functionList) {
 
         List<Property> tempData = new ArrayList<>();
@@ -165,11 +174,12 @@ public class RulesxmlTozkLoader extends ZkMultLoader implements NotiflyService {
 
     /**
      * 读取 mapFile文件的信息
-    * 方法描述
-    * @param name 名称信息
-    * @return
-    * @创建日期 2016年9月18日
-    */
+     * 方法描述
+     *
+     * @param name 名称信息
+     * @return
+     * @创建日期 2016年9月18日
+     */
     private String readMapFile(String name) {
 
         StringBuilder mapFileStr = new StringBuilder();
@@ -188,11 +198,13 @@ public class RulesxmlTozkLoader extends ZkMultLoader implements NotiflyService {
             while ((readIndex = input.read(buffers)) != -1) {
                 mapFileStr.append(new String(buffers, 0, readIndex));
             }
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             e.printStackTrace();
             LOGGER.error("RulesxmlTozkLoader readMapFile IOException", e);
 
-        } finally {
+        }
+        finally {
             IOUtils.close(input);
         }
 

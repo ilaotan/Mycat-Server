@@ -9,13 +9,11 @@ public class AlertException extends Exception {
 
     public static final AlertException INSTANCE = new AlertException();
 
-    private AlertException()
-    {
+    private AlertException() {
     }
 
     @Override
-    public Throwable fillInStackTrace()
-    {
+    public Throwable fillInStackTrace() {
         return this;
     }
 }

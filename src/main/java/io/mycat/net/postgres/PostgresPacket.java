@@ -24,19 +24,19 @@
 package io.mycat.net.postgres;
 
 /**
- * @see http://www.postgresql.org/docs/9.1/interactive/protocol.html
  * @author mycat
+ * @see http://www.postgresql.org/docs/9.1/interactive/protocol.html
  */
 public abstract class PostgresPacket {
     /**
      * <pre>
-     * AuthenticationOk (B)   
-     * AuthenticationKerberosV5 (B)       
-     * AuthenticationCleartextPassword (B)    
-     * AuthenticationMD5Password (B)    
-     * AuthenticationSCMCredential (B)     
-     * AuthenticationGSS (B)     
-     * AuthenticationSSPI (B)      
+     * AuthenticationOk (B)
+     * AuthenticationKerberosV5 (B)
+     * AuthenticationCleartextPassword (B)
+     * AuthenticationMD5Password (B)
+     * AuthenticationSCMCredential (B)
+     * AuthenticationGSS (B)
+     * AuthenticationSSPI (B)
      * AuthenticationGSSContinue (B)
      * </pre>
      */
@@ -224,25 +224,25 @@ public abstract class PostgresPacket {
      */
     public static final byte TERMINATE = (byte) 'X';
 
-    private byte             type;
-    private int              length;
-    
+    private byte type;
+
+    private int  length;
+
     public byte getType() {
         return type;
     }
-    
+
     public void setType(byte type) {
         this.type = type;
     }
-    
+
     public int getLength() {
         return length;
     }
-    
+
     public void setLength(int length) {
         this.length = length;
     }
-    
-    
+
 
 }

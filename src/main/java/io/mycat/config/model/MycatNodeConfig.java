@@ -30,9 +30,12 @@ package io.mycat.config.model;
 public final class MycatNodeConfig {
 
     private String name;
+
     private String host;
-    private int port;
-    private int weight;
+
+    private int    port;
+
+    private int    weight;
 
     public MycatNodeConfig(String name, String host, int port, int weight) {
         this.name = name;

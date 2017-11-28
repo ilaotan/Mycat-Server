@@ -10,6 +10,7 @@ import org.apache.curator.framework.recipes.cache.PathChildrenCacheEvent;
 import org.apache.curator.framework.recipes.cache.PathChildrenCacheListener;
 import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.apache.curator.retry.RetryForever;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,17 +19,21 @@ import java.util.List;
 import java.util.concurrent.*;
 
 public class ZKUtils {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ZKUtils.class);
-    static CuratorFramework curatorFramework = null;
-    static ConcurrentMap<String, PathChildrenCache> watchMap = new ConcurrentHashMap<>();
+    private static final Logger                                   LOGGER           = LoggerFactory.getLogger(ZKUtils
+            .class);
+
+    static               CuratorFramework                         curatorFramework = null;
+
+    static               ConcurrentMap<String, PathChildrenCache> watchMap         = new ConcurrentHashMap<>();
 
     static {
         curatorFramework = createConnection();
         Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
             @Override
             public void run() {
-                if (curatorFramework != null)
+                if (curatorFramework != null) {
                     curatorFramework.close();
+                }
                 watchMap.clear();
             }
         }));
@@ -57,7 +62,8 @@ public class ZKUtils {
             if (curatorFramework.getZookeeperClient().isConnected()) {
                 return curatorFramework;
             }
-        } catch (InterruptedException ignored) {
+        }
+        catch (InterruptedException ignored) {
             Thread.currentThread().interrupt();
         }
 
@@ -77,7 +83,8 @@ public class ZKUtils {
         if (childrenCache != null) {
             try {
                 childrenCache.close();
-            } catch (IOException e) {
+            }
+            catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
@@ -95,7 +102,8 @@ public class ZKUtils {
             childrenCache.start(PathChildrenCache.StartMode.POST_INITIALIZED_EVENT);
             childrenCache.getListenable().addListener(listener, executor);
             watchMap.put(path, childrenCache);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             throw new RuntimeException(e);
         }
     }

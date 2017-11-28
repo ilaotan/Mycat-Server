@@ -31,18 +31,19 @@ import io.mycat.net.BackendAIOConnection;
 
 /**
  * From client to server when the client do heartbeat between mycat cluster.
- * 
+ * <p>
  * <pre>
  * Bytes         Name
  * -----         ----
  * 1             command
  * n             id
- * 
+ *
  * @author mycat
  */
 public class HeartbeatPacket extends MySQLPacket {
 
     public byte command;
+
     public long id;
 
     public void read(byte[] data) {

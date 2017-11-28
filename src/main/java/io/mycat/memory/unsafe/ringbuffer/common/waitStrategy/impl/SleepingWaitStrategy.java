@@ -15,6 +15,7 @@ import java.util.concurrent.locks.LockSupport;
 public class SleepingWaitStrategy implements WaitStrategy {
     //重试200次
     private static final int DEFAULT_RETRIES = 200;
+
     private final int retries;
 
     public SleepingWaitStrategy() {

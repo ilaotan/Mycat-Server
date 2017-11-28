@@ -4,16 +4,17 @@ import java.util.List;
 
 public class SecondQueryHandler implements SecondHandler {
 
-	public MiddlerResultHandler middlerResultHandler;
-	public SecondQueryHandler(MiddlerResultHandler middlerResultHandler){
-		this.middlerResultHandler =  middlerResultHandler;
-	}
+    public MiddlerResultHandler middlerResultHandler;
 
-	@Override
-	public void doExecute(List params) {
-		// TODO Auto-generated method stub
-		
-	}
-	 
+    public SecondQueryHandler(MiddlerResultHandler middlerResultHandler) {
+        this.middlerResultHandler = middlerResultHandler;
+    }
+
+    @Override
+    public void doExecute(List params) {
+        // TODO Auto-generated method stub
+
+    }
+
 
 }

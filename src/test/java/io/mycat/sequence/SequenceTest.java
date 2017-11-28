@@ -18,8 +18,10 @@ import java.util.UUID;
  */
 public class SequenceTest {
     private Set<String> sequenceSet;
-    private long startTime;
-    private long endTime;
+
+    private long        startTime;
+
+    private long        endTime;
 
     @Before
     public void initialize() {
@@ -27,7 +29,7 @@ public class SequenceTest {
         startTime = System.nanoTime();
     }
 
-//    @Test
+    //    @Test
 //    public void testIncrement(){
 //        System.out.print("Increment ");
 //        for (int i = 0; i < 1000000; i++) {
@@ -36,7 +38,7 @@ public class SequenceTest {
 //    }
 //
     @Test
-    public void testUUID(){
+    public void testUUID() {
         System.out.print("UUID ");
         for (int i = 0; i < 100; i++) {
             sequenceSet.add(UUID.randomUUID().toString());
@@ -44,21 +46,21 @@ public class SequenceTest {
     }
 
     @Test
-    public void testRandom(){
-        TreeSet<String> treeSet= new TreeSet<>();
-        System.out.println(Long.toBinaryString(Long.valueOf(System.currentTimeMillis()+"")).length());
+    public void testRandom() {
+        TreeSet<String> treeSet = new TreeSet<>();
+        System.out.println(Long.toBinaryString(Long.valueOf(System.currentTimeMillis() + "")).length());
     }
 
     @Test
-    public void testRandom2(){
+    public void testRandom2() {
         System.out.print("UUID ");
         for (int i = 0; i < 100; i++) {
-            sequenceSet.add("aaassscccddd"+i);
+            sequenceSet.add("aaassscccddd" + i);
         }
     }
 
     @Test
-    public void testXAXID(){
+    public void testXAXID() {
         String xid = MycatServer.getInstance().getXATXIDGLOBAL();
         System.out.println(xid);
     }
@@ -67,6 +69,6 @@ public class SequenceTest {
     @After
     public void end() {
         endTime = System.nanoTime();
-        System.out.println("Time elapsed: " + (endTime - startTime)/(1000000L) + "ms");
+        System.out.println("Time elapsed: " + (endTime - startTime) / (1000000L) + "ms");
     }
 }

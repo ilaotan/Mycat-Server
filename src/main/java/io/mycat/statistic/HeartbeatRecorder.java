@@ -34,24 +34,32 @@ import io.mycat.util.TimeUtil;
 
 /**
  * 记录最近3个时段的平均响应时间，默认1，10，30分钟。
- * 
+ *
  * @author mycat
  */
 public class HeartbeatRecorder {
 
-    private static final int MAX_RECORD_SIZE = 256;
-    private static final long AVG1_TIME = 60 * 1000L;
-    private static final long AVG2_TIME = 10 * 60 * 1000L;
-    private static final long AVG3_TIME = 30 * 60 * 1000L;
-    private static final long SWAP_TIME = 24 * 60 * 60 * 1000L;
+    private static final int  MAX_RECORD_SIZE = 256;
 
-    private long avg1;
-    private long avg2;
-    private long avg3;
+    private static final long AVG1_TIME       = 60 * 1000L;
+
+    private static final long AVG2_TIME       = 10 * 60 * 1000L;
+
+    private static final long AVG3_TIME       = 30 * 60 * 1000L;
+
+    private static final long SWAP_TIME       = 24 * 60 * 60 * 1000L;
+
+    private       long          avg1;
+
+    private       long          avg2;
+
+    private       long          avg3;
+
     private final Queue<Record> records;
+
     private final Queue<Record> recordsAll;
-    
-	private static final Logger LOGGER = LoggerFactory.getLogger("DataSourceSyncRecorder");
+
+    private static final Logger LOGGER = LoggerFactory.getLogger("DataSourceSyncRecorder");
 
     public HeartbeatRecorder() {
         this.records = new ConcurrentLinkedQueue<Record>();
@@ -63,8 +71,8 @@ public class HeartbeatRecorder {
     }
 
     public void set(long value) {
-    	try{
-    		long time = TimeUtil.currentTimeMillis();
+        try {
+            long time = TimeUtil.currentTimeMillis();
             if (value < 0) {
                 recordsAll.offer(new Record(0, time));
                 return;
@@ -82,9 +90,10 @@ public class HeartbeatRecorder {
             records.offer(new Record(value, time));
             recordsAll.offer(new Record(value, time));
             calculate(time);
-    	}catch(Exception e){ 
-    		LOGGER.error("record HeartbeatRecorder error " ,e);
-    	}
+        }
+        catch (Exception e) {
+            LOGGER.error("record HeartbeatRecorder error ", e);
+        }
     }
 
     /**
@@ -96,17 +105,19 @@ public class HeartbeatRecorder {
             Record record = records.peek();
             if (time >= record.time + AVG3_TIME) {
                 records.poll();
-            } else {
+            }
+            else {
                 break;
             }
         }
-        
+
         final Queue<Record> recordsAll = this.recordsAll;
         while (recordsAll.size() > 0) {
             Record record = recordsAll.peek();
             if (time >= record.time + SWAP_TIME) {
-            	recordsAll.poll();
-            } else {
+                recordsAll.poll();
+            }
+            else {
                 break;
             }
         }
@@ -139,33 +150,38 @@ public class HeartbeatRecorder {
     }
 
     public Queue<Record> getRecordsAll() {
-		return this.recordsAll;
-	}
+        return this.recordsAll;
+    }
 
-	/**
+    /**
      * @author mycat
      */
     public static class Record {
-    	private long value;
-    	private long time;
+        private long value;
+
+        private long time;
 
         Record(long value, long time) {
             this.value = value;
             this.time = time;
         }
-		public long getValue() {
-			return this.value;
-		}
-		public void setValue(long value) {
-			this.value = value;
-		}
-		public long getTime() {
-			return this.time;
-		}
-		public void setTime(long time) {
-			this.time = time;
-		}
-        
-        
+
+        public long getValue() {
+            return this.value;
+        }
+
+        public void setValue(long value) {
+            this.value = value;
+        }
+
+        public long getTime() {
+            return this.time;
+        }
+
+        public void setTime(long time) {
+            this.time = time;
+        }
+
+
     }
 }

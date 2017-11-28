@@ -30,92 +30,99 @@ import java.io.Serializable;
 /**
  * cache mysql dataset ,for example "select * from A where .......",cache all
  * result
- * 
+ *
  * @author wuzhih
- * 
  */
 public class MysqlDataSetCache implements Serializable {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 5426632041410472392L;
-	// sql should not inlude page limit ,should store first record and sequnce
-	// next
-	private String sql;
-	private int total;
-	private String dataFile;
-	private long createTime;
-	private volatile int curCount;
-	private volatile long lastAccesTime;
-	private volatile boolean storing = true;
+    /**
+     *
+     */
+    private static final long serialVersionUID = 5426632041410472392L;
 
-	public String getSql() {
-		return sql;
-	}
+    // sql should not inlude page limit ,should store first record and sequnce
+    // next
+    private          String sql;
 
-	public boolean isStoring() {
-		return storing;
-	}
+    private          int    total;
 
-	public void setStoring(boolean storing) {
-		this.storing = storing;
-	}
+    private          String dataFile;
 
-	public void setSql(String sql) {
-		this.sql = sql;
-	}
+    private          long   createTime;
 
-	public int getTotal() {
-		return total;
-	}
+    private volatile int    curCount;
 
-	public void setTotal(int total) {
-		this.total = total;
-	}
+    private volatile long   lastAccesTime;
 
-	public String getDataFile() {
-		return dataFile;
-	}
+    private volatile boolean storing = true;
 
-	public void setDataFile(String dataFile) {
-		this.dataFile = dataFile;
-	}
+    public String getSql() {
+        return sql;
+    }
 
-	public long getCreateTime() {
-		return createTime;
-	}
+    public boolean isStoring() {
+        return storing;
+    }
 
-	public void setCreateTime(long createTime) {
-		this.createTime = createTime;
-	}
+    public void setStoring(boolean storing) {
+        this.storing = storing;
+    }
 
-	public long getLastAccesTime() {
-		return lastAccesTime;
-	}
+    public void setSql(String sql) {
+        this.sql = sql;
+    }
 
-	public void setLastAccesTime(long lastAccesTime) {
-		this.lastAccesTime = lastAccesTime;
-	}
+    public int getTotal() {
+        return total;
+    }
 
-	public void addHeader(byte[] header) throws IOException  {
-		writeFile(header);
-	}
+    public void setTotal(int total) {
+        this.total = total;
+    }
 
-	private void writeFile(byte[] data) throws IOException {
-		FileOutputStream outf = null;
-		try {
-			outf = new FileOutputStream(dataFile, true);
-			outf.write(data);
+    public String getDataFile() {
+        return dataFile;
+    }
 
-		} finally {
-			if (outf != null) {
-				outf.close();
-			}
-		}
-	}
+    public void setDataFile(String dataFile) {
+        this.dataFile = dataFile;
+    }
 
-	public void appendRecord(byte[] row) throws IOException {
-		writeFile(row);
-		curCount++;
-	}
+    public long getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(long createTime) {
+        this.createTime = createTime;
+    }
+
+    public long getLastAccesTime() {
+        return lastAccesTime;
+    }
+
+    public void setLastAccesTime(long lastAccesTime) {
+        this.lastAccesTime = lastAccesTime;
+    }
+
+    public void addHeader(byte[] header) throws IOException {
+        writeFile(header);
+    }
+
+    private void writeFile(byte[] data) throws IOException {
+        FileOutputStream outf = null;
+        try {
+            outf = new FileOutputStream(dataFile, true);
+            outf.write(data);
+
+        }
+        finally {
+            if (outf != null) {
+                outf.close();
+            }
+        }
+    }
+
+    public void appendRecord(byte[] row) throws IOException {
+        writeFile(row);
+        curCount++;
+    }
 }

@@ -16,20 +16,23 @@ import io.mycat.config.loader.zkprocess.entity.schema.schema.Schema;
 public class Schemas {
     /**
      * 配制的逻辑表信息
-    * @字段说明 schema
-    */
+     *
+     * @字段说明 schema
+     */
     private List<Schema> schema;
 
     /**
      * 配制的表对应的数据库信息
-    * @字段说明 dataNode
-    */
+     *
+     * @字段说明 dataNode
+     */
     private List<DataNode> dataNode;
 
     /**
      * 用于指定数据信息
-    * @字段说明 dataHost
-    */
+     *
+     * @字段说明 dataHost
+     */
     private List<DataHost> dataHost;
 
     public List<Schema> getSchema() {

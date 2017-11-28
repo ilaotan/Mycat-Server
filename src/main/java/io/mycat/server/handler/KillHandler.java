@@ -40,12 +40,14 @@ public class KillHandler {
         String id = stmt.substring(offset).trim();
         if (StringUtil.isEmpty(id)) {
             c.writeErrMessage(ErrorCode.ER_NO_SUCH_THREAD, "NULL connection id");
-        } else {
+        }
+        else {
             // get value
             long value = 0;
             try {
                 value = Long.parseLong(id);
-            } catch (NumberFormatException e) {
+            }
+            catch (NumberFormatException e) {
                 c.writeErrMessage(ErrorCode.ER_NO_SUCH_THREAD, "Invalid connection id:" + id);
                 return;
             }
@@ -68,7 +70,8 @@ public class KillHandler {
             if (fc != null) {
                 fc.close("killed");
                 getOkPacket().write(c);
-            } else {
+            }
+            else {
                 c.writeErrMessage(ErrorCode.ER_NO_SUCH_THREAD, "Unknown connection id:" + id);
             }
         }

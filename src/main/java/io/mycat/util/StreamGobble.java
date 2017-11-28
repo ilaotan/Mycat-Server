@@ -11,8 +11,10 @@ import java.io.InputStreamReader;
 
 public class StreamGobble extends Thread {
     InputStream is;
-    String type;
-   private StringBuffer result=new StringBuffer();
+
+    String      type;
+
+    private StringBuffer result = new StringBuffer();
 
     public String getResult() {
         return result.toString();
@@ -25,6 +27,7 @@ public class StreamGobble extends Thread {
         this.type = type;
     }
 
+    @Override
     public void run() {
         try {
             InputStreamReader isr = new InputStreamReader(is);
@@ -34,7 +37,8 @@ public class StreamGobble extends Thread {
                 result.append(line).append("\n");
                 LOG.info(line);
             }
-        } catch (IOException ioe) {
+        }
+        catch (IOException ioe) {
             LOG.error(ioe.getMessage());
         }
     }

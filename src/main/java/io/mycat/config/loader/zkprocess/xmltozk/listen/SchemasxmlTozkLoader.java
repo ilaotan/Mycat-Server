@@ -3,6 +3,7 @@ package io.mycat.config.loader.zkprocess.xmltozk.listen;
 import java.util.List;
 
 import org.apache.curator.framework.CuratorFramework;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,61 +25,68 @@ import io.mycat.config.loader.zkprocess.zookeeper.process.ZkMultLoader;
 
 /**
  * 进行从xml加载到zk中加载
-* 源文件名：SchemasLoader.java
-* 文件版本：1.0.0
-* 创建作者：liujun
-* 创建日期：2016年9月15日
-* 修改作者：liujun
-* 修改日期：2016年9月15日
-* 文件描述：TODO
-* 版权所有：Copyright 2016 zjhz, Inc. All Rights Reserved.
-*/
+ * 源文件名：SchemasLoader.java
+ * 文件版本：1.0.0
+ * 创建作者：liujun
+ * 创建日期：2016年9月15日
+ * 修改作者：liujun
+ * 修改日期：2016年9月15日
+ * 文件描述：TODO
+ * 版权所有：Copyright 2016 zjhz, Inc. All Rights Reserved.
+ */
 public class SchemasxmlTozkLoader extends ZkMultLoader implements NotiflyService {
 
     /**
      * 日志
-    * @字段说明 LOGGER
-    */
+     *
+     * @字段说明 LOGGER
+     */
     private static final Logger LOGGER = LoggerFactory.getLogger(SchemasxmlTozkLoader.class);
 
     /**
-     * 当前文件中的zkpath信息 
-    * @字段说明 currZkPath
-    */
+     * 当前文件中的zkpath信息
+     *
+     * @字段说明 currZkPath
+     */
     private final String currZkPath;
 
     /**
      * schema文件的路径信息
-    * @字段说明 SCHEMA_PATH
-    */
+     *
+     * @字段说明 SCHEMA_PATH
+     */
     private static final String SCHEMA_PATH = ZookeeperPath.ZK_LOCAL_CFG_PATH.getKey() + "schema.xml";
 
     /**
-     * schema类与xml转换服务 
-    * @字段说明 parseSchemaService
-    */
+     * schema类与xml转换服务
+     *
+     * @字段说明 parseSchemaService
+     */
     private ParseXmlServiceInf<Schemas> parseSchemaXmlService;
 
     /**
      * 进行将schema
-    * @字段说明 parseJsonSchema
-    */
+     *
+     * @字段说明 parseJsonSchema
+     */
     private ParseJsonServiceInf<List<Schema>> parseJsonSchema = new SchemaJsonParse();
 
     /**
      * 进行将dataNode
+     *
      * @字段说明 parseJsonSchema
      */
     private ParseJsonServiceInf<List<DataNode>> parseJsonDataNode = new DataNodeJsonParse();
 
     /**
      * 进行将dataNode
+     *
      * @字段说明 parseJsonSchema
      */
     private ParseJsonServiceInf<List<DataHost>> parseJsonDataHost = new DataHostJsonParse();
 
     public SchemasxmlTozkLoader(ZookeeperProcessListen zookeeperListen, CuratorFramework curator,
-            XmlProcessBase xmlParseBase) {
+                                XmlProcessBase xmlParseBase) {
 
         this.setCurator(curator);
 
@@ -111,12 +119,13 @@ public class SchemasxmlTozkLoader extends ZkMultLoader implements NotiflyService
 
     /**
      * 将xml文件的信息写入到zk中
-    * 方法描述
-    * @param basePath 基本路径
-    * @param schema schema文件的信息
-    * @throws Exception 异常信息
-    * @创建日期 2016年9月17日
-    */
+     * 方法描述
+     *
+     * @param basePath 基本路径
+     * @param schema   schema文件的信息
+     * @throws Exception 异常信息
+     * @创建日期 2016年9月17日
+     */
     private void xmlTozkSchemasJson(String basePath, Schemas schema) throws Exception {
 
         // 设置schema目录的值

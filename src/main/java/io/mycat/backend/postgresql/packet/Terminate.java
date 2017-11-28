@@ -13,28 +13,28 @@ import io.mycat.backend.postgresql.utils.PIOUtils;
 
 /***
  * 终止命令
- * 
+ *
  * @author Coollf
  *
  */
 public class Terminate extends PostgreSQLPacket {
 
-	private int length = 4;
+    private int length = 4;
 
-	@Override
-	public int getLength() {
+    @Override
+    public int getLength() {
 
-		return length;
-	}
+        return length;
+    }
 
-	@Override
-	public char getMarker() {
-		return PacketMarker.F_Terminate.getValue();
-	}
+    @Override
+    public char getMarker() {
+        return PacketMarker.F_Terminate.getValue();
+    }
 
-	public void write(ByteBuffer buffer) {
-		PIOUtils.SendChar(getMarker(), buffer);
-		PIOUtils.SendInteger4(getLength(), buffer);
-	}
+    public void write(ByteBuffer buffer) {
+        PIOUtils.SendChar(getMarker(), buffer);
+        PIOUtils.SendInteger4(getLength(), buffer);
+    }
 
 }

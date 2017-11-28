@@ -50,31 +50,39 @@ public class ServerParserTest {
         Assert.assertEquals(ServerParse.COMMIT, ServerParse.parse("COMMIT"));
         Assert.assertEquals(ServerParse.COMMIT, ServerParse.parse("cOmmiT "));
     }
-    
+
 
     @Test
     public void testComment() {
-        Assert.assertEquals(ServerParse.MYSQL_CMD_COMMENT, ServerParse.parse("/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */"));
-        Assert.assertEquals(ServerParse.MYSQL_CMD_COMMENT, ServerParse.parse("/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */"));
-        Assert.assertEquals(ServerParse.MYSQL_CMD_COMMENT, ServerParse.parse("/*!40101 SET @saved_cs_client     = @@character_set_client */"));
-   
-        Assert.assertEquals(ServerParse.MYSQL_COMMENT, ServerParse.parse("/*SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */"));
-        Assert.assertEquals(ServerParse.MYSQL_COMMENT, ServerParse.parse("/*SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */"));
-        Assert.assertEquals(ServerParse.MYSQL_COMMENT, ServerParse.parse("/*SET @saved_cs_client     = @@character_set_client */"));
+        Assert.assertEquals(ServerParse.MYSQL_CMD_COMMENT, ServerParse.parse("/*!40101 SET " +
+                "@OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */"));
+        Assert.assertEquals(ServerParse.MYSQL_CMD_COMMENT, ServerParse.parse("/*!40111 SET " +
+                "@OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */"));
+        Assert.assertEquals(ServerParse.MYSQL_CMD_COMMENT, ServerParse.parse("/*!40101 SET @saved_cs_client     = " +
+                "@@character_set_client */"));
+
+        Assert.assertEquals(ServerParse.MYSQL_COMMENT, ServerParse.parse("/*SET " +
+                "@OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */"));
+        Assert.assertEquals(ServerParse.MYSQL_COMMENT, ServerParse.parse("/*SET @OLD_SQL_NOTES=@@SQL_NOTES, " +
+                "SQL_NOTES=0 */"));
+        Assert.assertEquals(ServerParse.MYSQL_COMMENT, ServerParse.parse("/*SET @saved_cs_client     = " +
+                "@@character_set_client */"));
     }
 
     @Test
     public void testMycatComment() {
         Assert.assertEquals(ServerParse.SELECT, 0xff & ServerParse.parse("/*#mycat:schema=DN1*/SELECT ..."));
         Assert.assertEquals(ServerParse.UPDATE, 0xff & ServerParse.parse("/*#mycat: schema = DN1 */ UPDATE ..."));
-        Assert.assertEquals(ServerParse.DELETE, 0xff & ServerParse.parse("/*#mycat: sql = SELECT id FROM user */ DELETE ..."));
+        Assert.assertEquals(ServerParse.DELETE, 0xff & ServerParse.parse("/*#mycat: sql = SELECT id FROM user */ " +
+                "DELETE ..."));
     }
 
     @Test
     public void testOldMycatComment() {
         Assert.assertEquals(ServerParse.SELECT, 0xff & ServerParse.parse("/*!mycat:schema=DN1*/SELECT ..."));
         Assert.assertEquals(ServerParse.UPDATE, 0xff & ServerParse.parse("/*!mycat: schema = DN1 */ UPDATE ..."));
-        Assert.assertEquals(ServerParse.DELETE, 0xff & ServerParse.parse("/*!mycat: sql = SELECT id FROM user */ DELETE ..."));
+        Assert.assertEquals(ServerParse.DELETE, 0xff & ServerParse.parse("/*!mycat: sql = SELECT id FROM user */ " +
+                "DELETE ..."));
     }
 
     @Test
@@ -158,7 +166,8 @@ public class ServerParserTest {
     public void testShowMycatStatus() {
         Assert.assertEquals(ServerParseShow.MYCAT_STATUS, ServerParseShow.parse("show mycat_status", 4));
         Assert.assertEquals(ServerParseShow.MYCAT_STATUS, ServerParseShow.parse("show mycat_status ", 4));
-        Assert.assertEquals(ServerParseShow.MYCAT_STATUS, ServerParseShow.parse(" SHOW MYCAT_STATUS", " SHOW".length()));
+        Assert.assertEquals(ServerParseShow.MYCAT_STATUS, ServerParseShow.parse(" SHOW MYCAT_STATUS", " SHOW".length
+                ()));
         Assert.assertEquals(ServerParseShow.OTHER, ServerParseShow.parse(" show mycat_statu", " SHOW".length()));
         Assert.assertEquals(ServerParseShow.OTHER, ServerParseShow.parse(" show mycat_status2", " SHOW".length()));
         Assert.assertEquals(ServerParseShow.OTHER, ServerParseShow.parse("Show mycat_status2 ", "SHOW".length()));
@@ -293,7 +302,8 @@ public class ServerParserTest {
     @Test
     public void testTxReadUncommitted() {
         Assert.assertEquals(ServerParseSet.TX_READ_UNCOMMITTED,
-                ServerParseSet.parse("  SET SESSION TRANSACTION ISOLATION LEVEL READ  UNCOMMITTED  ", "  SET".length()));
+                ServerParseSet.parse("  SET SESSION TRANSACTION ISOLATION LEVEL READ  UNCOMMITTED  ", "  SET".length
+                        ()));
         Assert.assertEquals(ServerParseSet.TX_READ_UNCOMMITTED,
                 ServerParseSet.parse(" set session transaction isolation level read  uncommitted  ", " SET".length()));
         Assert.assertEquals(ServerParseSet.TX_READ_UNCOMMITTED,
@@ -313,7 +323,8 @@ public class ServerParserTest {
     @Test
     public void testTxRepeatedRead() {
         Assert.assertEquals(ServerParseSet.TX_REPEATED_READ,
-                ServerParseSet.parse("  SET SESSION TRANSACTION ISOLATION LEVEL REPEATABLE   READ  ", "  SET".length()));
+                ServerParseSet.parse("  SET SESSION TRANSACTION ISOLATION LEVEL REPEATABLE   READ  ", "  SET".length
+                        ()));
         Assert.assertEquals(ServerParseSet.TX_REPEATED_READ,
                 ServerParseSet.parse(" set session transaction isolation level repeatable   read  ", " SET".length()));
         Assert.assertEquals(ServerParseSet.TX_REPEATED_READ,
@@ -467,32 +478,32 @@ public class ServerParserTest {
         stmt = "select last_insert_id(#\n\r) as 'a";
         Assert.assertEquals(ServerParseSelect.OTHER, ServerParseSelect.parse(stmt, 6));
     }
-    
+
     @Test
     public void testLockTable() {
-    	Assert.assertEquals(ServerParse.LOCK, ServerParse.parse("lock tables ttt write;"));
-    	Assert.assertEquals(ServerParse.LOCK, ServerParse.parse(" lock tables ttt read;"));
-    	Assert.assertEquals(ServerParse.LOCK, ServerParse.parse("lock tables"));
+        Assert.assertEquals(ServerParse.LOCK, ServerParse.parse("lock tables ttt write;"));
+        Assert.assertEquals(ServerParse.LOCK, ServerParse.parse(" lock tables ttt read;"));
+        Assert.assertEquals(ServerParse.LOCK, ServerParse.parse("lock tables"));
     }
 
     @Test
     public void testUnlockTable() {
-    	Assert.assertEquals(ServerParse.UNLOCK, ServerParse.parse("unlock tables"));
-    	Assert.assertEquals(ServerParse.UNLOCK, ServerParse.parse(" unlock	 tables"));
+        Assert.assertEquals(ServerParse.UNLOCK, ServerParse.parse("unlock tables"));
+        Assert.assertEquals(ServerParse.UNLOCK, ServerParse.parse(" unlock	 tables"));
     }
-    
+
     @Test
     public void testSetXAOn() {
-    	Assert.assertEquals(ServerParseSet.XA_FLAG_ON, ServerParseSet.parse("set xa=on", 3));
-    	Assert.assertEquals(ServerParseSet.XA_FLAG_ON, ServerParseSet.parse("set xa = on", 3));
-    	Assert.assertEquals(ServerParseSet.XA_FLAG_ON, ServerParseSet.parse("set xa \t\n\r = \t\n\r on", 3));
+        Assert.assertEquals(ServerParseSet.XA_FLAG_ON, ServerParseSet.parse("set xa=on", 3));
+        Assert.assertEquals(ServerParseSet.XA_FLAG_ON, ServerParseSet.parse("set xa = on", 3));
+        Assert.assertEquals(ServerParseSet.XA_FLAG_ON, ServerParseSet.parse("set xa \t\n\r = \t\n\r on", 3));
     }
-    
+
     @Test
     public void testSetXAOff() {
-    	Assert.assertEquals(ServerParseSet.XA_FLAG_OFF, ServerParseSet.parse("set xa=off", 3));
-    	Assert.assertEquals(ServerParseSet.XA_FLAG_OFF, ServerParseSet.parse("set xa = off", 3));
-    	Assert.assertEquals(ServerParseSet.XA_FLAG_OFF, ServerParseSet.parse("set xa \t\n\r = \t\n\r off", 3));
+        Assert.assertEquals(ServerParseSet.XA_FLAG_OFF, ServerParseSet.parse("set xa=off", 3));
+        Assert.assertEquals(ServerParseSet.XA_FLAG_OFF, ServerParseSet.parse("set xa = off", 3));
+        Assert.assertEquals(ServerParseSet.XA_FLAG_OFF, ServerParseSet.parse("set xa \t\n\r = \t\n\r off", 3));
     }
 
 }

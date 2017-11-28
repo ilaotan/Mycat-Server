@@ -1,5 +1,5 @@
 package io.mycat.net;
 
-public interface BIOConnection extends ClosableConnection{
+public interface BIOConnection extends ClosableConnection {
 
 }

@@ -58,9 +58,8 @@ public interface Session {
 
     /**
      * 取消一个正在执行中的会话
-     * 
-     * @param sponsor
-     *            如果发起者为null，则表示由自己发起。
+     *
+     * @param sponsor 如果发起者为null，则表示由自己发起。
      */
     void cancel(FrontendConnection sponsor);
 
@@ -68,6 +67,6 @@ public interface Session {
      * 终止会话，必须在关闭源端连接后执行该方法。
      */
     void terminate();
-    
+
 
 }

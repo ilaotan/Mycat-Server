@@ -78,7 +78,8 @@ public class ConfigUtil {
             propValue = properties.getProperty(propName);
             if (propValue == null) {
                 s.append("${").append(propName).append('}');
-            } else {
+            }
+            else {
                 s.append(propValue);
             }
         }
@@ -135,13 +136,15 @@ public class ConfigUtil {
         }
         if (nodeList.getLength() == 1) {
             return (Element) nodeList.item(0);
-        } else {
+        }
+        else {
             return null;
         }
     }
 
     /**
      * 获取节点下所有property
+     *
      * @param parent
      * @return key-value property键值对
      */
@@ -160,7 +163,8 @@ public class ConfigUtil {
                     if (nl.getLength() == 0) {
                         String value = e.getTextContent();
                         map.put(key, StringUtil.isEmpty(value) ? null : value.trim());
-                    } else {
+                    }
+                    else {
                         map.put(key, loadBean((Element) nl.item(0)));
                     }
                 }
@@ -186,7 +190,8 @@ public class ConfigUtil {
         Element element = loadElement(e, "className");
         if (element != null) {
             bean.setClassName(element.getTextContent());
-        } else {
+        }
+        else {
             bean.setClassName(e.getAttribute("class"));
         }
         bean.setParams(loadElements(e));

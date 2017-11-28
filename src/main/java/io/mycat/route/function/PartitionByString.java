@@ -31,13 +31,17 @@ import io.mycat.util.StringUtil;
 /**
  * @author <a href="mailto:daasadmin@hp.com">yangwenx</a>
  */
-public final class PartitionByString extends AbstractPartitionAlgorithm implements RuleAlgorithm  {
-  
+public final class PartitionByString extends AbstractPartitionAlgorithm implements RuleAlgorithm {
+
     private int hashSliceStart = 0;
+
     /** 0 means str.length(), -1 means str.length()-1 */
-    private int hashSliceEnd = 8;
-    protected int[] count;
-    protected int[] length;
+    private int hashSliceEnd   = 8;
+
+    protected int[]         count;
+
+    protected int[]         length;
+
     protected PartitionUtil partitionUtil;
 
     public void setPartitionCount(String partitionCount) {
@@ -49,7 +53,7 @@ public final class PartitionByString extends AbstractPartitionAlgorithm implemen
     }
 
 
-	public void setHashLength(int hashLength) {
+    public void setHashLength(int hashLength) {
         setHashSlice(String.valueOf(hashLength));
     }
 
@@ -74,7 +78,8 @@ public final class PartitionByString extends AbstractPartitionAlgorithm implemen
             int i = Integer.parseInt(slice.trim());
             if (i >= 0) {
                 return new Pair<Integer, Integer>(0, i);
-            } else {
+            }
+            else {
                 return new Pair<Integer, Integer>(i, 0);
             }
         }
@@ -83,45 +88,49 @@ public final class PartitionByString extends AbstractPartitionAlgorithm implemen
         int start, end;
         if (left.length() <= 0) {
             start = 0;
-        } else {
+        }
+        else {
             start = Integer.parseInt(left);
         }
         if (right.length() <= 0) {
             end = 0;
-        } else {
+        }
+        else {
             end = Integer.parseInt(right);
         }
         return new Pair<Integer, Integer>(start, end);
     }
 
-	@Override
-	public void init() {
-		partitionUtil = new PartitionUtil(count,length);
-		
-	}
-	private static int[] toIntArray(String string) {
-		String[] strs = io.mycat.util.SplitUtil.split(string, ',', true);
-		int[] ints = new int[strs.length];
-		for (int i = 0; i < strs.length; ++i) {
-			ints[i] = Integer.parseInt(strs[i]);
-		}
-		return ints;
-	}
-	@Override
-	public Integer calculate(String key) {
+    @Override
+    public void init() {
+        partitionUtil = new PartitionUtil(count, length);
+
+    }
+
+    private static int[] toIntArray(String string) {
+        String[] strs = io.mycat.util.SplitUtil.split(string, ',', true);
+        int[] ints = new int[strs.length];
+        for (int i = 0; i < strs.length; ++i) {
+            ints[i] = Integer.parseInt(strs[i]);
+        }
+        return ints;
+    }
+
+    @Override
+    public Integer calculate(String key) {
         int start = hashSliceStart >= 0 ? hashSliceStart : key.length() + hashSliceStart;
         int end = hashSliceEnd > 0 ? hashSliceEnd : key.length() + hashSliceEnd;
         long hash = StringUtil.hash(key, start, end);
         return partitionUtil.partition(hash);
-	}
+    }
 
-	@Override
-	public int getPartitionNum() {
-		int nPartition = 0;
-		for(int i = 0; i < count.length; i++) {
-			nPartition += count[i];
-		}
-		return nPartition;
-	}
-	
+    @Override
+    public int getPartitionNum() {
+        int nPartition = 0;
+        for (int i = 0; i < count.length; i++) {
+            nPartition += count[i];
+        }
+        return nPartition;
+    }
+
 }

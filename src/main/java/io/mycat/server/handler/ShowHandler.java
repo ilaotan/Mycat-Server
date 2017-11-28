@@ -34,31 +34,31 @@ import io.mycat.util.StringUtil;
  */
 public final class ShowHandler {
 
-	public static void handle(String stmt, ServerConnection c, int offset) {
+    public static void handle(String stmt, ServerConnection c, int offset) {
 
-		// 排除 “ ` ” 符号
-		stmt = StringUtil.replaceChars(stmt, "`", null);
+        // 排除 “ ` ” 符号
+        stmt = StringUtil.replaceChars(stmt, "`", null);
 
-		int type = ServerParseShow.parse(stmt, offset);
-		switch (type) {
-		case ServerParseShow.DATABASES:
-			ShowDatabases.response(c);
-			break;
-		case ServerParseShow.TABLES:
-			ShowTables.response(c, stmt,type);
-			break;
-            case ServerParseShow.FULLTABLES:
-                ShowFullTables.response(c, stmt,type);
+        int type = ServerParseShow.parse(stmt, offset);
+        switch (type) {
+            case ServerParseShow.DATABASES:
+                ShowDatabases.response(c);
                 break;
-		case ServerParseShow.MYCAT_STATUS:
-			ShowMyCatStatus.response(c);
-			break;
-		case ServerParseShow.MYCAT_CLUSTER:
-			ShowMyCATCluster.response(c);
-			break;
-		default:
-			c.execute(stmt, ServerParse.SHOW);
-		}
-	}
+            case ServerParseShow.TABLES:
+                ShowTables.response(c, stmt, type);
+                break;
+            case ServerParseShow.FULLTABLES:
+                ShowFullTables.response(c, stmt, type);
+                break;
+            case ServerParseShow.MYCAT_STATUS:
+                ShowMyCatStatus.response(c);
+                break;
+            case ServerParseShow.MYCAT_CLUSTER:
+                ShowMyCATCluster.response(c);
+                break;
+            default:
+                c.execute(stmt, ServerParse.SHOW);
+        }
+    }
 
 }

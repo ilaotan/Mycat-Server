@@ -45,10 +45,14 @@ import io.mycat.util.TimeUtil;
  */
 public final class ShowConnectionSQL {
 
-    private static final int FIELD_COUNT = 7;
-    private static final ResultSetHeaderPacket header = PacketUtil.getHeader(FIELD_COUNT);
-    private static final FieldPacket[] fields = new FieldPacket[FIELD_COUNT];
-    private static final EOFPacket eof = new EOFPacket();
+    private static final int                   FIELD_COUNT = 7;
+
+    private static final ResultSetHeaderPacket header      = PacketUtil.getHeader(FIELD_COUNT);
+
+    private static final FieldPacket[]         fields      = new FieldPacket[FIELD_COUNT];
+
+    private static final EOFPacket             eof         = new EOFPacket();
+
     static {
         int i = 0;
         byte packetId = 0;
@@ -59,7 +63,7 @@ public final class ShowConnectionSQL {
 
         fields[i] = PacketUtil.getField("HOST", Fields.FIELD_TYPE_VAR_STRING);
         fields[i++].packetId = ++packetId;
-        
+
         fields[i] = PacketUtil.getField("USER", Fields.FIELD_TYPE_VAR_STRING);
         fields[i++].packetId = ++packetId;
 
@@ -82,15 +86,15 @@ public final class ShowConnectionSQL {
         ByteBuffer buffer = c.allocate();
 
         // write header
-        buffer = header.write(buffer, c,true);
+        buffer = header.write(buffer, c, true);
 
         // write fields
         for (FieldPacket field : fields) {
-            buffer = field.write(buffer, c,true);
+            buffer = field.write(buffer, c, true);
         }
 
         // write eof
-        buffer = eof.write(buffer, c,true);
+        buffer = eof.write(buffer, c, true);
 
         // write rows
         byte packetId = eof.packetId;
@@ -98,14 +102,14 @@ public final class ShowConnectionSQL {
         for (NIOProcessor p : MycatServer.getInstance().getProcessors()) {
             for (FrontendConnection fc : p.getFrontends().values()) {
                 if (!fc.isClosed()) {
-                	if(fc.getExecuteSql()==null){
-                		continue;
-                	}
-                	if(fc instanceof ServerConnection){
-                		RowDataPacket row = getRow(fc, charset);
+                    if (fc.getExecuteSql() == null) {
+                        continue;
+                    }
+                    if (fc instanceof ServerConnection) {
+                        RowDataPacket row = getRow(fc, charset);
                         row.packetId = ++packetId;
-                        buffer = row.write(buffer, c,true);
-                	}
+                        buffer = row.write(buffer, c, true);
+                    }
                 }
             }
         }
@@ -113,14 +117,14 @@ public final class ShowConnectionSQL {
         // write last eof
         EOFPacket lastEof = new EOFPacket();
         lastEof.packetId = ++packetId;
-        buffer = lastEof.write(buffer, c,true);
+        buffer = lastEof.write(buffer, c, true);
 
         // write buffer
         c.write(buffer);
     }
 
     private static RowDataPacket getRow(FrontendConnection c, String charset) {
-    	String executeSql = c.getExecuteSql();
+        String executeSql = c.getExecuteSql();
         RowDataPacket row = new RowDataPacket(FIELD_COUNT);
         row.add(LongUtil.toBytes(c.getId()));
         row.add(StringUtil.encode(c.getHost(), charset));
@@ -129,8 +133,9 @@ public final class ShowConnectionSQL {
         row.add(LongUtil.toBytes(c.getLastReadTime()));
         long rt = c.getLastReadTime();
         long wt = c.getLastWriteTime();
-        row.add(LongUtil.toBytes(executeSql==null?0:((wt > rt) ? (wt - rt) : (TimeUtil.currentTimeMillis() - rt))));
-        row.add(StringUtil.encode(executeSql==null?"":executeSql, charset) );
+        row.add(LongUtil.toBytes(executeSql == null ? 0 : ((wt > rt) ? (wt - rt) : (TimeUtil.currentTimeMillis() -
+                rt))));
+        row.add(StringUtil.encode(executeSql == null ? "" : executeSql, charset));
         return row;
     }
 

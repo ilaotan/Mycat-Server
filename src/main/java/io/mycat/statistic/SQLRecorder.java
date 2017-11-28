@@ -36,6 +36,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public final class SQLRecorder {
 
     private final int count;
+
     SortedSet<SQLRecord> records;
 
     public SQLRecorder(int count) {
@@ -57,13 +58,13 @@ public final class SQLRecorder {
         records.clear();
     }
 
-    public void recycle(){
-        if(records.size() > count){
+    public void recycle() {
+        if (records.size() > count) {
             SortedSet<SQLRecord> records2 = new ConcurrentSkipListSet<>();
             List<SQLRecord> keyList = new ArrayList<SQLRecord>(records);
             int i = 0;
-            for(SQLRecord key : keyList){
-                if(i == count) {
+            for (SQLRecord key : keyList) {
+                if (i == count) {
                     break;
                 }
                 records2.add(key);

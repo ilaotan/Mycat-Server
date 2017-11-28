@@ -13,11 +13,12 @@ import java.util.concurrent.CountDownLatch;
  */
 public class PartitionByHashModTest {
     String allChar = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
     @Test
     public void test() throws InterruptedException {
         CountDownLatch countDownLatch = new CountDownLatch(1);
-        Task task1 = new Task(countDownLatch,63);
-        Task task2 = new Task(countDownLatch,64);
+        Task task1 = new Task(countDownLatch, 63);
+        Task task2 = new Task(countDownLatch, 64);
 
         task1.start();
         task2.start();
@@ -26,11 +27,12 @@ public class PartitionByHashModTest {
         task2.join();
     }
 
-    private class Task extends Thread{
+    private class Task extends Thread {
         CountDownLatch countDownLatch;
-        int count;
 
-        public Task(CountDownLatch countDownLatch,int count) {
+        int            count;
+
+        public Task(CountDownLatch countDownLatch, int count) {
             this.countDownLatch = countDownLatch;
             this.count = count;
         }
@@ -39,7 +41,8 @@ public class PartitionByHashModTest {
         public void run() {
             try {
                 countDownLatch.await();
-            } catch (InterruptedException e) {
+            }
+            catch (InterruptedException e) {
                 e.printStackTrace();
             }
             PartitionByHashMod partitionByHashMod = new PartitionByHashMod();
@@ -53,10 +56,10 @@ public class PartitionByHashModTest {
                 }
                 int result = partitionByHashMod.calculate(sb.toString());
                 sb = new StringBuffer();
-                Assert.assertTrue(0<=result && result<count);
+                Assert.assertTrue(0 <= result && result < count);
             }
             long end = System.currentTimeMillis();
-            System.out.println("Shard Count is "+count+", time elapsed: "+ (end-start));
+            System.out.println("Shard Count is " + count + ", time elapsed: " + (end - start));
         }
     }
 }

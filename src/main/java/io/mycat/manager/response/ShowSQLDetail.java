@@ -39,17 +39,22 @@ import io.mycat.util.StringUtil;
 
 /**
  * 查询指定SQL在各个pool中的执行情况
- * 
+ *
  * @author mycat
  * @author mycat
  */
 public final class ShowSQLDetail {
 
-    private static final NumberFormat nf = DecimalFormat.getInstance();
-    private static final int FIELD_COUNT = 5;
-    private static final ResultSetHeaderPacket header = PacketUtil.getHeader(FIELD_COUNT);
-    private static final FieldPacket[] fields = new FieldPacket[FIELD_COUNT];
-    private static final EOFPacket eof = new EOFPacket();
+    private static final NumberFormat          nf          = DecimalFormat.getInstance();
+
+    private static final int                   FIELD_COUNT = 5;
+
+    private static final ResultSetHeaderPacket header      = PacketUtil.getHeader(FIELD_COUNT);
+
+    private static final FieldPacket[]         fields      = new FieldPacket[FIELD_COUNT];
+
+    private static final EOFPacket             eof         = new EOFPacket();
+
     static {
         nf.setMaximumFractionDigits(3);
 
@@ -79,28 +84,28 @@ public final class ShowSQLDetail {
         ByteBuffer buffer = c.allocate();
 
         // write header
-        buffer = header.write(buffer, c,true);
+        buffer = header.write(buffer, c, true);
 
         // write fields
         for (FieldPacket field : fields) {
-            buffer = field.write(buffer, c,true);
+            buffer = field.write(buffer, c, true);
         }
 
         // write eof
-        buffer = eof.write(buffer, c,true);
+        buffer = eof.write(buffer, c, true);
 
         // write rows
         byte packetId = eof.packetId;
         for (int i = 0; i < 3; i++) {
             RowDataPacket row = getRow(sql, c.getCharset());
             row.packetId = ++packetId;
-            buffer = row.write(buffer, c,true);
+            buffer = row.write(buffer, c, true);
         }
 
         // write last eof
         EOFPacket lastEof = new EOFPacket();
         lastEof.packetId = ++packetId;
-        buffer = lastEof.write(buffer, c,true);
+        buffer = lastEof.write(buffer, c, true);
 
         // write buffer
         c.write(buffer);

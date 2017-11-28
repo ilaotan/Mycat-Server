@@ -15,29 +15,29 @@ import java.io.IOException;
  *
  */
 public class PostgreSQLDataSource extends PhysicalDatasource {
-	private final PostgreSQLBackendConnectionFactory factory;
+    private final PostgreSQLBackendConnectionFactory factory;
 
-	public PostgreSQLDataSource(DBHostConfig config, DataHostConfig hostConfig,
-			boolean isReadNode) {
-		super(config, hostConfig, isReadNode);
-		this.factory = new PostgreSQLBackendConnectionFactory();
-	}
+    public PostgreSQLDataSource(DBHostConfig config, DataHostConfig hostConfig,
+                                boolean isReadNode) {
+        super(config, hostConfig, isReadNode);
+        this.factory = new PostgreSQLBackendConnectionFactory();
+    }
 
-	@Override
-	public DBHeartbeat createHeartBeat() {
-		return new PostgreSQLHeartbeat(this);
-	}
+    @Override
+    public DBHeartbeat createHeartBeat() {
+        return new PostgreSQLHeartbeat(this);
+    }
 
-	@Override
-	public void createNewConnection(ResponseHandler handler, String schema)
-			throws IOException {
-		factory.make(this, handler, schema);
-	}
+    @Override
+    public void createNewConnection(ResponseHandler handler, String schema)
+            throws IOException {
+        factory.make(this, handler, schema);
+    }
 
-	@Override
-	public boolean testConnection(String schema) throws IOException {
-		// TODO Auto-generated method stub
-		return true;
-	}
+    @Override
+    public boolean testConnection(String schema) throws IOException {
+        // TODO Auto-generated method stub
+        return true;
+    }
 
 }

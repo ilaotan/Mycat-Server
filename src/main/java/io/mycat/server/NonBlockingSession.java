@@ -66,22 +66,30 @@ public class NonBlockingSession implements Session {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(NonBlockingSession.class);
 
-    private final ServerConnection source;
-    //huangyiming add 避免出现jdk版本冲突
-    private final ConcurrentMap<RouteResultsetNode, BackendConnection> target;
-    // life-cycle: each sql execution
-    private volatile SingleNodeHandler singleNodeHandler;
-    private volatile MultiNodeQueryHandler multiNodeHandler;
-    private volatile RollbackNodeHandler rollbackHandler;
-    private final MultiNodeCoordinator multiNodeCoordinator;
-    private final CommitNodeHandler commitHandler;
-    private volatile String xaTXID;
+    private final    ServerConnection                                     source;
 
-   //huangyiming 
-  	private  volatile boolean canClose = true;
-  	
-  	private volatile MiddlerResultHandler  middlerResultHandler;
-    private boolean prepared;
+    //huangyiming add 避免出现jdk版本冲突
+    private final    ConcurrentMap<RouteResultsetNode, BackendConnection> target;
+
+    // life-cycle: each sql execution
+    private volatile SingleNodeHandler                                    singleNodeHandler;
+
+    private volatile MultiNodeQueryHandler                                multiNodeHandler;
+
+    private volatile RollbackNodeHandler                                  rollbackHandler;
+
+    private final    MultiNodeCoordinator                                 multiNodeCoordinator;
+
+    private final    CommitNodeHandler                                    commitHandler;
+
+    private volatile String                                               xaTXID;
+
+    //huangyiming
+    private volatile boolean canClose = true;
+
+    private volatile MiddlerResultHandler middlerResultHandler;
+
+    private          boolean              prepared;
 
     public NonBlockingSession(ServerConnection source) {
         this.source = source;
@@ -115,7 +123,7 @@ public class NonBlockingSession implements Session {
     public BackendConnection removeTarget(RouteResultsetNode key) {
         return target.remove(key);
     }
-    
+
     @Override
     public void execute(RouteResultset rrs, int type) {
 
@@ -128,7 +136,7 @@ public class NonBlockingSession implements Session {
 
         // 检查路由结果是否为空
         RouteResultsetNode[] nodes = rrs.getNodes();
-        if (nodes == null || nodes.length == 0 || nodes[0].getName() == null || nodes[0].getName().equals("")) {
+        if (nodes == null || nodes.length == 0 || nodes[0].getName() == null || "".equals(nodes[0].getName())) {
             source.writeErrMessage(ErrorCode.ER_NO_DB_ERROR,
                     "No dataNode found ,please check tables defined in schema:" + source.getSchema());
             return;
@@ -142,29 +150,35 @@ public class NonBlockingSession implements Session {
             }
 
             try {
-                if(initCount > 1){
-                    checkDistriTransaxAndExecute(rrs,1,autocommit);
-                }else{
+                if (initCount > 1) {
+                    checkDistriTransaxAndExecute(rrs, 1, autocommit);
+                }
+                else {
                     singleNodeHandler.execute();
                 }
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 LOGGER.warn(new StringBuilder().append(source).append(rrs).toString(), e);
                 source.writeErrMessage(ErrorCode.ERR_HANDLE_DATA, e.toString());
             }
 
-        } else {
+        }
+        else {
 
             multiNodeHandler = new MultiNodeQueryHandler(type, rrs, autocommit, this);
             if (this.isPrepared()) {
                 multiNodeHandler.setPrepared(true);
             }
             try {
-                if(((type == ServerParse.DELETE || type == ServerParse.INSERT || type == ServerParse.UPDATE) && !rrs.isGlobalTable() && nodes.length > 1)||initCount > 1) {
-                    checkDistriTransaxAndExecute(rrs,2,autocommit);
-                } else {
+                if (((type == ServerParse.DELETE || type == ServerParse.INSERT || type == ServerParse.UPDATE) && !rrs
+                        .isGlobalTable() && nodes.length > 1) || initCount > 1) {
+                    checkDistriTransaxAndExecute(rrs, 2, autocommit);
+                }
+                else {
                     multiNodeHandler.execute();
                 }
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 LOGGER.warn(new StringBuilder().append(source).append(rrs).toString(), e);
                 source.writeErrMessage(ErrorCode.ERR_HANDLE_DATA, e.toString());
             }
@@ -175,38 +189,39 @@ public class NonBlockingSession implements Session {
         }
     }
 
-    private void checkDistriTransaxAndExecute(RouteResultset rrs, int type,boolean autocommit) throws Exception {
-        switch(MycatServer.getInstance().getConfig().getSystem().getHandleDistributedTransactions()) {
+    private void checkDistriTransaxAndExecute(RouteResultset rrs, int type, boolean autocommit) throws Exception {
+        switch (MycatServer.getInstance().getConfig().getSystem().getHandleDistributedTransactions()) {
             case 1:
                 source.writeErrMessage(ErrorCode.ER_NOT_ALLOWED_COMMAND, "Distributed transaction is disabled!");
-                if(!autocommit){
+                if (!autocommit) {
                     source.setTxInterrupt("Distributed transaction is disabled!");
                 }
                 break;
             case 2:
                 LOGGER.warn("Distributed transaction detected! RRS:" + rrs);
-                if(type == 1){
+                if (type == 1) {
                     singleNodeHandler.execute();
                 }
-                else{
+                else {
                     multiNodeHandler.execute();
                 }
                 break;
             default:
-                if(type == 1){
+                if (type == 1) {
                     singleNodeHandler.execute();
                 }
-                else{
+                else {
                     multiNodeHandler.execute();
                 }
         }
     }
 
     private void checkDistriTransaxAndExecute() {
-        if(!isALLGlobal()){
-            switch(MycatServer.getInstance().getConfig().getSystem().getHandleDistributedTransactions()) {
+        if (!isALLGlobal()) {
+            switch (MycatServer.getInstance().getConfig().getSystem().getHandleDistributedTransactions()) {
                 case 1:
-                    source.writeErrMessage(ErrorCode.ER_NOT_ALLOWED_COMMAND, "Distributed transaction is disabled!Please rollback!");
+                    source.writeErrMessage(ErrorCode.ER_NOT_ALLOWED_COMMAND, "Distributed transaction is " +
+                            "disabled!Please rollback!");
                     source.setTxInterrupt("Distributed transaction is disabled!");
                     break;
                 case 2:
@@ -217,11 +232,13 @@ public class NonBlockingSession implements Session {
                     multiNodeCoordinator.executeBatchNodeCmd(SQLCmdConstant.COMMIT_CMD);
 
             }
-        } else {
+        }
+        else {
             multiNodeCoordinator.executeBatchNodeCmd(SQLCmdConstant.COMMIT_CMD);
         }
     }
 
+    @Override
     public void commit() {
         final int initCount = target.size();
         if (initCount <= 0) {
@@ -229,19 +246,21 @@ public class NonBlockingSession implements Session {
             buffer = source.writeToBuffer(OkPacket.OK, buffer);
             source.write(buffer);
             /* 1. 如果开启了 xa 事务 */
-            if(getXaTXID()!=null){
-				setXATXEnabled(false);
-			}
+            if (getXaTXID() != null) {
+                setXATXEnabled(false);
+            }
             /* 2. preAcStates 为true,事务结束后,需要设置为true。preAcStates 为ac上一个状态    */
-            if(source.isPreAcStates()&&!source.isAutocommit()){
-            	source.setAutocommit(true);
+            if (source.isPreAcStates() && !source.isAutocommit()) {
+                source.setAutocommit(true);
             }
             return;
-        } else if (initCount == 1) {
-        	//huangyiming add 避免出现jdk版本冲突
+        }
+        else if (initCount == 1) {
+            //huangyiming add 避免出现jdk版本冲突
             BackendConnection con = target.values().iterator().next();
             commitHandler.commit(con);
-        } else {
+        }
+        else {
 
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("multi node commit to send ,total " + initCount);
@@ -251,18 +270,19 @@ public class NonBlockingSession implements Session {
 
     }
 
-    private boolean isALLGlobal(){
-        for(RouteResultsetNode routeResultsetNode:target.keySet()){
-            if(routeResultsetNode.getSource()==null){
+    private boolean isALLGlobal() {
+        for (RouteResultsetNode routeResultsetNode : target.keySet()) {
+            if (routeResultsetNode.getSource() == null) {
                 return false;
             }
-            else if(!routeResultsetNode.getSource().isGlobalTable()){
+            else if (!routeResultsetNode.getSource().isGlobalTable()) {
                 return false;
             }
         }
         return true;
     }
 
+    @Override
     public void rollback() {
         final int initCount = target.size();
         if (initCount <= 0) {
@@ -273,12 +293,12 @@ public class NonBlockingSession implements Session {
             buffer = source.writeToBuffer(OkPacket.OK, buffer);
             source.write(buffer);
             /* 1. 如果开启了 xa 事务 */
-            if(getXaTXID()!=null){
-				setXATXEnabled(false);
-			}
+            if (getXaTXID() != null) {
+                setXATXEnabled(false);
+            }
             /* 2. preAcStates 为true,事务结束后,需要设置为true。preAcStates 为ac上一个状态    */
-            if(source.isPreAcStates()&&!source.isAutocommit()){
-            	source.setAutocommit(true);
+            if (source.isPreAcStates() && !source.isAutocommit()) {
+                source.setAutocommit(true);
             }
             return;
         }
@@ -287,43 +307,46 @@ public class NonBlockingSession implements Session {
         rollbackHandler.rollback();
     }
 
-	/**
-	 * 执行lock tables语句方法
-	 * @author songdabin
-	 * @date 2016-7-9
-	 * @param rrs
-	 */
-	public void lockTable(RouteResultset rrs) {
-		// 检查路由结果是否为空
-		RouteResultsetNode[] nodes = rrs.getNodes();
-		if (nodes == null || nodes.length == 0 || nodes[0].getName() == null
-				|| nodes[0].getName().equals("")) {
-			source.writeErrMessage(ErrorCode.ER_NO_DB_ERROR,
-					"No dataNode found ,please check tables defined in schema:"
-							+ source.getSchema());
-			return;
-		}
-		LockTablesHandler handler = new LockTablesHandler(this, rrs);
-		source.setLocked(true);
-		try {
-			handler.execute();
-		} catch (Exception e) {
-			LOGGER.warn(new StringBuilder().append(source).append(rrs).toString(), e);
-			source.writeErrMessage(ErrorCode.ERR_HANDLE_DATA, e.toString());
-		}
-	}
+    /**
+     * 执行lock tables语句方法
+     *
+     * @param rrs
+     * @author songdabin
+     * @date 2016-7-9
+     */
+    public void lockTable(RouteResultset rrs) {
+        // 检查路由结果是否为空
+        RouteResultsetNode[] nodes = rrs.getNodes();
+        if (nodes == null || nodes.length == 0 || nodes[0].getName() == null
+                || "".equals(nodes[0].getName())) {
+            source.writeErrMessage(ErrorCode.ER_NO_DB_ERROR,
+                    "No dataNode found ,please check tables defined in schema:"
+                            + source.getSchema());
+            return;
+        }
+        LockTablesHandler handler = new LockTablesHandler(this, rrs);
+        source.setLocked(true);
+        try {
+            handler.execute();
+        }
+        catch (Exception e) {
+            LOGGER.warn(new StringBuilder().append(source).append(rrs).toString(), e);
+            source.writeErrMessage(ErrorCode.ERR_HANDLE_DATA, e.toString());
+        }
+    }
 
-	/**
-	 * 执行unlock tables语句方法
-	 * @author songdabin
-	 * @date 2016-7-9
-	 * @param rrs
-	 */
-	public void unLockTable(String sql) {
-		UnLockTablesHandler handler = new UnLockTablesHandler(this, this.source.isAutocommit(), sql);
-		handler.execute();
-	}
-	
+    /**
+     * 执行unlock tables语句方法
+     *
+     * @param rrs
+     * @author songdabin
+     * @date 2016-7-9
+     */
+    public void unLockTable(String sql) {
+        UnLockTablesHandler handler = new UnLockTablesHandler(this, this.source.isAutocommit(), sql);
+        handler.execute();
+    }
+
     @Override
     public void cancel(FrontendConnection sponsor) {
 
@@ -332,6 +355,7 @@ public class NonBlockingSession implements Session {
     /**
      * {@link ServerConnection#isClosed()} must be true before invoking this
      */
+    @Override
     public void terminate() {
         for (BackendConnection node : target.values()) {
             node.close("client closed ");
@@ -377,22 +401,23 @@ public class NonBlockingSession implements Session {
             if (!c.isClosedOrQuit()) {
                 if (c.isAutocommit()) {
                     c.release();
-                } else
+                }
+                else
                 //if (needRollback)
                 {
                     c.setResponseHandler(new RollbackReleaseHandler());
                     c.rollback();
                 }
                 //else {
-				//	c.release();
-				//}
+                //	c.release();
+                //}
             }
         }
     }
 
     public void releaseConnections(final boolean needRollback) {
         boolean debug = LOGGER.isDebugEnabled();
-        
+
         for (RouteResultsetNode rrn : target.keySet()) {
             releaseConnection(rrn, debug, needRollback);
         }
@@ -424,7 +449,7 @@ public class NonBlockingSession implements Session {
         // " to key "+key.getName()+" on sesion "+this);
         return target.put(key, conn);
     }
-    
+
     public boolean tryExistsCon(final BackendConnection conn, RouteResultsetNode node) {
         if (conn == null) {
             return false;
@@ -449,7 +474,8 @@ public class NonBlockingSession implements Session {
             }
             conn.setAttachment(node);
             return true;
-        } else {
+        }
+        else {
             // slavedb connection and can't use anymore ,release it
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("release slave connection,can't be used in trasaction  "
@@ -512,7 +538,8 @@ public class NonBlockingSession implements Session {
                 try {
                     dn.getConnectionFromSameSource(null, true, en.getValue(),
                             kill, en.getKey());
-                } catch (Exception e) {
+                }
+                catch (Exception e) {
                     LOGGER.error(
                             "get killer connection failed for " + en.getKey(),
                             e);
@@ -554,13 +581,14 @@ public class NonBlockingSession implements Session {
     public void setXATXEnabled(boolean xaTXEnabled) {
 
         if (xaTXEnabled) {
-        	LOGGER.info("XA Transaction enabled ,con " + this.getSource());
-        	if(this.xaTXID == null){
-        		xaTXID = genXATXID();
-        	}
-        }else{
-        	LOGGER.info("XA Transaction disabled ,con " + this.getSource());
-        	this.xaTXID = null;
+            LOGGER.info("XA Transaction enabled ,con " + this.getSource());
+            if (this.xaTXID == null) {
+                xaTXID = genXATXID();
+            }
+        }
+        else {
+            LOGGER.info("XA Transaction disabled ,con " + this.getSource());
+            this.xaTXID = null;
         }
     }
 
@@ -577,21 +605,21 @@ public class NonBlockingSession implements Session {
     }
 
 
-	public boolean isCanClose() {
-		return canClose;
-	}
+    public boolean isCanClose() {
+        return canClose;
+    }
 
-	public void setCanClose(boolean canClose) {
-		this.canClose = canClose;
-	}
+    public void setCanClose(boolean canClose) {
+        this.canClose = canClose;
+    }
 
-	public MiddlerResultHandler getMiddlerResultHandler() {
-		return middlerResultHandler;
-	}
+    public MiddlerResultHandler getMiddlerResultHandler() {
+        return middlerResultHandler;
+    }
 
-	public void setMiddlerResultHandler(MiddlerResultHandler middlerResultHandler) {
-		this.middlerResultHandler = middlerResultHandler;
-	}
+    public void setMiddlerResultHandler(MiddlerResultHandler middlerResultHandler) {
+        this.middlerResultHandler = middlerResultHandler;
+    }
 
-    
+
 }

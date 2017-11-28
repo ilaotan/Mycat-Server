@@ -3,6 +3,7 @@ package io.mycat.backend.jdbc.mongodb;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import org.bson.types.ObjectId;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -142,14 +143,16 @@ public class MongoEmbeddedObjectProcessor {
                 return null;
             }
             parameterizedType = pt.getActualTypeArguments()[0].toString();
-        } else {
+        }
+        else {
             return null;
         }
 
         Class<?> clazz;
         try {
             clazz = Class.forName(parameterizedType);
-        } catch (ClassNotFoundException e) {
+        }
+        catch (ClassNotFoundException e) {
             LOG.warn("获取field:{}的范型异常。", field.getName(), e);
             return null;
         }
@@ -169,7 +172,8 @@ public class MongoEmbeddedObjectProcessor {
         Collection<Object> collection = null;
         if (fieldType.isAssignableFrom(List.class)) {
             collection = new ArrayList<>(size);
-        } else if (fieldType.isAssignableFrom(Set.class)) {
+        }
+        else if (fieldType.isAssignableFrom(Set.class)) {
             collection = new HashSet<>(size);
         }
         return collection;
@@ -198,7 +202,8 @@ public class MongoEmbeddedObjectProcessor {
                 o = beanMapper((BasicDBObject) o, field.getType());
 
                 // 钳套对象列表
-            } else if (o instanceof BasicDBList) {
+            }
+            else if (o instanceof BasicDBList) {
                 Field field = fieldMap.get(s);
                 // 获取对应的范型
                 Class<?> parameterizedClazz = getParameterizedClass(field);
@@ -210,9 +215,11 @@ public class MongoEmbeddedObjectProcessor {
                     // 基本类型
                     if (parameterizedClazz.isPrimitive()) {
                         collection.add(basicDbObj);
-                    } else if (parameterizedClazz.getName().startsWith("java.lang")) {
+                    }
+                    else if (parameterizedClazz.getName().startsWith("java.lang")) {
                         collection.add(basicDbObj);
-                    } else {
+                    }
+                    else {
                         // 对象类型
                         collection.add(beanMapper((BasicDBObject) basicDbObj, parameterizedClazz));
                     }
@@ -227,7 +234,8 @@ public class MongoEmbeddedObjectProcessor {
         Object instance;
         try {
             instance = clazzToMapper.newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
+        }
+        catch (InstantiationException | IllegalAccessException e) {
             LOG.warn("实例化:[{}]对象异常.", clazzToMapper, e);
             return null;
         }
@@ -241,7 +249,8 @@ public class MongoEmbeddedObjectProcessor {
 
                 try {
                     field.set(instance, value);
-                } catch (IllegalAccessException e) {
+                }
+                catch (IllegalAccessException e) {
                     // 应该不会报
                     LOG.error("为字段:[{}]设置值异常",
                             fieldName, e);
@@ -267,7 +276,8 @@ public class MongoEmbeddedObjectProcessor {
             clazzToMapper = Class.forName(arrayClass.getName()
                     .replace("[L", "")
                     .replace(";", ""));
-        } catch (ClassNotFoundException e) {
+        }
+        catch (ClassNotFoundException e) {
             LOG.warn("实例化:[{}]对象异常.", arrayClass, e);
             return null;
         }
@@ -282,9 +292,11 @@ public class MongoEmbeddedObjectProcessor {
             // 基本类型
             if (clazzToMapper.isPrimitive()) {
                 value = basicDbObj;
-            } else if (clazzToMapper.getName().startsWith("java.lang")) {
+            }
+            else if (clazzToMapper.getName().startsWith("java.lang")) {
                 value = basicDbObj;
-            } else {
+            }
+            else {
                 // 对象类型
                 value = beanMapper((BasicDBObject) basicDbObj, clazzToMapper);
             }

@@ -19,11 +19,13 @@ import io.mycat.config.loader.zkprocess.xmltozk.listen.SchemasxmlTozkLoader;
 import io.mycat.config.loader.zkprocess.xmltozk.listen.SequenceTozkLoader;
 import io.mycat.config.loader.zkprocess.xmltozk.listen.ServerxmlTozkLoader;
 import io.mycat.util.ZKUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class XmltoZkMain {
     private static final Logger LOGGER = LoggerFactory.getLogger(XmltoZkMain.class);
+
     public static void main(String[] args) throws JAXBException, InterruptedException {
         // 加载zk总服务
         ZookeeperProcessListen zkListen = new ZookeeperProcessListen();
@@ -67,16 +69,16 @@ public class XmltoZkMain {
         zkListen.notifly(ZkNofiflyCfg.ZK_NOTIFLY_LOAD_ALL.getKey());
 
 
-
-        String clusterNodes=    ZkConfig.getInstance().getValue(ZkParamCfg.ZK_CFG_CLUSTER_NODES);
-        String clusterSize=    ZkConfig.getInstance().getValue(ZkParamCfg.ZK_CFG_CLUSTER_SIZE);
-        ClusterInfo info=new ClusterInfo();
+        String clusterNodes = ZkConfig.getInstance().getValue(ZkParamCfg.ZK_CFG_CLUSTER_NODES);
+        String clusterSize = ZkConfig.getInstance().getValue(ZkParamCfg.ZK_CFG_CLUSTER_SIZE);
+        ClusterInfo info = new ClusterInfo();
         info.setClusterNodes(clusterNodes);
         info.setClusterSize(Integer.parseInt(clusterSize));
         try {
             zkConn.setData().forPath(basePath, JSON.toJSONBytes(info));
-        } catch (Exception e) {
-            LOGGER.error("error",e);
+        }
+        catch (Exception e) {
+            LOGGER.error("error", e);
         }
 
     }

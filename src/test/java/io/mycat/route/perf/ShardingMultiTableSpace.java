@@ -38,25 +38,28 @@ import io.mycat.route.factory.RouteStrategyFactory;
  */
 public class ShardingMultiTableSpace {
     private SchemaConfig schema;
-    private static int total=1000000;
-    protected LayerCachePool cachePool = new SimpleCachePool();
+
+    private static int            total     = 1000000;
+
+    protected      LayerCachePool cachePool = new SimpleCachePool();
+
     public ShardingMultiTableSpace() throws InterruptedException {
-         String schemaFile = "/route/schema.xml";
- 		String ruleFile = "/route/rule.xml";
- 		SchemaLoader schemaLoader = new XMLSchemaLoader(schemaFile, ruleFile);
- 		schema = schemaLoader.getSchemas().get("cndb");
+        String schemaFile = "/route/schema.xml";
+        String ruleFile = "/route/rule.xml";
+        SchemaLoader schemaLoader = new XMLSchemaLoader(schemaFile, ruleFile);
+        schema = schemaLoader.getSchemas().get("cndb");
     }
 
     /**
      * 路由到tableSpace的性能测试
-     * 
+     *
      * @throws SQLNonTransientException
      */
     public void testTableSpace() throws SQLNonTransientException {
         SchemaConfig schema = getSchema();
         String sql = "select id,member_id,gmt_create from offer where member_id in ('1','22','333','1124','4525')";
         for (int i = 0; i < total; i++) {
-            RouteStrategyFactory.getRouteStrategy().route(new SystemConfig(),schema, -1,sql, null, null,cachePool);
+            RouteStrategyFactory.getRouteStrategy().route(new SystemConfig(), schema, -1, sql, null, null, cachePool);
         }
     }
 
@@ -71,6 +74,6 @@ public class ShardingMultiTableSpace {
         long start = System.currentTimeMillis();
         test.testTableSpace();
         long end = System.currentTimeMillis();
-        System.out.println("take " + (end - start) + " ms. avg "+(end-start+0.0)/total);
+        System.out.println("take " + (end - start) + " ms. avg " + (end - start + 0.0) / total);
     }
 }

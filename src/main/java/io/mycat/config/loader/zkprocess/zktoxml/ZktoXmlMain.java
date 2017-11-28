@@ -10,6 +10,7 @@ import org.apache.curator.framework.recipes.cache.NodeCacheListener;
 import org.apache.curator.framework.recipes.cache.PathChildrenCache;
 import org.apache.curator.utils.ZKPaths;
 import org.apache.zookeeper.CreateMode;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,21 +27,22 @@ import io.mycat.util.ZKUtils;
 
 /**
  * 将xk的信息转换为xml文件的操作
-* 源文件名：ZktoxmlMain.java
-* 文件版本：1.0.0
-* 创建作者：liujun
-* 创建日期：2016年9月20日
-* 修改作者：liujun
-* 修改日期：2016年9月20日
-* 文件描述：TODO
-* 版权所有：Copyright 2016 zjhz, Inc. All Rights Reserved.
-*/
+ * 源文件名：ZktoxmlMain.java
+ * 文件版本：1.0.0
+ * 创建作者：liujun
+ * 创建日期：2016年9月20日
+ * 修改作者：liujun
+ * 修改日期：2016年9月20日
+ * 文件描述：TODO
+ * 版权所有：Copyright 2016 zjhz, Inc. All Rights Reserved.
+ */
 public class ZktoXmlMain {
 
     /**
      * 日志
-    * @字段说明 LOGGER
-    */
+     *
+     * @字段说明 LOGGER
+     */
     private static final Logger LOGGER = LoggerFactory.getLogger(ZkMultLoader.class);
 
     /**
@@ -55,10 +57,11 @@ public class ZktoXmlMain {
 
     /**
      * 将zk数据放到到本地
-    * 方法描述
-     * @throws Exception 
+     * 方法描述
+     *
+     * @throws Exception
      * @创建日期 2016年9月21日
-    */
+     */
     public static void loadZktoFile() throws Exception {
 
         // 得到集群名称
@@ -115,7 +118,7 @@ public class ZktoXmlMain {
     }
 
     private static void loadZkWatch(Set<String> setPaths, final CuratorFramework zkConn,
-            final ZookeeperProcessListen zkListen) throws Exception {
+                                    final ZookeeperProcessListen zkListen) throws Exception {
 
         if (null != setPaths && !setPaths.isEmpty()) {
             for (String path : setPaths) {
@@ -130,13 +133,14 @@ public class ZktoXmlMain {
 
     /**
      * 进行命令的监听操作
-    * 方法描述
-    * @param zkConn zk的连接信息
-    * @param path 路径信息
-    * @param ZKLISTENER 监控路径信息
-    * @throws Exception
-    * @创建日期 2016年9月20日
-    */
+     * 方法描述
+     *
+     * @param zkConn     zk的连接信息
+     * @param path       路径信息
+     * @param ZKLISTENER 监控路径信息
+     * @throws Exception
+     * @创建日期 2016年9月20日
+     */
     @SuppressWarnings("resource")
     private static void runCommandWatch(final CuratorFramework zkConn, final String path) throws Exception {
 
@@ -152,13 +156,14 @@ public class ZktoXmlMain {
 
     /**
      * 创建临时节点测试
-    * 方法描述
-    * @param parent
-    * @param node
-    * @param zkConn
-    * @throws Exception
-    * @创建日期 2016年9月20日
-    */
+     * 方法描述
+     *
+     * @param parent
+     * @param node
+     * @param zkConn
+     * @throws Exception
+     * @创建日期 2016年9月20日
+     */
     private static void createTempNode(String parent, String node, final CuratorFramework zkConn, String type)
             throws Exception {
 
@@ -170,15 +175,16 @@ public class ZktoXmlMain {
 
     /**
      * 进行zk的watch操作
-    * 方法描述
-    * @param zkConn zk的连接信息
-    * @param path 路径信息
-    * @param zkListen 监控路径信息
-    * @throws Exception
-    * @创建日期 2016年9月20日
-    */
+     * 方法描述
+     *
+     * @param zkConn   zk的连接信息
+     * @param path     路径信息
+     * @param zkListen 监控路径信息
+     * @throws Exception
+     * @创建日期 2016年9月20日
+     */
     private static NodeCache runWatch(final CuratorFramework zkConn, final String path,
-            final ZookeeperProcessListen zkListen) throws Exception {
+                                      final ZookeeperProcessListen zkListen) throws Exception {
         final NodeCache cache = new NodeCache(zkConn, path);
 
         NodeCacheListener listen = new NodeCacheListener() {

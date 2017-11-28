@@ -18,7 +18,6 @@
 package io.mycat.memory.unsafe.utils.sort;
 
 
-
 import io.mycat.memory.unsafe.KVIterator;
 import io.mycat.memory.unsafe.row.UnsafeRow;
 
@@ -26,7 +25,7 @@ import java.io.IOException;
 
 public abstract class UnsafeKeyValueSorter {
 
-  public abstract void insert(UnsafeRow key, UnsafeRow value);
+    public abstract void insert(UnsafeRow key, UnsafeRow value);
 
-  public abstract KVIterator<UnsafeRow, UnsafeRow> sort() throws IOException;
+    public abstract KVIterator<UnsafeRow, UnsafeRow> sort() throws IOException;
 }

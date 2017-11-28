@@ -7,12 +7,12 @@ import java.util.Random;
 import java.util.Set;
 
 /**
- * 
  * @author coderczp-2014-12-8
  */
 public class IntMinHeap {
 
-    private int i;
+    private int   i;
+
     private int[] data;
 
     public IntMinHeap(int[] data) {

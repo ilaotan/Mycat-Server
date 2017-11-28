@@ -15,9 +15,8 @@ import io.mycat.config.loader.zkprocess.console.ZkNofiflyCfg;
 
 /**
  * 进行zookeeper操作的监控器器父类信息
- * 
+ *
  * @author liujun
- * 
  * @date 2015年2月4日
  * @vsersion 0.0.1
  */
@@ -25,8 +24,9 @@ public class ZookeeperProcessListen {
 
     /**
      * 日志
-    * @字段说明 LOGGER
-    */
+     *
+     * @字段说明 LOGGER
+     */
     private static final Logger lOG = LoggerFactory.getLogger(ZookeeperProcessListen.class);
 
     /**
@@ -36,20 +36,23 @@ public class ZookeeperProcessListen {
 
     /**
      * 监控的路径信息
-    * @字段说明 watchPath
-    */
+     *
+     * @字段说明 watchPath
+     */
     private Map<String, Set<String>> watchPathMap = new HashMap<>();
 
     /**
      * 监控路径对应的缓存key的对应表
-    * @字段说明 watchToListen
-    */
+     *
+     * @字段说明 watchToListen
+     */
     private Map<String, String> watchToListenMap = new HashMap<>();
 
     /**
      * 基本路径信息
-    * @字段说明 basePath
-    */
+     *
+     * @字段说明 basePath
+     */
     private String basePath;
 
     public String getBasePath() {
@@ -62,7 +65,7 @@ public class ZookeeperProcessListen {
 
     /**
      * 添加缓存更新操作
-     * 
+     *
      * @param key
      * @param cacheNotiflySercie
      */
@@ -72,12 +75,13 @@ public class ZookeeperProcessListen {
 
     /**
      * 专门针对zk设置的监控路径
-    * 方法描述
-    * @param key
-    * @param path
-    * @param cacheNotiflySercie
-    * @创建日期 2016年9月19日
-    */
+     * 方法描述
+     *
+     * @param key
+     * @param path
+     * @param cacheNotiflySercie
+     * @创建日期 2016年9月19日
+     */
     public void watchPath(String key, String path) {
         Set<String> watchPaths = watchPathMap.get(key);
 
@@ -91,9 +95,10 @@ public class ZookeeperProcessListen {
 
     /**
      * 进行监控路径的转换
-    * 方法描述
-    * @创建日期 2016年9月20日
-    */
+     * 方法描述
+     *
+     * @创建日期 2016年9月20日
+     */
     public void watchToParse() {
         if (null != watchPathMap && !watchPathMap.isEmpty()) {
             for (Entry<String, Set<String>> watchPathEntry : watchPathMap.entrySet()) {
@@ -107,10 +112,11 @@ public class ZookeeperProcessListen {
 
     /**
      * 返回路径集合
-    * 方法描述
-    * @return
-    * @创建日期 2016年9月19日
-    */
+     * 方法描述
+     *
+     * @return
+     * @创建日期 2016年9月19日
+     */
     public Set<String> getWatchPath() {
 
         if (watchToListenMap.isEmpty()) {
@@ -122,9 +128,8 @@ public class ZookeeperProcessListen {
 
     /**
      * 进行缓存更新通知
-     * 
-     * @param key
-     *            缓存模块的key
+     *
+     * @param key 缓存模块的key
      * @return true 当前缓存模块数据更新成功，false，当前缓存数据更新失败
      */
     public boolean notifly(String key) {
@@ -147,7 +152,8 @@ public class ZookeeperProcessListen {
                     if (null != cacheService) {
                         try {
                             result = cacheService.notiflyProcess();
-                        } catch (Exception e) {
+                        }
+                        catch (Exception e) {
                             lOG.error("ZookeeperProcessListen notifly key :" + key + " error:Exception info:", e);
                         }
                     }
@@ -174,7 +180,8 @@ public class ZookeeperProcessListen {
             if (null != item.getValue()) {
                 try {
                     item.getValue().notiflyProcess();
-                } catch (Exception e) {
+                }
+                catch (Exception e) {
                     lOG.error("ZookeeperProcessListen notiflyAll key :" + item.getKey() + ";value " + item.getValue()
                             + ";error:Exception info:", e);
                 }

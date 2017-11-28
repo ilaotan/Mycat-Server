@@ -14,34 +14,37 @@ import io.mycat.config.loader.zkprocess.parse.XmlProcessBase;
 
 /**
  * schema.xml与javabean之间的转化
-* 源文件名：SchemasParseXmlImpl.java
-* 文件版本：1.0.0
-* 创建作者：liujun
-* 创建日期：2016年9月16日
-* 修改作者：liujun
-* 修改日期：2016年9月16日
-* 文件描述：TODO
-* 版权所有：Copyright 2016 zjhz, Inc. All Rights Reserved.
-*/
+ * 源文件名：SchemasParseXmlImpl.java
+ * 文件版本：1.0.0
+ * 创建作者：liujun
+ * 创建日期：2016年9月16日
+ * 修改作者：liujun
+ * 修改日期：2016年9月16日
+ * 文件描述：TODO
+ * 版权所有：Copyright 2016 zjhz, Inc. All Rights Reserved.
+ */
 public class SchemasParseXmlImpl implements ParseXmlServiceInf<Schemas> {
 
     /**
      * 日志
-    * @字段说明 LOGGER
-    */
+     *
+     * @字段说明 LOGGER
+     */
     private static final Logger lOG = LoggerFactory.getLogger(SchemasParseXmlImpl.class);
 
     /**
      * 基本的转换类的信息
-    * @字段说明 parseBean
-    */
+     *
+     * @字段说明 parseBean
+     */
     private XmlProcessBase parseBean;
 
     /**
      * 转换的类的信息
-    * 构造方法
-    * @param parseBase
-    */
+     * 构造方法
+     *
+     * @param parseBase
+     */
     public SchemasParseXmlImpl(XmlProcessBase parseBase) {
 
         this.parseBean = parseBase;
@@ -56,10 +59,12 @@ public class SchemasParseXmlImpl implements ParseXmlServiceInf<Schemas> {
 
         try {
             schema = (Schemas) this.parseBean.baseParseXmlToBean(path);
-        } catch (JAXBException e) {
+        }
+        catch (JAXBException e) {
             e.printStackTrace();
             lOG.error("SchemasParseXmlImpl parseXmlToBean JAXBException", e);
-        } catch (XMLStreamException e) {
+        }
+        catch (XMLStreamException e) {
             e.printStackTrace();
             lOG.error("SchemasParseXmlImpl parseXmlToBean XMLStreamException", e);
         }
@@ -71,7 +76,8 @@ public class SchemasParseXmlImpl implements ParseXmlServiceInf<Schemas> {
     public void parseToXmlWrite(Schemas data, String outputFile, String dataName) {
         try {
             this.parseBean.baseParseAndWriteToXml(data, outputFile, dataName);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             e.printStackTrace();
             lOG.error("SchemasParseXmlImpl parseToXmlWrite IOException", e);
         }

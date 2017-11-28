@@ -25,11 +25,11 @@ package io.mycat.net.postgres;
 
 /**
  * <pre>
- * Flush (F) 
- * Byte1('H') Identifies the message as a Flush command. 
+ * Flush (F)
+ * Byte1('H') Identifies the message as a Flush command.
  * Int32(4) Length of message contents in bytes, including self.
  * </pre>
- * 
+ *
  * @author mycat
  */
 public class Flush extends PostgresPacket {

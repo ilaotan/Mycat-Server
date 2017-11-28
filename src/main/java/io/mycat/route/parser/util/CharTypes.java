@@ -22,19 +22,23 @@
  *
  */
 package io.mycat.route.parser.util;
+
 /**
  * @author mycat
  * @author mycat
  */
 public class CharTypes {
     private final static boolean[] hexFlags = new boolean[256];
+
     static {
         for (char c = 0; c < hexFlags.length; ++c) {
             if (c >= 'A' && c <= 'F') {
                 hexFlags[c] = true;
-            } else if (c >= 'a' && c <= 'f') {
+            }
+            else if (c >= 'a' && c <= 'f') {
                 hexFlags[c] = true;
-            } else if (c >= '0' && c <= '9') {
+            }
+            else if (c >= '0' && c <= '9') {
                 hexFlags[c] = true;
             }
         }
@@ -49,13 +53,16 @@ public class CharTypes {
     }
 
     private final static boolean[] identifierFlags = new boolean[256];
+
     static {
         for (char c = 0; c < identifierFlags.length; ++c) {
             if (c >= 'A' && c <= 'Z') {
                 identifierFlags[c] = true;
-            } else if (c >= 'a' && c <= 'z') {
+            }
+            else if (c >= 'a' && c <= 'z') {
                 identifierFlags[c] = true;
-            } else if (c >= '0' && c <= '9') {
+            }
+            else if (c >= '0' && c <= '9') {
                 identifierFlags[c] = true;
             }
         }
@@ -69,6 +76,7 @@ public class CharTypes {
     }
 
     private final static boolean[] whitespaceFlags = new boolean[256];
+
     static {
         whitespaceFlags[' '] = true;
         whitespaceFlags['\n'] = true;

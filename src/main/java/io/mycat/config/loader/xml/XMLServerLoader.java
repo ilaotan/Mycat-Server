@@ -58,10 +58,13 @@ import io.mycat.util.SplitUtil;
  */
 @SuppressWarnings("unchecked")
 public class XMLServerLoader {
-    private final SystemConfig system;
+    private final SystemConfig            system;
+
     private final Map<String, UserConfig> users;
-    private final FirewallConfig firewall;
-    private ClusterConfig cluster;
+
+    private final FirewallConfig          firewall;
+
+    private       ClusterConfig           cluster;
 
     public XMLServerLoader() {
         this.system = new SystemConfig();
@@ -75,7 +78,8 @@ public class XMLServerLoader {
     }
 
     public Map<String, UserConfig> getUsers() {
-        return (Map<String, UserConfig>) (users.isEmpty() ? Collections.emptyMap() : Collections.unmodifiableMap(users));
+        return (Map<String, UserConfig>) (users.isEmpty() ? Collections.emptyMap() : Collections.unmodifiableMap
+                (users));
     }
 
     public FirewallConfig getFirewall() {
@@ -106,21 +110,26 @@ public class XMLServerLoader {
 
             //加载全局SQL防火墙
             loadFirewall(root);
-        } catch (ConfigException e) {
+        }
+        catch (ConfigException e) {
             throw e;
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             throw new ConfigException(e);
-        } finally {
+        }
+        finally {
             if (dtd != null) {
                 try {
                     dtd.close();
-                } catch (IOException e) {
+                }
+                catch (IOException e) {
                 }
             }
             if (xml != null) {
                 try {
                     xml.close();
-                } catch (IOException e) {
+                }
+                catch (IOException e) {
                 }
             }
         }
@@ -128,11 +137,11 @@ public class XMLServerLoader {
 
     /**
      * 初始载入配置获取防火墙配置，配置防火墙方法之一，一共有两处，另一处:
-     * @see  FirewallConfig
      *
      * @modification 修改增加网段白名单
      * @date 2016/12/8
      * @modifiedBy Hash Zhang
+     * @see FirewallConfig
      */
     private void loadFirewall(Element root) throws IllegalAccessException, InvocationTargetException {
         NodeList list = root.getElementsByTagName("host");
@@ -148,10 +157,10 @@ public class XMLServerLoader {
                 if (this.firewall.existsHost(host)) {
                     throw new ConfigException("host duplicated : " + host);
                 }
-                String []users = userStr.split(",");
+                String[] users = userStr.split(",");
                 List<UserConfig> userConfigs = new ArrayList<UserConfig>();
-                for(String user : users){
-                	UserConfig uc = this.users.get(user);
+                for (String user : users) {
+                    UserConfig uc = this.users.get(user);
                     if (null == uc) {
                         throw new ConfigException("[user: " + user + "] doesn't exist in [host: " + host + "]");
                     }
@@ -160,9 +169,10 @@ public class XMLServerLoader {
                     }
                     userConfigs.add(uc);
                 }
-                if(host.contains("*")||host.contains("%")){
-                    whitehostMask.put(FirewallConfig.getMaskPattern(host),userConfigs);
-                }else{
+                if (host.contains("*") || host.contains("%")) {
+                    whitehostMask.put(FirewallConfig.getMaskPattern(host), userConfigs);
+                }
+                else {
                     whitehost.put(host, userConfigs);
                 }
             }
@@ -176,11 +186,11 @@ public class XMLServerLoader {
         for (int i = 0, n = blacklist.getLength(); i < n; i++) {
             Node node = blacklist.item(i);
             if (node instanceof Element) {
-            	Element e = (Element) node;
-             	String check = e.getAttribute("check");
-             	if (null != check) {
-             		firewall.setCheck(Boolean.parseBoolean(check));
-				}
+                Element e = (Element) node;
+                String check = e.getAttribute("check");
+                if (null != check) {
+                    firewall.setCheck(Boolean.parseBoolean(check));
+                }
 
                 Map<String, Object> props = ConfigUtil.loadElements((Element) node);
                 ParameterMapping.mapping(wallConfig, props);
@@ -203,26 +213,26 @@ public class XMLServerLoader {
 
                 UserConfig user = new UserConfig();
                 Map<String, Object> props = ConfigUtil.loadElements(e);
-                String password = (String)props.get("password");
-                String usingDecrypt = (String)props.get("usingDecrypt");
-                String passwordDecrypt = DecryptUtil.mycatDecrypt(usingDecrypt,name,password);
+                String password = (String) props.get("password");
+                String usingDecrypt = (String) props.get("usingDecrypt");
+                String passwordDecrypt = DecryptUtil.mycatDecrypt(usingDecrypt, name, password);
                 user.setName(name);
                 user.setDefaultAccount(Boolean.parseBoolean(defaultAccount));
                 user.setPassword(passwordDecrypt);
                 user.setEncryptPassword(password);
 
-				String benchmark = (String) props.get("benchmark");
-				if(null != benchmark) {
-					user.setBenchmark( Integer.parseInt(benchmark) );
-				}
+                String benchmark = (String) props.get("benchmark");
+                if (null != benchmark) {
+                    user.setBenchmark(Integer.parseInt(benchmark));
+                }
 
-				String readOnly = (String) props.get("readOnly");
-				if (null != readOnly) {
-					user.setReadOnly(Boolean.parseBoolean(readOnly));
-				}
-				
-				
-				String schemas = (String) props.get("schemas");
+                String readOnly = (String) props.get("readOnly");
+                if (null != readOnly) {
+                    user.setReadOnly(Boolean.parseBoolean(readOnly));
+                }
+
+
+                String schemas = (String) props.get("schemas");
                 if (schemas != null) {
                     String[] strArray = SplitUtil.split(schemas, ',', true);
                     user.setSchemas(new HashSet<String>(Arrays.asList(strArray)));
@@ -241,61 +251,61 @@ public class XMLServerLoader {
 
     private void loadPrivileges(UserConfig userConfig, Element node) {
 
-    	UserPrivilegesConfig privilegesConfig = new UserPrivilegesConfig();
+        UserPrivilegesConfig privilegesConfig = new UserPrivilegesConfig();
 
-    	NodeList privilegesNodes = node.getElementsByTagName("privileges");
-    	int privilegesNodesLength = privilegesNodes.getLength();
-		for (int i = 0; i < privilegesNodesLength; ++i) {
-			Element privilegesNode = (Element) privilegesNodes.item(i);
-			String check = privilegesNode.getAttribute("check");
-         	if (null != check) {
-         		privilegesConfig.setCheck(Boolean.valueOf(check));
-			}
+        NodeList privilegesNodes = node.getElementsByTagName("privileges");
+        int privilegesNodesLength = privilegesNodes.getLength();
+        for (int i = 0; i < privilegesNodesLength; ++i) {
+            Element privilegesNode = (Element) privilegesNodes.item(i);
+            String check = privilegesNode.getAttribute("check");
+            if (null != check) {
+                privilegesConfig.setCheck(Boolean.valueOf(check));
+            }
 
 
-			NodeList schemaNodes = privilegesNode.getElementsByTagName("schema");
-			int schemaNodeLength = schemaNodes.getLength();
+            NodeList schemaNodes = privilegesNode.getElementsByTagName("schema");
+            int schemaNodeLength = schemaNodes.getLength();
 
-			for (int j = 0; j < schemaNodeLength; j++ ) {
-				Element schemaNode = (Element) schemaNodes.item(j);
-				String name1 = schemaNode.getAttribute("name");
-				String dml1 = schemaNode.getAttribute("dml");
+            for (int j = 0; j < schemaNodeLength; j++) {
+                Element schemaNode = (Element) schemaNodes.item(j);
+                String name1 = schemaNode.getAttribute("name");
+                String dml1 = schemaNode.getAttribute("dml");
 
-				int[] dml1Array = new int[ dml1.length() ];
-				for(int offset1 = 0; offset1 < dml1.length(); offset1++ ) {
-					dml1Array[offset1] =  Character.getNumericValue( dml1.charAt( offset1 ) );
-				}
+                int[] dml1Array = new int[dml1.length()];
+                for (int offset1 = 0; offset1 < dml1.length(); offset1++) {
+                    dml1Array[offset1] = Character.getNumericValue(dml1.charAt(offset1));
+                }
 
-				UserPrivilegesConfig.SchemaPrivilege schemaPrivilege = new UserPrivilegesConfig.SchemaPrivilege();
-				schemaPrivilege.setName( name1 );
-				schemaPrivilege.setDml( dml1Array );
+                UserPrivilegesConfig.SchemaPrivilege schemaPrivilege = new UserPrivilegesConfig.SchemaPrivilege();
+                schemaPrivilege.setName(name1);
+                schemaPrivilege.setDml(dml1Array);
 
-				NodeList tableNodes = schemaNode.getElementsByTagName("table");
-				int tableNodeLength = tableNodes.getLength();
-				for (int z = 0; z < tableNodeLength; z++) {
+                NodeList tableNodes = schemaNode.getElementsByTagName("table");
+                int tableNodeLength = tableNodes.getLength();
+                for (int z = 0; z < tableNodeLength; z++) {
 
-					UserPrivilegesConfig.TablePrivilege tablePrivilege = new UserPrivilegesConfig.TablePrivilege();
+                    UserPrivilegesConfig.TablePrivilege tablePrivilege = new UserPrivilegesConfig.TablePrivilege();
 
-					Element tableNode = (Element) tableNodes.item(z);
-					String name2 = tableNode.getAttribute("name");
-					String dml2 = tableNode.getAttribute("dml");
+                    Element tableNode = (Element) tableNodes.item(z);
+                    String name2 = tableNode.getAttribute("name");
+                    String dml2 = tableNode.getAttribute("dml");
 
-					int[] dml2Array = new int[ dml2.length() ];
-					for(int offset2 = 0; offset2 < dml2.length(); offset2++ ) {
-						dml2Array[offset2] =  Character.getNumericValue( dml2.charAt( offset2 ) );
-					}
+                    int[] dml2Array = new int[dml2.length()];
+                    for (int offset2 = 0; offset2 < dml2.length(); offset2++) {
+                        dml2Array[offset2] = Character.getNumericValue(dml2.charAt(offset2));
+                    }
 
-					tablePrivilege.setName( name2 );
-					tablePrivilege.setDml( dml2Array );
+                    tablePrivilege.setName(name2);
+                    tablePrivilege.setDml(dml2Array);
 
-					schemaPrivilege.addTablePrivilege(name2, tablePrivilege);
-				}
+                    schemaPrivilege.addTablePrivilege(name2, tablePrivilege);
+                }
 
-				privilegesConfig.addSchemaPrivilege(name1, schemaPrivilege);
-			}
-		}
+                privilegesConfig.addSchemaPrivilege(name1, schemaPrivilege);
+            }
+        }
 
-		userConfig.setPrivilegesConfig(privilegesConfig);
+        userConfig.setPrivilegesConfig(privilegesConfig);
     }
 
     private void loadSystem(Element root) throws IllegalAccessException, InvocationTargetException {
@@ -325,7 +335,8 @@ public class XMLServerLoader {
 
             if (validVersion) {
                 Versions.setServerVersion(system.getFakeMySQLVersion());
-            } else {
+            }
+            else {
                 throw new ConfigException("The specified MySQL Version (" + system.getFakeMySQLVersion()
                         + ") is not valid.");
             }

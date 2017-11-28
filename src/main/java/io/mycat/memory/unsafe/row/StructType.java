@@ -4,6 +4,7 @@ import io.mycat.sqlengine.mpp.ColMeta;
 import io.mycat.sqlengine.mpp.OrderCol;
 
 import javax.annotation.Nonnull;
+
 import java.util.Map;
 
 /**
@@ -12,12 +13,13 @@ import java.util.Map;
 public class StructType {
 
     private final Map<String, ColMeta> columToIndx;
-    private final int fieldCount;
 
-    private  OrderCol[] orderCols = null;
+    private final int                  fieldCount;
 
-    public StructType(@Nonnull Map<String,ColMeta> columToIndx,int fieldCount){
-        assert fieldCount >=0;
+    private OrderCol[] orderCols = null;
+
+    public StructType(@Nonnull Map<String, ColMeta> columToIndx, int fieldCount) {
+        assert fieldCount >= 0;
         this.columToIndx = columToIndx;
         this.fieldCount = fieldCount;
     }

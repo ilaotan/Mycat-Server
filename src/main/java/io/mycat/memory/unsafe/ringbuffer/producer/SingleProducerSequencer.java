@@ -15,28 +15,25 @@ import java.util.concurrent.locks.LockSupport;
  * @date 2016/7/24
  */
 
-abstract class SingleProducerSequencerPad extends AbstractSequencer
-{
+abstract class SingleProducerSequencerPad extends AbstractSequencer {
     protected long p1, p2, p3, p4, p5, p6, p7;
 
-    public SingleProducerSequencerPad(int bufferSize, WaitStrategy waitStrategy)
-    {
+    public SingleProducerSequencerPad(int bufferSize, WaitStrategy waitStrategy) {
         super(bufferSize, waitStrategy);
     }
 }
 
-abstract class SingleProducerSequencerFields extends SingleProducerSequencerPad
-{
-    public SingleProducerSequencerFields(int bufferSize, WaitStrategy waitStrategy)
-    {
+abstract class SingleProducerSequencerFields extends SingleProducerSequencerPad {
+    public SingleProducerSequencerFields(int bufferSize, WaitStrategy waitStrategy) {
         super(bufferSize, waitStrategy);
     }
 
-    protected long nextValue = Sequence.INITIAL_VALUE;
+    protected long nextValue   = Sequence.INITIAL_VALUE;
+
     protected long cachedValue = Sequence.INITIAL_VALUE;
 }
 
-public class SingleProducerSequencer extends SingleProducerSequencerFields{
+public class SingleProducerSequencer extends SingleProducerSequencerFields {
 
     public SingleProducerSequencer(int bufferSize, final WaitStrategy waitStrategy) {
         super(bufferSize, waitStrategy);
@@ -66,13 +63,11 @@ public class SingleProducerSequencer extends SingleProducerSequencerFields{
         //Disruptor经常用缓存，这里缓存之间所有gatingSequences最小的那个，这样不用每次都遍历一遍gatingSequences，影响效率
         long cachedGatingSequence = this.cachedValue;
         //只要wrapPoint大于缓存的所有gatingSequences最小的那个，就重新检查更新缓存
-        if (wrapPoint > cachedGatingSequence || cachedGatingSequence > nextValue)
-        {
+        if (wrapPoint > cachedGatingSequence || cachedGatingSequence > nextValue) {
             long minSequence = Util.getMinimumSequence(gatingSequences, nextValue);
             this.cachedValue = minSequence;
             //空间不足返回false
-            if (wrapPoint > minSequence)
-            {
+            if (wrapPoint > minSequence) {
                 return false;
             }
         }

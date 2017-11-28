@@ -19,9 +19,10 @@ public class InMemoryRepository implements Repository {
 
 
     private boolean closed = true;
+
     @Override
     public void init() {
-        closed=false;
+        closed = false;
     }
 
     @Override
@@ -50,7 +51,7 @@ public class InMemoryRepository implements Repository {
     @Override
     public void close() {
         storage.clear();
-        closed=true;
+        closed = true;
     }
 
     @Override
@@ -67,7 +68,6 @@ public class InMemoryRepository implements Repository {
         }
 
     }
-
 
 
     public boolean isClosed() {

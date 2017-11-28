@@ -25,12 +25,13 @@ package io.mycat.route.parser.util;
 
 /**
  * (created at 2010-7-21)
- * 
+ *
  * @author mycat
  */
 public final class Pair<K, V> {
 
     private final K key;
+
     private final V value;
 
     public Pair(K key, V value) {
@@ -60,12 +61,14 @@ public final class Pair<K, V> {
         int hash = 17;
         if (key == null) {
             hash += HASH_CONST;
-        } else {
+        }
+        else {
             hash = hash << 5 + hash << 1 + hash + key.hashCode();
         }
         if (value == null) {
             hash += HASH_CONST;
-        } else {
+        }
+        else {
             hash = hash << 5 + hash << 1 + hash + value.hashCode();
         }
         return hash;

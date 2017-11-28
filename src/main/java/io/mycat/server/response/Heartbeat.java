@@ -23,7 +23,8 @@
  */
 package io.mycat.server.response;
 
-import org.slf4j.Logger; import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import io.mycat.MycatServer;
 import io.mycat.config.ErrorCode;
@@ -52,7 +53,8 @@ public class Heartbeat {
             if (HEARTBEAT.isInfoEnabled()) {
                 HEARTBEAT.info(responseMessage("OK", c, hp.id));
             }
-        } else {
+        }
+        else {
             ErrorPacket error = new ErrorPacket();
             error.packetId = 1;
             error.errno = ErrorCode.ER_SERVER_SHUTDOWN;

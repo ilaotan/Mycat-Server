@@ -6,6 +6,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.recipes.cache.PathChildrenCacheEvent;
 import org.apache.curator.framework.recipes.cache.PathChildrenCacheListener;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,9 +26,10 @@ import io.mycat.util.ZKUtils;
 
 /**
  * zk命令监听器
+ *
  * @author kk
- * @date 2017年1月18日
  * @version 0.0.1
+ * @date 2017年1月18日
  */
 public class CommandPathListener implements PathChildrenCacheListener {
 
@@ -36,35 +38,35 @@ public class CommandPathListener implements PathChildrenCacheListener {
     @Override
     public void childEvent(CuratorFramework client, PathChildrenCacheEvent event) throws Exception {
         switch (event.getType()) {
-        case CHILD_ADDED:
-            // 在发生节点添加的时候，则执行接收命令并执行
-            // 1,首先检查
-            String path = event.getData().getPath();
-            String basePath = ZKUtils.getZKBasePath() + ZKHandler.ZK_NODE_PATH + "/";
+            case CHILD_ADDED:
+                // 在发生节点添加的时候，则执行接收命令并执行
+                // 1,首先检查
+                String path = event.getData().getPath();
+                String basePath = ZKUtils.getZKBasePath() + ZKHandler.ZK_NODE_PATH + "/";
 
-            // 检查节点与当前的节点是否一致
-            String node = path.substring(basePath.length());
+                // 检查节点与当前的节点是否一致
+                String node = path.substring(basePath.length());
 
-            if (node.equals(ZkConfig.getInstance().getValue(ZkParamCfg.ZK_CFG_MYID))) {
-                // 检查命令内容是否为
-                if (ZKHandler.RELOAD_FROM_ZK.equals(new String(client.getData().forPath(path)))) {
-                    // 从服务器上下载最新的配制文件信息
-                    ZktoXmlMain.ZKLISTENER.notifly(ZkNofiflyCfg.ZK_NOTIFLY_LOAD_ALL.getKey());
-                    // 重新加载配制信息
-                    reload(path);
-                    // 完成之后，删除命令信息， 以供下次读取
-                    client.delete().forPath(event.getData().getPath());
-                    LOGGER.info("CommandPathListener path:" + path + " reload success");
+                if (node.equals(ZkConfig.getInstance().getValue(ZkParamCfg.ZK_CFG_MYID))) {
+                    // 检查命令内容是否为
+                    if (ZKHandler.RELOAD_FROM_ZK.equals(new String(client.getData().forPath(path)))) {
+                        // 从服务器上下载最新的配制文件信息
+                        ZktoXmlMain.ZKLISTENER.notifly(ZkNofiflyCfg.ZK_NOTIFLY_LOAD_ALL.getKey());
+                        // 重新加载配制信息
+                        reload(path);
+                        // 完成之后，删除命令信息， 以供下次读取
+                        client.delete().forPath(event.getData().getPath());
+                        LOGGER.info("CommandPathListener path:" + path + " reload success");
+                    }
                 }
-            }
 
-            break;
-        case CHILD_UPDATED:
-            break;
-        case CHILD_REMOVED:
-            break;
-        default:
-            break;
+                break;
+            case CHILD_UPDATED:
+                break;
+            case CHILD_REMOVED:
+                break;
+            default:
+                break;
         }
 
     }
@@ -97,7 +99,8 @@ public class CommandPathListener implements PathChildrenCacheListener {
                 }
 
             }, MycatServer.getInstance().getListeningExecutorService());
-        } finally {
+        }
+        finally {
             lock.unlock();
         }
     }

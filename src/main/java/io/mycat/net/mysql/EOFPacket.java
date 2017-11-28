@@ -34,24 +34,26 @@ import io.mycat.net.FrontendConnection;
  * From Server To Client, at the end of a series of Field Packets, and at the
  * end of a series of Data Packets.With prepared statements, EOF Packet can also
  * end parameter information, which we'll describe later.
- * 
+ * <p>
  * <pre>
  * Bytes                 Name
  * -----                 ----
  * 1                     field_count, always = 0xfe
  * 2                     warning_count
  * 2                     Status Flags
- * 
+ *
  * @see http://forge.mysql.com/wiki/MySQL_Internals_ClientServer_Protocol#EOF_Packet
  * </pre>
- * 
+ *
  * @author mycat
  */
 public class EOFPacket extends MySQLPacket {
     public static final byte FIELD_COUNT = (byte) 0xfe;
 
     public byte fieldCount = FIELD_COUNT;
+
     public int warningCount;
+
     public int status = 2;
 
     public void read(byte[] data) {
@@ -64,9 +66,9 @@ public class EOFPacket extends MySQLPacket {
     }
 
     @Override
-    public ByteBuffer write(ByteBuffer buffer, FrontendConnection c,boolean writeSocketIfFull) {
+    public ByteBuffer write(ByteBuffer buffer, FrontendConnection c, boolean writeSocketIfFull) {
         int size = calcPacketSize();
-        buffer = c.checkWriteBuffer(buffer, c.getPacketHeaderSize() + size,writeSocketIfFull);
+        buffer = c.checkWriteBuffer(buffer, c.getPacketHeaderSize() + size, writeSocketIfFull);
         BufferUtil.writeUB3(buffer, size);
         buffer.put(packetId);
         buffer.put(fieldCount);
@@ -85,15 +87,15 @@ public class EOFPacket extends MySQLPacket {
         return "MySQL EOF Packet";
     }
 
-	public void write(BufferArray bufferArray) {
-		int size = calcPacketSize();
-		ByteBuffer buffer = bufferArray.checkWriteBuffer(packetHeaderSize
-				+ size);
-		BufferUtil.writeUB3(buffer, size);
-		buffer.put(packetId);
-		buffer.put(fieldCount);
-		BufferUtil.writeUB2(buffer, warningCount);
-		BufferUtil.writeUB2(buffer, status);
-	}
+    public void write(BufferArray bufferArray) {
+        int size = calcPacketSize();
+        ByteBuffer buffer = bufferArray.checkWriteBuffer(packetHeaderSize
+                + size);
+        BufferUtil.writeUB3(buffer, size);
+        buffer.put(packetId);
+        buffer.put(fieldCount);
+        BufferUtil.writeUB2(buffer, warningCount);
+        BufferUtil.writeUB2(buffer, status);
+    }
 
 }

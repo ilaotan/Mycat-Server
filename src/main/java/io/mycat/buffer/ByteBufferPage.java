@@ -11,10 +11,15 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class ByteBufferPage {
 
     private final ByteBuffer buf;
-    private final int chunkSize;
-    private final int chunkCount;
-    private final BitSet chunkAllocateTrack;
+
+    private final int        chunkSize;
+
+    private final int        chunkCount;
+
+    private final BitSet     chunkAllocateTrack;
+
     private final AtomicBoolean allocLockStatus = new AtomicBoolean(false);
+
     private final long startAddress;
 
     public ByteBufferPage(ByteBuffer buf, int chunkSize) {
@@ -41,12 +46,14 @@ public class ByteBufferPage {
                         if (theChunkCount == 1) {
                             break;
                         }
-                    } else {
+                    }
+                    else {
                         if (++contiueCount == theChunkCount) {
                             break;
                         }
                     }
-                } else {
+                }
+                else {
                     startChunk = -1;
                     contiueCount = 0;
                 }
@@ -62,11 +69,13 @@ public class ByteBufferPage {
                 //System.out.println("offAddress " + (theBuf.address() - startAddress));
                 markChunksUsed(startChunk, theChunkCount);
                 return newBuf;
-            } else {
+            }
+            else {
                 //System.out.println("contiueCount " + contiueCount + " theChunkCount " + theChunkCount);
                 return null;
             }
-        } finally {
+        }
+        finally {
             allocLockStatus.set(false);
         }
     }
@@ -91,8 +100,9 @@ public class ByteBufferPage {
                 Thread.yield();
             }
             try {
-                markChunksUnused(startChunk,chunkCount);
-            } finally {
+                markChunksUnused(startChunk, chunkCount);
+            }
+            finally {
                 allocLockStatus.set(false);
             }
             return true;

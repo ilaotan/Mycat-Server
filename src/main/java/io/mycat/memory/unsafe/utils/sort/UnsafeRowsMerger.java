@@ -9,6 +9,7 @@ import java.util.PriorityQueue;
  */
 public final class UnsafeRowsMerger {
     private int numRecords = 0;
+
     private final PriorityQueue<UnsafeSorterIterator> priorityQueue;
 
     UnsafeRowsMerger(
@@ -24,7 +25,8 @@ public final class UnsafeRowsMerger {
                     return recordComparator.compare(
                             left.getBaseObject(), left.getBaseOffset(),
                             right.getBaseObject(), right.getBaseOffset());
-                } else {
+                }
+                else {
                     return prefixComparisonResult;
                 }
             }
@@ -34,12 +36,11 @@ public final class UnsafeRowsMerger {
          * 使用优先级队列实现多个Spill File 合并排序,并且支持已经排序内存记录
          * 重新写入一个排序文件中。
          */
-        priorityQueue = new PriorityQueue<UnsafeSorterIterator>(numSpills,comparator);
+        priorityQueue = new PriorityQueue<UnsafeSorterIterator>(numSpills, comparator);
     }
 
     /**
      * Add an UnsafeSorterIterator to this merger
-     *
      */
     public void addSpillIfNotEmpty(UnsafeSorterIterator iterator) throws IOException {
         /**
@@ -82,16 +83,24 @@ public final class UnsafeRowsMerger {
             }
 
             @Override
-            public Object getBaseObject() { return spillReader.getBaseObject(); }
+            public Object getBaseObject() {
+                return spillReader.getBaseObject();
+            }
 
             @Override
-            public long getBaseOffset() { return spillReader.getBaseOffset(); }
+            public long getBaseOffset() {
+                return spillReader.getBaseOffset();
+            }
 
             @Override
-            public int getRecordLength() { return spillReader.getRecordLength(); }
+            public int getRecordLength() {
+                return spillReader.getRecordLength();
+            }
 
             @Override
-            public long getKeyPrefix() { return spillReader.getKeyPrefix(); }
+            public long getKeyPrefix() {
+                return spillReader.getKeyPrefix();
+            }
         };
     }
 }

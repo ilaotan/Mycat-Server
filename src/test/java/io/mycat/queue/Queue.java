@@ -31,8 +31,11 @@ public final class Queue<T> {
     private final static int MIN_SHRINK_SIZE = 1024;
 
     private T[] items;
+
     private int count = 0;
+
     private int start = 0, end = 0;
+
     private int suggestedSize, size = 0;
 
     public Queue(int suggestedSize) {
@@ -64,7 +67,8 @@ public final class Queue<T> {
         }
         if (start == 0) {
             start = size - 1;
-        } else {
+        }
+        else {
             start--;
         }
         this.items[start] = item;
@@ -102,7 +106,8 @@ public final class Queue<T> {
         while (count == 0) {
             try {
                 wait();
-            } catch (InterruptedException e) {
+            }
+            catch (InterruptedException e) {
             }
         }
     }
@@ -111,7 +116,8 @@ public final class Queue<T> {
         if (count == 0) {
             try {
                 wait(maxwait);
-            } catch (InterruptedException e) {
+            }
+            catch (InterruptedException e) {
             }
             if (count == 0) {
                 return null;
@@ -124,7 +130,8 @@ public final class Queue<T> {
         while (count == 0) {
             try {
                 wait();
-            } catch (InterruptedException e) {
+            }
+            catch (InterruptedException e) {
             }
         }
 
@@ -172,7 +179,8 @@ public final class Queue<T> {
             // the data wraps around
             System.arraycopy(this.items, start, items, 0, size - start);
             System.arraycopy(this.items, 0, items, size - start, end + 1);
-        } else {
+        }
+        else {
             // the data does not wrap around
             System.arraycopy(this.items, start, items, 0, end - start + 1);
         }

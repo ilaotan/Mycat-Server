@@ -4,10 +4,10 @@ import java.util.List;
 
 /**
  * 查询分解后的第二部处理
- * @author huangyiming
  *
+ * @author huangyiming
  */
 public interface SecondHandler {
-	
-	public void doExecute(List params);
+
+    public void doExecute(List params);
 }

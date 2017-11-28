@@ -25,11 +25,11 @@ package io.mycat.net.postgres;
 
 /**
  * <pre>
- * BindComplete (B) 
- * Byte1('2') Identifies the message as a Bind-complete indicator. 
+ * BindComplete (B)
+ * Byte1('2') Identifies the message as a Bind-complete indicator.
  * Int32(4) Length of message contents in bytes, including self.
  * </pre>
- * 
+ *
  * @author mycat
  */
 public class BindComplete extends PostgresPacket {

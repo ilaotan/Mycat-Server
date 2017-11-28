@@ -16,14 +16,16 @@ public class Rules {
 
     /**
      * 表的路由配制信息
-    * @字段说明 tableRule
-    */
+     *
+     * @字段说明 tableRule
+     */
     protected List<TableRule> tableRule;
 
     /**
      * 指定的方法信息
-    * @字段说明 function
-    */
+     *
+     * @字段说明 function
+     */
     protected List<Function> function;
 
     public List<TableRule> getTableRule() {

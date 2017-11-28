@@ -6,12 +6,11 @@ import com.alibaba.druid.sql.dialect.mysql.visitor.MySqlOutputVisitor;
 /**
  * Created by nange on 2015/10/20.
  */
-public class LoadDataOutputVisitor extends MySqlOutputVisitor
-{
-    public LoadDataOutputVisitor(Appendable appender)
-    {
+public class LoadDataOutputVisitor extends MySqlOutputVisitor {
+    public LoadDataOutputVisitor(Appendable appender) {
         super(appender);
     }
+
     @Override
     public boolean visit(MySqlLoadDataInFileStatement x) {
         print("LOAD DATA ");
@@ -42,10 +41,9 @@ public class LoadDataOutputVisitor extends MySqlOutputVisitor
 
         print(" INTO TABLE ");
         x.getTableName().accept(this);
-        if(x.getCharset()!=null)
-        {
+        if (x.getCharset() != null) {
             print(" CHARACTER SET ");
-            print("'"+x.getCharset()+"'");
+            print("'" + x.getCharset() + "'");
         }
 
         if (x.getColumnsTerminatedBy() != null || x.getColumnsEnclosedBy() != null || x.getColumnsEscaped() != null) {
@@ -82,7 +80,7 @@ public class LoadDataOutputVisitor extends MySqlOutputVisitor
             }
         }
 
-        if(x.getIgnoreLinesNumber() != null) {
+        if (x.getIgnoreLinesNumber() != null) {
             print(" IGNORE ");
             x.getIgnoreLinesNumber().accept(this);
             print(" LINES");

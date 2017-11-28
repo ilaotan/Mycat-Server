@@ -3,11 +3,10 @@ package io.mycat.route.parser.druid;
 import com.alibaba.druid.sql.dialect.mysql.ast.statement.MySqlLoadDataInFileStatement;
 
 
-public class LoadDataStatement extends MySqlLoadDataInFileStatement
-{
+public class LoadDataStatement extends MySqlLoadDataInFileStatement {
 
-    public String toString()
-    {
+    @Override
+    public String toString() {
         StringBuilder out = new StringBuilder();
         this.accept(new LoadDataOutputVisitor(out));
 

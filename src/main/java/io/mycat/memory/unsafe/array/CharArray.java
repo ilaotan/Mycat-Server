@@ -11,15 +11,18 @@ import io.mycat.memory.unsafe.memory.mm.MemoryConsumer;
  */
 public class CharArray {
     private static final long WIDTH = 2;
+
     private final MemoryConsumer memoryConsumer;
 
     private final MemoryBlock memory;
-    private final Object baseObj;
-    private final long baseOffset;
+
+    private final Object      baseObj;
+
+    private final long        baseOffset;
 
     private final long length;
 
-    public CharArray(MemoryBlock memory,MemoryConsumer memoryConsumer) {
+    public CharArray(MemoryBlock memory, MemoryConsumer memoryConsumer) {
         assert memory.size() < (long) Integer.MAX_VALUE * 2 : "Array size > 4 billion elements";
         this.memory = memory;
         this.baseObj = memory.getBaseObject();
@@ -75,6 +78,7 @@ public class CharArray {
         return Platform.getChar(baseObj, baseOffset + index * WIDTH);
     }
 
+    @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder((int) this.length);
         for (int i = 0; i < this.length; i++) {

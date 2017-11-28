@@ -30,55 +30,98 @@ import io.mycat.route.parser.util.ParseUtil;
  */
 public final class ManagerParseShow {
 
-    public static final int OTHER = -1;
-    public static final int COMMAND = 1;
-    public static final int CONNECTION = 2;
-    public static final int DATABASE = 3;
-    public static final int DATANODE = 4;
-    public static final int DATASOURCE = 5;
-    public static final int HELP = 6;
-    public static final int PARSER = 7;
-    public static final int PROCESSOR = 8;
-    public static final int ROUTER = 9;
-    public static final int SERVER = 10;
-    public static final int SQL = 11;
-    public static final int SQL_DETAIL = 12;
-    public static final int SQL_EXECUTE = 13;
-    public static final int SQL_SLOW = 14;
-    public static final int SQL_SUM_USER = 15;
-    public static final int SQL_SUM_TABLE = 16;
-    public static final int SQL_HIGH = 17;
-    public static final int SQL_CONDITION = 18;
-    public static final int SQL_LARGE = 19;
-    public static final int SQL_RESULTSET = 20;
-    
-    public static final int THREADPOOL = 21;
-    public static final int TIME_CURRENT = 22;
-    public static final int TIME_STARTUP = 23;
-    public static final int VERSION = 24;
-    public static final int VARIABLES = 25;
-    public static final int COLLATION = 26;
-    public static final int CONNECTION_SQL = 27;
-    public static final int DATANODE_WHERE = 28;
-    public static final int DATASOURCE_WHERE = 29;
-    public static final int HEARTBEAT = 30;
-    public static final int SLOW_DATANODE = 31;
-    public static final int SLOW_SCHEMA = 32;
-    public static final int BACKEND = 33;
-    public static final int BACKEND_OLD = 34;
-    
-    public static final int CACHE = 35;
-    public static final int SESSION = 36;
-    public static final int SYSPARAM = 37;
-    public static final int SYSLOG = 38;
-    public static final int HEARTBEAT_DETAIL = 39;
-    public static final int DATASOURCE_SYNC = 40;
-    public static final int DATASOURCE_SYNC_DETAIL = 41;
-    public static final int DATASOURCE_CLUSTER = 42;
+    public static final int OTHER         = -1;
 
-	public static final int WHITE_HOST = 43;
-	public static final int WHITE_HOST_SET = 44;
-    public static final int DIRECTMEMORY_TOTAL = 45;
+    public static final int COMMAND       = 1;
+
+    public static final int CONNECTION    = 2;
+
+    public static final int DATABASE      = 3;
+
+    public static final int DATANODE      = 4;
+
+    public static final int DATASOURCE    = 5;
+
+    public static final int HELP          = 6;
+
+    public static final int PARSER        = 7;
+
+    public static final int PROCESSOR     = 8;
+
+    public static final int ROUTER        = 9;
+
+    public static final int SERVER        = 10;
+
+    public static final int SQL           = 11;
+
+    public static final int SQL_DETAIL    = 12;
+
+    public static final int SQL_EXECUTE   = 13;
+
+    public static final int SQL_SLOW      = 14;
+
+    public static final int SQL_SUM_USER  = 15;
+
+    public static final int SQL_SUM_TABLE = 16;
+
+    public static final int SQL_HIGH      = 17;
+
+    public static final int SQL_CONDITION = 18;
+
+    public static final int SQL_LARGE     = 19;
+
+    public static final int SQL_RESULTSET = 20;
+
+    public static final int THREADPOOL       = 21;
+
+    public static final int TIME_CURRENT     = 22;
+
+    public static final int TIME_STARTUP     = 23;
+
+    public static final int VERSION          = 24;
+
+    public static final int VARIABLES        = 25;
+
+    public static final int COLLATION        = 26;
+
+    public static final int CONNECTION_SQL   = 27;
+
+    public static final int DATANODE_WHERE   = 28;
+
+    public static final int DATASOURCE_WHERE = 29;
+
+    public static final int HEARTBEAT        = 30;
+
+    public static final int SLOW_DATANODE    = 31;
+
+    public static final int SLOW_SCHEMA      = 32;
+
+    public static final int BACKEND          = 33;
+
+    public static final int BACKEND_OLD      = 34;
+
+    public static final int CACHE                  = 35;
+
+    public static final int SESSION                = 36;
+
+    public static final int SYSPARAM               = 37;
+
+    public static final int SYSLOG                 = 38;
+
+    public static final int HEARTBEAT_DETAIL       = 39;
+
+    public static final int DATASOURCE_SYNC        = 40;
+
+    public static final int DATASOURCE_SYNC_DETAIL = 41;
+
+    public static final int DATASOURCE_CLUSTER     = 42;
+
+    public static final int WHITE_HOST           = 43;
+
+    public static final int WHITE_HOST_SET       = 44;
+
+    public static final int DIRECTMEMORY_TOTAL   = 45;
+
     public static final int DIRECTMEMORY_DETAILl = 46;
 
 
@@ -86,25 +129,25 @@ public final class ManagerParseShow {
         int i = offset;
         for (; i < stmt.length(); i++) {
             switch (stmt.charAt(i)) {
-            case ' ':
-                continue;
-            case '/':
-            case '#':
-                i = ParseUtil.comment(stmt, i);
-                continue;
-            case '@':
-                return show2Check(stmt, i);
-            case 'C':
-            case 'c':
-                return showCCheck(stmt, i);
-			case 'd':
-			case 'D':
-				return show2DCheck(stmt, i);
-			case 'V':
-            case 'v':
-                return showVCheck(stmt, i);
-            default:
-                return OTHER;
+                case ' ':
+                    continue;
+                case '/':
+                case '#':
+                    i = ParseUtil.comment(stmt, i);
+                    continue;
+                case '@':
+                    return show2Check(stmt, i);
+                case 'C':
+                case 'c':
+                    return showCCheck(stmt, i);
+                case 'd':
+                case 'D':
+                    return show2DCheck(stmt, i);
+                case 'V':
+                case 'v':
+                    return showVCheck(stmt, i);
+                default:
+                    return OTHER;
             }
         }
         return OTHER;
@@ -114,7 +157,7 @@ public final class ManagerParseShow {
     static int show2Check(String stmt, int offset) {
         if (stmt.length() > ++offset && stmt.charAt(offset) == '@'
                 && stmt.length() > ++offset) {
-                switch (stmt.charAt(offset)) {
+            switch (stmt.charAt(offset)) {
                 case 'B':
                 case 'b':
                     return show2BCheck(stmt, offset);
@@ -144,10 +187,10 @@ public final class ManagerParseShow {
                     return show2VCheck(stmt, offset);
                 case 'W':
                 case 'w':
-                    return show2WCheck(stmt, offset);                    
+                    return show2WCheck(stmt, offset);
                 default:
                     return OTHER;
-                }
+            }
         }
         return OTHER;
     }
@@ -209,67 +252,67 @@ public final class ManagerParseShow {
             char c6 = stmt.charAt(++offset);
             if ((c1 == 'A' || c1 == 'a') && (c2 == 'C' || c2 == 'c') && (c3 == 'K' || c3 == 'k')
                     && (c4 == 'E' || c4 == 'e') && (c5 == 'N' || c5 == 'n') && (c6 == 'D' || c6 == 'd')) {
-                
+
                 if (stmt.length() > ++offset) {
                     switch (stmt.charAt(offset)) {
-                    case ';':
-                    case ' ':
-                        return BACKEND;
-                    case '.':
-                        return show2BackendOld(stmt, offset);
-                    default:
-                        return OTHER;
+                        case ';':
+                        case ' ':
+                            return BACKEND;
+                        case '.':
+                            return show2BackendOld(stmt, offset);
+                        default:
+                            return OTHER;
                     }
                 }
                 return BACKEND;
-                
+
             }
         }
         return OTHER;
     }
-    
+
     static int show2BackendOld(String stmt, int offset) {
-    	  if (stmt.length() > offset + "OLD".length()) {
-              char c1 = stmt.charAt(++offset);
-              char c2 = stmt.charAt(++offset);
-              char c3 = stmt.charAt(++offset);
-              if ((c1 == 'O' || c1 == 'o') && (c2 == 'L' || c2 == 'l') && (c3 == 'D' || c3 == 'd')) {
-                  if (stmt.length() > ++offset && stmt.charAt(offset) != ' ') {
-                      return OTHER;
-                  }
-                  return BACKEND_OLD;
-              }
-          }
-          return OTHER;
+        if (stmt.length() > offset + "OLD".length()) {
+            char c1 = stmt.charAt(++offset);
+            char c2 = stmt.charAt(++offset);
+            char c3 = stmt.charAt(++offset);
+            if ((c1 == 'O' || c1 == 'o') && (c2 == 'L' || c2 == 'l') && (c3 == 'D' || c3 == 'd')) {
+                if (stmt.length() > ++offset && stmt.charAt(offset) != ' ') {
+                    return OTHER;
+                }
+                return BACKEND_OLD;
+            }
+        }
+        return OTHER;
     }
 
     // SHOW @@C
     static int show2CCheck(String stmt, int offset) {
         if (stmt.length() > ++offset) {
             switch (stmt.charAt(offset)) {
-            case 'O':
-            case 'o':
-                return show2CoCheck(stmt, offset);
-            case 'A':
-            case 'a':
-            	 return show2CACheck(stmt, offset);
-            default:
-                return OTHER;
+                case 'O':
+                case 'o':
+                    return show2CoCheck(stmt, offset);
+                case 'A':
+                case 'a':
+                    return show2CACheck(stmt, offset);
+                default:
+                    return OTHER;
             }
         }
         return OTHER;
     }
- // SHOW @@CACHE
-    private static int show2CACheck(String stmt, int offset) {
-    	String remain=stmt.substring(offset);
-    	 if(remain.equalsIgnoreCase("ACHE"))
-    	 {
-    		 return CACHE;
-    	 }
-    	return OTHER;
-	}
 
-	// SHOW @@DATA
+    // SHOW @@CACHE
+    private static int show2CACheck(String stmt, int offset) {
+        String remain = stmt.substring(offset);
+        if ("ACHE".equalsIgnoreCase(remain)) {
+            return CACHE;
+        }
+        return OTHER;
+    }
+
+    // SHOW @@DATA
     static int show2DCheck(String stmt, int offset) {
         if (stmt.length() > offset + "ATA".length()) {
             char c1 = stmt.charAt(++offset);
@@ -277,7 +320,7 @@ public final class ManagerParseShow {
             char c3 = stmt.charAt(++offset);
             if ((c1 == 'A' || c1 == 'a') && (c2 == 'T' || c2 == 't') && (c3 == 'A' || c3 == 'a')
                     && stmt.length() > ++offset) {
-                    switch (stmt.charAt(offset)) {
+                switch (stmt.charAt(offset)) {
                     case 'B':
                     case 'b':
                         return show2DataBCheck(stmt, offset);
@@ -289,23 +332,25 @@ public final class ManagerParseShow {
                         return show2DataSCheck(stmt, offset);
                     default:
                         return OTHER;
-                    }
-            }else if( (c1 == 'I'|| c1 == 'i')
-                    &&(c2 == 'R' || c2 == 'r')
+                }
+            }
+            else if ((c1 == 'I' || c1 == 'i')
+                    && (c2 == 'R' || c2 == 'r')
                     && (c3 == 'E' || c3 == 'e')
-                    && stmt.length() > ++offset){   /**DIRECTMEMORY**/
-                    switch (stmt.charAt(offset)) {
-                        case 'C':
-                        case 'c':
-                            return show2DirectMemoryCheck(stmt,offset);
-                        default:
-                            return OTHER;
-                    }
+                    && stmt.length() > ++offset) {   /**DIRECTMEMORY**/
+                switch (stmt.charAt(offset)) {
+                    case 'C':
+                    case 'c':
+                        return show2DirectMemoryCheck(stmt, offset);
+                    default:
+                        return OTHER;
+                }
             }
         }
         return OTHER;
     }
- // SHOW @@DIRECT_MEMORY=1 or 0
+
+    // SHOW @@DIRECT_MEMORY=1 or 0
     static int show2DirectMemoryCheck(String stmt, int offset) {
         if (stmt.length() > offset + "TMEMORY".length()) {
 
@@ -342,54 +387,58 @@ public final class ManagerParseShow {
 
         return OTHER;
     }
+
     // SHOW @@DataSyn
     static int show2DataSynCheck(String stmt, int offset) {
         if (stmt.length() > ++offset) {
             switch (stmt.charAt(offset)) {
-            case 'S':
-            case 's':
-            	if (stmt.length() > offset + "yn".length()) {
-            		char c1 = stmt.charAt(++offset);
-                    char c2 = stmt.charAt(++offset);
-                    if ((c1 == 'Y' || c1 == 'y') && (c2 == 'N' || c2 == 'n')){
-                        switch (stmt.charAt(++offset)) {
-                        case 'S':
-                        case 's':
-                        	return show2SynStatuslCheck(stmt,offset);
-                        case 'D':
-                        case 'd':
-                        	return show2SynDetailCheck(stmt,offset);
-                        default:
+                case 'S':
+                case 's':
+                    if (stmt.length() > offset + "yn".length()) {
+                        char c1 = stmt.charAt(++offset);
+                        char c2 = stmt.charAt(++offset);
+                        if ((c1 == 'Y' || c1 == 'y') && (c2 == 'N' || c2 == 'n')) {
+                            switch (stmt.charAt(++offset)) {
+                                case 'S':
+                                case 's':
+                                    return show2SynStatuslCheck(stmt, offset);
+                                case 'D':
+                                case 'd':
+                                    return show2SynDetailCheck(stmt, offset);
+                                default:
+                                    return OTHER;
+                            }
+
+                        }
+                        else {
                             return OTHER;
                         }
-
-                    }else{
-                    	return OTHER;
                     }
-            	}
-            case 'C':
-            case 'c':
-            	if (stmt.length() > offset + "luster".length()) {
-            		char c1 = stmt.charAt(++offset);
-                    char c2 = stmt.charAt(++offset);
-                    char c3 = stmt.charAt(++offset);
-                    char c4 = stmt.charAt(++offset);
-                    char c5 = stmt.charAt(++offset);
-                    char c6 = stmt.charAt(++offset);
-                    if ((c1 == 'L' || c1 == 'l') && (c2 == 'U' || c2 == 'u') 
-                    		&& (c3 == 'S' || c3 == 's') && (c4 == 'T' || c4 == 't')
-                    		&& (c5 == 'E' || c5 == 'e')&& (c6 == 'R' || c6 == 'r') ){
-                    	return DATASOURCE_CLUSTER;
-                    }else{
-                    	return OTHER;
+                case 'C':
+                case 'c':
+                    if (stmt.length() > offset + "luster".length()) {
+                        char c1 = stmt.charAt(++offset);
+                        char c2 = stmt.charAt(++offset);
+                        char c3 = stmt.charAt(++offset);
+                        char c4 = stmt.charAt(++offset);
+                        char c5 = stmt.charAt(++offset);
+                        char c6 = stmt.charAt(++offset);
+                        if ((c1 == 'L' || c1 == 'l') && (c2 == 'U' || c2 == 'u')
+                                && (c3 == 'S' || c3 == 's') && (c4 == 'T' || c4 == 't')
+                                && (c5 == 'E' || c5 == 'e') && (c6 == 'R' || c6 == 'r')) {
+                            return DATASOURCE_CLUSTER;
+                        }
+                        else {
+                            return OTHER;
+                        }
                     }
-            	}
-            default:
-                return OTHER;
+                default:
+                    return OTHER;
             }
         }
         return OTHER;
     }
+
     //show @@datasource.syndetail
     static int show2SynDetailCheck(String stmt, int offset) {
         if (stmt.length() > offset + "etail".length()) {
@@ -409,7 +458,8 @@ public final class ManagerParseShow {
         }
         return OTHER;
     }
-    //show @@datasource.synstatus  
+
+    //show @@datasource.synstatus
     static int show2SynStatuslCheck(String stmt, int offset) {
         if (stmt.length() > offset + "tatus".length()) {
             char c1 = stmt.charAt(++offset);
@@ -433,11 +483,11 @@ public final class ManagerParseShow {
     static int show2HCheck(String stmt, int offset) {
         if (stmt.length() > ++offset) {
             switch (stmt.charAt(offset)) {
-            case 'E':
-            case 'e':
-                return show2HeCheck(stmt, offset);
-            default:
-                return OTHER;
+                case 'E':
+                case 'e':
+                    return show2HeCheck(stmt, offset);
+                default:
+                    return OTHER;
             }
         }
         return OTHER;
@@ -447,14 +497,14 @@ public final class ManagerParseShow {
     static int show2HeCheck(String stmt, int offset) {
         if (stmt.length() > ++offset) {
             switch (stmt.charAt(offset)) {
-            case 'L':
-            case 'l':
-                return show2HelCheck(stmt, offset);
-            case 'A':
-            case 'a':
-                return ManagerParseHeartbeat.show2HeaCheck(stmt, offset);
-            default:
-                return OTHER;
+                case 'L':
+                case 'l':
+                    return show2HelCheck(stmt, offset);
+                case 'A':
+                case 'a':
+                    return ManagerParseHeartbeat.show2HeaCheck(stmt, offset);
+                default:
+                    return OTHER;
             }
         }
         return OTHER;
@@ -474,20 +524,19 @@ public final class ManagerParseShow {
         return OTHER;
     }
 
-    
 
     // SHOW @@P
     static int show2PCheck(String stmt, int offset) {
         if (stmt.length() > ++offset) {
             switch (stmt.charAt(offset)) {
-            case 'A':
-            case 'a':
-                return show2PaCheck(stmt, offset);
-            case 'R':
-            case 'r':
-                return show2PrCheck(stmt, offset);
-            default:
-                return OTHER;
+                case 'A':
+                case 'a':
+                    return show2PaCheck(stmt, offset);
+                case 'R':
+                case 'r':
+                    return show2PrCheck(stmt, offset);
+                default:
+                    return OTHER;
             }
         }
         return OTHER;
@@ -516,26 +565,26 @@ public final class ManagerParseShow {
     static int show2SCheck(String stmt, int offset) {
         if (stmt.length() > ++offset) {
             switch (stmt.charAt(offset)) {
-            case 'E':
-            case 'e':
-                return show2SeCheck(stmt, offset);
-            case 'Q':
-            case 'q':
-                return show2SqCheck(stmt, offset);
-            case 'L':
-            case 'l':
-                return show2SlCheck(stmt, offset);
-            case 'Y':
-            case 'y':
-            	return show2SyCheck(stmt, offset);
-            default:
-                return OTHER;
+                case 'E':
+                case 'e':
+                    return show2SeCheck(stmt, offset);
+                case 'Q':
+                case 'q':
+                    return show2SqCheck(stmt, offset);
+                case 'L':
+                case 'l':
+                    return show2SlCheck(stmt, offset);
+                case 'Y':
+                case 'y':
+                    return show2SyCheck(stmt, offset);
+                default:
+                    return OTHER;
             }
         }
         return OTHER;
     }
-    
-	// SHOW @@SLOW
+
+    // SHOW @@SLOW
     static int show2SlCheck(String stmt, int offset) {
         if (stmt.length() > offset + "OW ".length()) {
             char c1 = stmt.charAt(++offset);
@@ -544,20 +593,20 @@ public final class ManagerParseShow {
             if ((c1 == 'O' || c1 == 'o') && (c2 == 'W' || c2 == 'w') && c3 == ' ') {
                 while (stmt.length() > ++offset) {
                     switch (stmt.charAt(offset)) {
-                    case ' ':
-                        continue;
-                    case 'W':
-                    case 'w':
-                        return show2SlowWhereCheck(stmt, offset);
-                    default:
-                        return OTHER;
+                        case ' ':
+                            continue;
+                        case 'W':
+                        case 'w':
+                            return show2SlowWhereCheck(stmt, offset);
+                        default:
+                            return OTHER;
                     }
                 }
             }
         }
         return OTHER;
     }
-    
+
     // SHOW @@SYSPARAM
     static int show2sysparam(String stmt, int offset) {
         if (stmt.length() > offset + "ARAM".length()) {
@@ -566,8 +615,8 @@ public final class ManagerParseShow {
             char c3 = stmt.charAt(++offset);
             char c4 = stmt.charAt(++offset);
 
-            if ((c1 == 'A' || c1 == 'a')  && (c2 == 'R' || c2 == 'r') 
-            		&& (c3 == 'A' || c3 == 'a') && (c4 == 'M' || c4 == 'm')) {
+            if ((c1 == 'A' || c1 == 'a') && (c2 == 'R' || c2 == 'r')
+                    && (c3 == 'A' || c3 == 'a') && (c4 == 'M' || c4 == 'm')) {
                 if (stmt.length() > ++offset && stmt.charAt(offset) != ' ') {
                     return OTHER;
                 }
@@ -576,77 +625,76 @@ public final class ManagerParseShow {
         }
         return OTHER;
     }
-    
-    static int show2syslog(String stmt, int offset) {
-    	
-    	if (stmt.length() > offset + "SLOG".length()) {    		
-    		 
-    		 char c1 = stmt.charAt(++offset);
-             char c2 = stmt.charAt(++offset);
-             char c3 = stmt.charAt(++offset);
-             
-             if ( (c1 == 'O' || c1 == 'o') && (c2 == 'G' || c2 == 'g') && c3 == ' ' ) {
-            	 
-            	 char c4 = stmt.charAt(++offset);
-                 char c5 = stmt.charAt(++offset);
-                 char c6 = stmt.charAt(++offset);
-                 char c7 = stmt.charAt(++offset);
-                 char c8 = stmt.charAt(++offset);
-                 
-                 if ((c4 == 'L' || c4 == 'l') && (c5 == 'I' || c5 == 'i') && (c6 == 'M' || c6 == 'm')
-                         && (c7 == 'I' || c7 == 'i') && (c8 == 'T' || c8 == 't')  ) {
-                	 
-                     while (stmt.length() > ++offset) {
-                         switch (stmt.charAt(offset)) {
-                         case ' ':
-                             continue;
-                         case '=':
-                             while (stmt.length() > ++offset) {
-                                 switch (stmt.charAt(offset)) {
-                                 case ' ':
-                                     continue;
-                                 default:
-                                     return (offset << 8) | SYSLOG;
-                                 }
-                             }
-                             return OTHER;
-                         default:
-                             return OTHER;
-                         }
-                     }
-                 }
 
-                 return SYSLOG;
-             }
-    	}
-    	
-    	return OTHER; 
+    static int show2syslog(String stmt, int offset) {
+
+        if (stmt.length() > offset + "SLOG".length()) {
+
+            char c1 = stmt.charAt(++offset);
+            char c2 = stmt.charAt(++offset);
+            char c3 = stmt.charAt(++offset);
+
+            if ((c1 == 'O' || c1 == 'o') && (c2 == 'G' || c2 == 'g') && c3 == ' ') {
+
+                char c4 = stmt.charAt(++offset);
+                char c5 = stmt.charAt(++offset);
+                char c6 = stmt.charAt(++offset);
+                char c7 = stmt.charAt(++offset);
+                char c8 = stmt.charAt(++offset);
+
+                if ((c4 == 'L' || c4 == 'l') && (c5 == 'I' || c5 == 'i') && (c6 == 'M' || c6 == 'm')
+                        && (c7 == 'I' || c7 == 'i') && (c8 == 'T' || c8 == 't')) {
+
+                    while (stmt.length() > ++offset) {
+                        switch (stmt.charAt(offset)) {
+                            case ' ':
+                                continue;
+                            case '=':
+                                while (stmt.length() > ++offset) {
+                                    switch (stmt.charAt(offset)) {
+                                        case ' ':
+                                            continue;
+                                        default:
+                                            return (offset << 8) | SYSLOG;
+                                    }
+                                }
+                                return OTHER;
+                            default:
+                                return OTHER;
+                        }
+                    }
+                }
+
+                return SYSLOG;
+            }
+        }
+
+        return OTHER;
     }
-    
+
     // SHOW @@SYSPARAM
     // SHOW @@SYSLOG LIMIT=1000
     static int show2SyCheck(String stmt, int offset) {
-    	
-    	if (stmt.length() > offset + "YS".length()) {    		
-    		char c1 = stmt.charAt(++offset);
-    		char c2 = stmt.charAt(++offset);
-    		if ( c1 == 'S' || c1 == 's' ) {	    		
-    			switch (c2) {
-	            case 'L':
-	            case 'l':
-	                return show2syslog(stmt, offset);
-	            case 'P':
-	            case 'p':
-	                return show2sysparam(stmt, offset);
-	            default:
-	                return OTHER;
-	            }
-    		}
-    	}
-        return OTHER;    	
+
+        if (stmt.length() > offset + "YS".length()) {
+            char c1 = stmt.charAt(++offset);
+            char c2 = stmt.charAt(++offset);
+            if (c1 == 'S' || c1 == 's') {
+                switch (c2) {
+                    case 'L':
+                    case 'l':
+                        return show2syslog(stmt, offset);
+                    case 'P':
+                    case 'p':
+                        return show2sysparam(stmt, offset);
+                    default:
+                        return OTHER;
+                }
+            }
+        }
+        return OTHER;
     }
-   
-    
+
 
     // SHOW @@SLOW WHERE
     static int show2SlowWhereCheck(String stmt, int offset) {
@@ -659,16 +707,16 @@ public final class ManagerParseShow {
                     && (c4 == 'E' || c4 == 'e')) {
                 while (stmt.length() > ++offset) {
                     switch (stmt.charAt(offset)) {
-                    case ' ':
-                        continue;
-                    case 'D':
-                    case 'd':
-                        return show2SlowWhereDCheck(stmt, offset);
-                    case 'S':
-                    case 's':
-                        return show2SlowWhereSCheck(stmt, offset);
-                    default:
-                        return OTHER;
+                        case ' ':
+                            continue;
+                        case 'D':
+                        case 'd':
+                            return show2SlowWhereDCheck(stmt, offset);
+                        case 'S':
+                        case 's':
+                            return show2SlowWhereSCheck(stmt, offset);
+                        default:
+                            return OTHER;
                     }
                 }
             }
@@ -691,20 +739,20 @@ public final class ManagerParseShow {
                     && (c7 == 'E' || c7 == 'e')) {
                 while (stmt.length() > ++offset) {
                     switch (stmt.charAt(offset)) {
-                    case ' ':
-                        continue;
-                    case '=':
-                        while (stmt.length() > ++offset) {
-                            switch (stmt.charAt(offset)) {
-                            case ' ':
-                                continue;
-                            default:
-                                return (offset << 8) | SLOW_DATANODE;
+                        case ' ':
+                            continue;
+                        case '=':
+                            while (stmt.length() > ++offset) {
+                                switch (stmt.charAt(offset)) {
+                                    case ' ':
+                                        continue;
+                                    default:
+                                        return (offset << 8) | SLOW_DATANODE;
+                                }
                             }
-                        }
-                        return OTHER;
-                    default:
-                        return OTHER;
+                            return OTHER;
+                        default:
+                            return OTHER;
                     }
                 }
             }
@@ -724,20 +772,20 @@ public final class ManagerParseShow {
                     && (c4 == 'M' || c4 == 'm') && (c5 == 'A' || c5 == 'a')) {
                 while (stmt.length() > ++offset) {
                     switch (stmt.charAt(offset)) {
-                    case ' ':
-                        continue;
-                    case '=':
-                        while (stmt.length() > ++offset) {
-                            switch (stmt.charAt(offset)) {
-                            case ' ':
-                                continue;
-                            default:
-                                return (offset << 8) | SLOW_SCHEMA;
+                        case ' ':
+                            continue;
+                        case '=':
+                            while (stmt.length() > ++offset) {
+                                switch (stmt.charAt(offset)) {
+                                    case ' ':
+                                        continue;
+                                    default:
+                                        return (offset << 8) | SLOW_SCHEMA;
+                                }
                             }
-                        }
-                        return OTHER;
-                    default:
-                        return OTHER;
+                            return OTHER;
+                        default:
+                            return OTHER;
                     }
                 }
             }
@@ -749,14 +797,14 @@ public final class ManagerParseShow {
     static int show2TCheck(String stmt, int offset) {
         if (stmt.length() > ++offset) {
             switch (stmt.charAt(offset)) {
-            case 'H':
-            case 'h':
-                return show2ThCheck(stmt, offset);
-            case 'I':
-            case 'i':
-                return show2TiCheck(stmt, offset);
-            default:
-                return OTHER;
+                case 'H':
+                case 'h':
+                    return show2ThCheck(stmt, offset);
+                case 'I':
+                case 'i':
+                    return show2TiCheck(stmt, offset);
+                default:
+                    return OTHER;
             }
         }
         return OTHER;
@@ -781,6 +829,7 @@ public final class ManagerParseShow {
         }
         return OTHER;
     }
+
     // SHOW @@White  ip白名单
     static int show2WCheck(String stmt, int offset) {
         if (stmt.length() > offset + "HITE".length()) {
@@ -789,7 +838,7 @@ public final class ManagerParseShow {
             char c3 = stmt.charAt(++offset);
             char c4 = stmt.charAt(++offset);
             if ((c1 == 'H' || c1 == 'h') && (c2 == 'I' || c2 == 'i') && (c3 == 'T' || c3 == 't')
-                    && (c4 == 'E' || c4 == 'e') ) {
+                    && (c4 == 'E' || c4 == 'e')) {
                 if (stmt.length() > ++offset && stmt.charAt(offset) == '.') {
                     return show2WhiteCheck(stmt, offset);
                 }
@@ -798,6 +847,7 @@ public final class ManagerParseShow {
         }
         return OTHER;
     }
+
     static int show2WhiteCheck(String stmt, int offset) {
         if (stmt.length() > offset + "set".length()) {
             char c1 = stmt.charAt(++offset);
@@ -813,18 +863,19 @@ public final class ManagerParseShow {
         }
         return OTHER;
     }
+
     // SHOW @@CO
     static int show2CoCheck(String stmt, int offset) {
         if (stmt.length() > ++offset) {
             switch (stmt.charAt(offset)) {
-            case 'M':
-            case 'm':
-                return show2ComCheck(stmt, offset);
-            case 'N':
-            case 'n':
-                return show2ConCheck(stmt, offset);
-            default:
-                return OTHER;
+                case 'M':
+                case 'm':
+                    return show2ComCheck(stmt, offset);
+                case 'N':
+                case 'n':
+                    return show2ConCheck(stmt, offset);
+                default:
+                    return OTHER;
             }
         }
         return OTHER;
@@ -855,13 +906,13 @@ public final class ManagerParseShow {
             if ((c1 == 'O' || c1 == 'o') && (c2 == 'D' || c2 == 'd') && (c3 == 'E' || c3 == 'e')) {
                 while (stmt.length() > ++offset) {
                     switch (stmt.charAt(offset)) {
-                    case ' ':
-                        continue;
-                    case 'W':
-                    case 'w':
-                        return show2DataNWhereCheck(stmt, offset);
-                    default:
-                        return OTHER;
+                        case ' ':
+                            continue;
+                        case 'W':
+                        case 'w':
+                            return show2DataNWhereCheck(stmt, offset);
+                        default:
+                            return OTHER;
                     }
                 }
                 return DATANODE;
@@ -881,13 +932,13 @@ public final class ManagerParseShow {
                     && (c4 == 'E' || c4 == 'e')) {
                 while (stmt.length() > ++offset) {
                     switch (stmt.charAt(offset)) {
-                    case ' ':
-                        continue;
-                    case 'S':
-                    case 's':
-                        return show2DataNWhereSchemaCheck(stmt, offset);
-                    default:
-                        return OTHER;
+                        case ' ':
+                            continue;
+                        case 'S':
+                        case 's':
+                            return show2DataNWhereSchemaCheck(stmt, offset);
+                        default:
+                            return OTHER;
                     }
                 }
             }
@@ -907,20 +958,20 @@ public final class ManagerParseShow {
                     && (c4 == 'M' || c4 == 'm') && (c5 == 'A' || c5 == 'a')) {
                 while (stmt.length() > ++offset) {
                     switch (stmt.charAt(offset)) {
-                    case ' ':
-                        continue;
-                    case '=':
-                        while (stmt.length() > ++offset) {
-                            switch (stmt.charAt(offset)) {
-                            case ' ':
-                                continue;
-                            default:
-                                return (offset << 8) | DATANODE_WHERE;
+                        case ' ':
+                            continue;
+                        case '=':
+                            while (stmt.length() > ++offset) {
+                                switch (stmt.charAt(offset)) {
+                                    case ' ':
+                                        continue;
+                                    default:
+                                        return (offset << 8) | DATANODE_WHERE;
+                                }
                             }
-                        }
-                        return OTHER;
-                    default:
-                        return OTHER;
+                            return OTHER;
+                        default:
+                            return OTHER;
                     }
                 }
             }
@@ -940,15 +991,15 @@ public final class ManagerParseShow {
                     && (c4 == 'C' || c4 == 'c') && (c5 == 'E' || c5 == 'e')) {
                 while (stmt.length() > ++offset) {
                     switch (stmt.charAt(offset)) {
-                    case ' ':
-                        continue;
-                    case 'W':
-                    case 'w':
-                        return show2DataSWhereCheck(stmt, offset);
-                    case '.':
-                        return show2DataSynCheck(stmt, offset);
-                    default:
-                        return OTHER;
+                        case ' ':
+                            continue;
+                        case 'W':
+                        case 'w':
+                            return show2DataSWhereCheck(stmt, offset);
+                        case '.':
+                            return show2DataSynCheck(stmt, offset);
+                        default:
+                            return OTHER;
                     }
                 }
 
@@ -969,13 +1020,13 @@ public final class ManagerParseShow {
                     && (c4 == 'E' || c4 == 'e')) {
                 while (stmt.length() > ++offset) {
                     switch (stmt.charAt(offset)) {
-                    case ' ':
-                        continue;
-                    case 'd':
-                    case 'D':
-                        return show2DataSWhereDatanodeCheck(stmt, offset);
-                    default:
-                        return OTHER;
+                        case ' ':
+                            continue;
+                        case 'd':
+                        case 'D':
+                            return show2DataSWhereDatanodeCheck(stmt, offset);
+                        default:
+                            return OTHER;
                     }
                 }
             }
@@ -998,20 +1049,20 @@ public final class ManagerParseShow {
                     && (c7 == 'E' || c7 == 'e')) {
                 while (stmt.length() > ++offset) {
                     switch (stmt.charAt(offset)) {
-                    case ' ':
-                        continue;
-                    case '=':
-                        while (stmt.length() > ++offset) {
-                            switch (stmt.charAt(offset)) {
-                            case ' ':
-                                continue;
-                            default:
-                                return (offset << 8) | DATASOURCE_WHERE;
+                        case ' ':
+                            continue;
+                        case '=':
+                            while (stmt.length() > ++offset) {
+                                switch (stmt.charAt(offset)) {
+                                    case ' ':
+                                        continue;
+                                    default:
+                                        return (offset << 8) | DATASOURCE_WHERE;
+                                }
                             }
-                        }
-                        return OTHER;
-                    default:
-                        return OTHER;
+                            return OTHER;
+                        default:
+                            return OTHER;
                     }
                 }
             }
@@ -1123,7 +1174,7 @@ public final class ManagerParseShow {
             char c3 = stmt.charAt(++offset);
             if ((c1 == 'M' || c1 == 'm') && (c2 == 'E' || c2 == 'e') && (c3 == '.')
                     && (stmt.length() > ++offset)) {
-                    switch (stmt.charAt(offset)) {
+                switch (stmt.charAt(offset)) {
                     case 'C':
                     case 'c':
                         return show2TimeCCheck(stmt, offset);
@@ -1132,7 +1183,7 @@ public final class ManagerParseShow {
                         return show2TimeSCheck(stmt, offset);
                     default:
                         return OTHER;
-                    }
+                }
             }
         }
         return OTHER;
@@ -1171,12 +1222,12 @@ public final class ManagerParseShow {
                     && (c7 == 'N' || c7 == 'n')) {
                 if (stmt.length() > ++offset) {
                     switch (stmt.charAt(offset)) {
-                    case ' ':
-                        return CONNECTION;
-                    case '.':
-                        return show2ConnectonSQL(stmt, offset);
-                    default:
-                        return OTHER;
+                        case ' ':
+                            return CONNECTION;
+                        case '.':
+                            return show2ConnectonSQL(stmt, offset);
+                        default:
+                            return OTHER;
                     }
                 }
                 return CONNECTION;
@@ -1245,11 +1296,11 @@ public final class ManagerParseShow {
     static int show2SqCheck(String stmt, int offset) {
         if (stmt.length() > ++offset) {
             switch (stmt.charAt(offset)) {
-            case 'L':
-            case 'l':
-                return show2SqlCheck(stmt, offset);
-            default:
-                return OTHER;
+                case 'L':
+                case 'l':
+                    return show2SqlCheck(stmt, offset);
+                default:
+                    return OTHER;
             }
         }
         return OTHER;
@@ -1259,15 +1310,16 @@ public final class ManagerParseShow {
     static int show2SqlCheck(String stmt, int offset) {
         if (stmt.length() > ++offset) {
             switch (stmt.charAt(offset)) {
-            case '.':
-                return show2SqlDotCheck(stmt, offset);
-            case ' ':
-                return show2SqlBlankCheck(stmt, offset);
-            default:            	          	
-            	return SQL;
+                case '.':
+                    return show2SqlDotCheck(stmt, offset);
+                case ' ':
+                    return show2SqlBlankCheck(stmt, offset);
+                default:
+                    return SQL;
             }
-        } else {
-        	return SQL;
+        }
+        else {
+            return SQL;
         }
     }
 
@@ -1275,37 +1327,37 @@ public final class ManagerParseShow {
     static int show2SqlDotCheck(String stmt, int offset) {
         if (stmt.length() > ++offset) {
             switch (stmt.charAt(offset)) {
-            case 'D':
-            case 'd':
-                return show2SqlDCheck(stmt, offset);
-            case 'E':
-            case 'e':
-                return show2SqlECheck(stmt, offset);
-            case 'S':
-            case 's':
-            	char c1 = stmt.charAt(++offset);
-            	switch (c1) {
-            	case 'L':
-            	case 'l':
-                	return show2SqlSLCheck(stmt, offset);
-            	case 'U':
-            	case 'u':
-            		return show2SqlSUCheck(stmt, offset);
-            	}
-            case 'H':
-            case 'h':
-            	return show2SqlHCheck(stmt, offset);
-            case 'L':
-            case 'l':
-            	return show2SqlLCheck(stmt, offset);
-            case 'C':
-            case 'c':
-            	return show2SqlCCheck(stmt, offset);
-            case 'R':
-            case 'r':
-            	return show2SqlRCheck(stmt, offset);
-            default:
-                return OTHER;
+                case 'D':
+                case 'd':
+                    return show2SqlDCheck(stmt, offset);
+                case 'E':
+                case 'e':
+                    return show2SqlECheck(stmt, offset);
+                case 'S':
+                case 's':
+                    char c1 = stmt.charAt(++offset);
+                    switch (c1) {
+                        case 'L':
+                        case 'l':
+                            return show2SqlSLCheck(stmt, offset);
+                        case 'U':
+                        case 'u':
+                            return show2SqlSUCheck(stmt, offset);
+                    }
+                case 'H':
+                case 'h':
+                    return show2SqlHCheck(stmt, offset);
+                case 'L':
+                case 'l':
+                    return show2SqlLCheck(stmt, offset);
+                case 'C':
+                case 'c':
+                    return show2SqlCCheck(stmt, offset);
+                case 'R':
+                case 'r':
+                    return show2SqlRCheck(stmt, offset);
+                default:
+                    return OTHER;
             }
         }
         return OTHER;
@@ -1313,19 +1365,20 @@ public final class ManagerParseShow {
 
     // SHOW @@SQL WHERE ID = XXXXXX
     static int show2SqlBlankCheck(String stmt, int offset) {
-        for (++offset; stmt.length() > offset;) {
+        for (++offset; stmt.length() > offset; ) {
             switch (stmt.charAt(offset)) {
-            case ' ':
-            	return SQL;
-            case 'W':
-            case 'w':
-                if (isWhere(stmt, offset)) {
+                case ' ':
                     return SQL;
-                } else {
-                    return OTHER;
-                }
-            default:
-            	return (offset << 8) | SQL;
+                case 'W':
+                case 'w':
+                    if (isWhere(stmt, offset)) {
+                        return SQL;
+                    }
+                    else {
+                        return OTHER;
+                    }
+                default:
+                    return (offset << 8) | SQL;
             }
         }
 
@@ -1344,17 +1397,18 @@ public final class ManagerParseShow {
                     && (c4 == 'I' || c4 == 'i') && (c5 == 'L' || c5 == 'l')) {
                 for (++offset; stmt.length() > offset; ++offset) {
                     switch (stmt.charAt(offset)) {
-                    case ' ':
-                        continue;
-                    case 'W':
-                    case 'w':
-                        if (isWhere(stmt, offset)) {
-                            return SQL_DETAIL;
-                        } else {
+                        case ' ':
+                            continue;
+                        case 'W':
+                        case 'w':
+                            if (isWhere(stmt, offset)) {
+                                return SQL_DETAIL;
+                            }
+                            else {
+                                return OTHER;
+                            }
+                        default:
                             return OTHER;
-                        }
-                    default:
-                        return OTHER;
                     }
                 }
             }
@@ -1388,51 +1442,51 @@ public final class ManagerParseShow {
             char c1 = stmt.charAt(++offset);
             char c2 = stmt.charAt(++offset);
             if ((c1 == 'O' || c1 == 'o') && (c2 == 'W' || c2 == 'w')) {
-            	
-            	while (stmt.length() > ++offset) {
-	           		 switch (stmt.charAt(offset)) {
-	           		 case ' ':
-	                     continue;
-	                 default:
-	                   	 return (offset << 8) | SQL_SLOW;	 
-	           		 }
-	           	}
-            	
+
+                while (stmt.length() > ++offset) {
+                    switch (stmt.charAt(offset)) {
+                        case ' ':
+                            continue;
+                        default:
+                            return (offset << 8) | SQL_SLOW;
+                    }
+                }
+
                 return SQL_SLOW;
             }
         }
         return OTHER;
     }
-    
+
     // SHOW @@SQL.HIGH
     static int show2SqlHCheck(String stmt, int offset) {
-    	
-    	if (stmt.length() > offset + "IGH".length()) {
-    		char c1 = stmt.charAt(++offset);
+
+        if (stmt.length() > offset + "IGH".length()) {
+            char c1 = stmt.charAt(++offset);
             char c2 = stmt.charAt(++offset);
             char c3 = stmt.charAt(++offset);
-            if ((c1 == 'I' || c1 == 'i') && (c2 == 'G' || c2 == 'g') && (c3 == 'H' || c3 == 'h') ) {
-            	
-            	while (stmt.length() > ++offset) {
-            		 switch (stmt.charAt(offset)) {
-            		 case ' ':
-                         continue;
-                     default:
-                    	 return (offset << 8) | SQL_HIGH;	 
-            		 }
-            	}
-            	
+            if ((c1 == 'I' || c1 == 'i') && (c2 == 'G' || c2 == 'g') && (c3 == 'H' || c3 == 'h')) {
+
+                while (stmt.length() > ++offset) {
+                    switch (stmt.charAt(offset)) {
+                        case ' ':
+                            continue;
+                        default:
+                            return (offset << 8) | SQL_HIGH;
+                    }
+                }
+
                 return SQL_HIGH;
             }
         }
         return OTHER;
     }
-    
+
     // SHOW @@SQL.RESULTSET
     static int show2SqlRCheck(String stmt, int offset) {
-    	
-    	if (stmt.length() > offset + "ESULTSET".length()) {
-    		char c1 = stmt.charAt(++offset);
+
+        if (stmt.length() > offset + "ESULTSET".length()) {
+            char c1 = stmt.charAt(++offset);
             char c2 = stmt.charAt(++offset);
             char c3 = stmt.charAt(++offset);
             char c4 = stmt.charAt(++offset);
@@ -1440,55 +1494,56 @@ public final class ManagerParseShow {
             char c6 = stmt.charAt(++offset);
             char c7 = stmt.charAt(++offset);
             char c8 = stmt.charAt(++offset);
-            if ((c1 == 'E' || c1 == 'e') && (c2 == 'S' || c2 == 's') && (c3 == 'U' || c3 == 'u')&&
-            		(c4 == 'l' || c4 == 'i') && (c5 == 'T' || c5 == 't') && (c6 == 'S' || c6 == 's')&&
-            		(c7 == 'E' || c7 == 'e') && (c8 == 'T' || c8 == 't') ) {
-            	
-            	while (stmt.length() > ++offset) {
-            		 switch (stmt.charAt(offset)) {
-            		 case ' ':
-                         continue;
-                     default:
-                    	 return (offset << 8) | SQL_RESULTSET;	 
-            		 }
-            	}
-            	
+            if ((c1 == 'E' || c1 == 'e') && (c2 == 'S' || c2 == 's') && (c3 == 'U' || c3 == 'u') &&
+                    (c4 == 'l' || c4 == 'i') && (c5 == 'T' || c5 == 't') && (c6 == 'S' || c6 == 's') &&
+                    (c7 == 'E' || c7 == 'e') && (c8 == 'T' || c8 == 't')) {
+
+                while (stmt.length() > ++offset) {
+                    switch (stmt.charAt(offset)) {
+                        case ' ':
+                            continue;
+                        default:
+                            return (offset << 8) | SQL_RESULTSET;
+                    }
+                }
+
                 return SQL_RESULTSET;
             }
         }
         return OTHER;
     }
-    
+
     // SHOW @@SQL.LARGE
     static int show2SqlLCheck(String stmt, int offset) {
-    	
-    	if (stmt.length() > offset + "ARGE".length()) {
-    		char c1 = stmt.charAt(++offset);
+
+        if (stmt.length() > offset + "ARGE".length()) {
+            char c1 = stmt.charAt(++offset);
             char c2 = stmt.charAt(++offset);
             char c3 = stmt.charAt(++offset);
             char c4 = stmt.charAt(++offset);
-            if ((c1 == 'A' || c1 == 'a') && (c2 == 'R' || c2 == 'r') && (c3 == 'G' || c3 == 'g') && (c4 == 'E' || c4 == 'e') ) {
-            	
-            	while (stmt.length() > ++offset) {
-            		 switch (stmt.charAt(offset)) {
-            		 case ' ':
-                         continue;
-                     default:
-                    	 return (offset << 8) | SQL_LARGE;	 
-            		 }
-            	}
-            	
+            if ((c1 == 'A' || c1 == 'a') && (c2 == 'R' || c2 == 'r') && (c3 == 'G' || c3 == 'g') && (c4 == 'E' || c4
+                    == 'e')) {
+
+                while (stmt.length() > ++offset) {
+                    switch (stmt.charAt(offset)) {
+                        case ' ':
+                            continue;
+                        default:
+                            return (offset << 8) | SQL_LARGE;
+                    }
+                }
+
                 return SQL_LARGE;
             }
         }
         return OTHER;
     }
-    
+
     // SHOW @@sql.condition
     static int show2SqlCCheck(String stmt, int offset) {
-    	
-    	if (stmt.length() > offset + "ONDITION".length()) {
-    		char c1 = stmt.charAt(++offset);
+
+        if (stmt.length() > offset + "ONDITION".length()) {
+            char c1 = stmt.charAt(++offset);
             char c2 = stmt.charAt(++offset);
             char c3 = stmt.charAt(++offset);
             char c4 = stmt.charAt(++offset);
@@ -1496,9 +1551,9 @@ public final class ManagerParseShow {
             char c6 = stmt.charAt(++offset);
             char c7 = stmt.charAt(++offset);
             char c8 = stmt.charAt(++offset);
-            if ( (c1 == 'O' || c1 == 'o') && (c2 == 'N' || c2 == 'n') && (c3 == 'D' || c3 == 'd') &&
-            		(c4 == 'I' || c4 == 'i') && (c5 == 'T' || c5 == 't') && (c6 == 'I' || c6 == 'i') &&
-            		(c7 == 'O' || c7 == 'o') && (c8 == 'N' || c8 == 'n') ) {
+            if ((c1 == 'O' || c1 == 'o') && (c2 == 'N' || c2 == 'n') && (c3 == 'D' || c3 == 'd') &&
+                    (c4 == 'I' || c4 == 'i') && (c5 == 'T' || c5 == 't') && (c6 == 'I' || c6 == 'i') &&
+                    (c7 == 'O' || c7 == 'o') && (c8 == 'N' || c8 == 'n')) {
                 if (stmt.length() > ++offset && stmt.charAt(offset) != ' ') {
                     return OTHER;
                 }
@@ -1507,69 +1562,70 @@ public final class ManagerParseShow {
         }
         return OTHER;
     }
-    
+
     // SHOW @@SQL.SUM
     static int show2SqlSUCheck(String stmt, int offset) {
-    	if (stmt.length() > offset + "M".length()) {
+        if (stmt.length() > offset + "M".length()) {
             char c1 = stmt.charAt(++offset);
-            if ( c1 == 'M' || c1 == 'm') {
+            if (c1 == 'M' || c1 == 'm') {
                 if (stmt.length() > ++offset && stmt.charAt(offset) == '.') {
-                	
-                	/**
-                	 *  TODO: modify by zhuam
-                	 *   
-                	 *  兼容之前指令
-                	 *  在保留 SHOW @@SQL.SUM 指令的同时， 扩展支持  SHOW @@SQL.SUM.TABLE 、 SHOW @@SQL.SUM.USER   
-                	 */       	
-                	if ( stmt.length() > (offset+4) ) {                		
-	                	char c2 = stmt.charAt(++offset);
-	                	char c3 = stmt.charAt(++offset);
-	                	char c4 = stmt.charAt(++offset);
-	                	char c5 = stmt.charAt(++offset);	                	
-	                	
-	                	if ( (c2 == 'U' || c2 == 'u') && (c3 == 'S' || c3 == 's')
-	                	  && (c4 == 'E' || c4 == 'e') && (c5 == 'R' || c5 == 'r') ) {	
-	                		return SQL_SUM_USER;
-	                		
-	                	} else if ( (c2 == 'T' || c2 == 't') && (c3 == 'A' || c3 == 'a')
-				             	 && (c4 == 'B' || c4 == 'b') && (c5 == 'L' || c5 == 'l')
-                                && stmt.length() > (offset+1)) {
 
-	                			 char c6 = stmt.charAt(++offset);
-	                			 if ( c6 == 'E' || c6 == 'e') {
-	                				 
-                	            	while (stmt.length() > ++offset) {
-                		           		 switch (stmt.charAt(offset)) {
-                		           		 case ' ':
-                		                     continue;
-                		                 default:
-                		                   	 return (offset << 8) | SQL_SUM_TABLE;	 
-                		           		 }
-                		           	}
-	 
-	                				return SQL_SUM_TABLE;
-	                			 }
-	                	}
-	                	
-                	} 
-                	
+                    /**
+                     *  TODO: modify by zhuam
+                     *
+                     *  兼容之前指令
+                     *  在保留 SHOW @@SQL.SUM 指令的同时， 扩展支持  SHOW @@SQL.SUM.TABLE 、 SHOW @@SQL.SUM.USER
+                     */
+                    if (stmt.length() > (offset + 4)) {
+                        char c2 = stmt.charAt(++offset);
+                        char c3 = stmt.charAt(++offset);
+                        char c4 = stmt.charAt(++offset);
+                        char c5 = stmt.charAt(++offset);
+
+                        if ((c2 == 'U' || c2 == 'u') && (c3 == 'S' || c3 == 's')
+                                && (c4 == 'E' || c4 == 'e') && (c5 == 'R' || c5 == 'r')) {
+                            return SQL_SUM_USER;
+
+                        }
+                        else if ((c2 == 'T' || c2 == 't') && (c3 == 'A' || c3 == 'a')
+                                && (c4 == 'B' || c4 == 'b') && (c5 == 'L' || c5 == 'l')
+                                && stmt.length() > (offset + 1)) {
+
+                            char c6 = stmt.charAt(++offset);
+                            if (c6 == 'E' || c6 == 'e') {
+
+                                while (stmt.length() > ++offset) {
+                                    switch (stmt.charAt(offset)) {
+                                        case ' ':
+                                            continue;
+                                        default:
+                                            return (offset << 8) | SQL_SUM_TABLE;
+                                    }
+                                }
+
+                                return SQL_SUM_TABLE;
+                            }
+                        }
+
+                    }
+
                     return OTHER;
                 }
-                
-            	while (stmt.length() > ++offset) {
-              		 switch (stmt.charAt(offset)) {
-              		 case ' ':
-                           continue;
-                       default:
-                      	 return (offset << 8) | SQL_SUM_USER;	 
-              		 }
-                 	}
+
+                while (stmt.length() > ++offset) {
+                    switch (stmt.charAt(offset)) {
+                        case ' ':
+                            continue;
+                        default:
+                            return (offset << 8) | SQL_SUM_USER;
+                    }
+                }
                 return SQL_SUM_USER;
             }
         }
         return OTHER;
     }
-    
+
 
     static boolean isWhere(String stmt, int offset) {
         if (stmt.length() > offset + 5) {
@@ -1583,27 +1639,27 @@ public final class ManagerParseShow {
                 boolean jump1 = false;
                 for (++offset; stmt.length() > offset && !jump1; ++offset) {
                     switch (stmt.charAt(offset)) {
-                    case ' ':
-                        continue;
-                    case 'I':
-                    case 'i':
-                        jump1 = true;
-                        break;
-                    default:
-                        return false;
+                        case ' ':
+                            continue;
+                        case 'I':
+                        case 'i':
+                            jump1 = true;
+                            break;
+                        default:
+                            return false;
                     }
                 }
                 if ((stmt.length() > offset) && (stmt.charAt(offset) == 'D' || stmt.charAt(offset) == 'd')) {
                     boolean jump2 = false;
                     for (++offset; stmt.length() > offset && !jump2; ++offset) {
                         switch (stmt.charAt(offset)) {
-                        case ' ':
-                            continue;
-                        case '=':
-                            jump2 = true;
-                            break;
-                        default:
-                            return false;
+                            case ' ':
+                                continue;
+                            case '=':
+                                jump2 = true;
+                                break;
+                            default:
+                                return false;
                         }
                     }
                     return isSqlId(stmt, offset);
@@ -1617,7 +1673,8 @@ public final class ManagerParseShow {
         String id = stmt.substring(offset).trim();
         try {
             Long.parseLong(id);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             return false;
         }
         return true;

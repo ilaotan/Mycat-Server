@@ -19,28 +19,29 @@ import io.mycat.backend.postgresql.utils.PIOUtils;
  */
 public class EmptyQueryResponse extends PostgreSQLPacket {
 
-	private char marker = PacketMarker.B_EmptyQueryResponse.getValue();
-	private int length;
+    private char marker = PacketMarker.B_EmptyQueryResponse.getValue();
 
-	@Override
-	public int getLength() {
-		return length;
-	}
+    private int length;
 
-	@Override
-	public char getMarker() {
-		return marker;
-	}
+    @Override
+    public int getLength() {
+        return length;
+    }
 
-	public static EmptyQueryResponse parse(ByteBuffer buffer, int offset) {
-		if (buffer.get(offset) != PacketMarker.B_EmptyQueryResponse.getValue()) {
-			throw new IllegalArgumentException(
-					"this packetData not is EmptyQueryResponse");
-		}
-		int _offset = offset + 1;
-		EmptyQueryResponse pack = new EmptyQueryResponse();
-		pack.length = PIOUtils.redInteger4(buffer, _offset);
-		return pack;
-	}
+    @Override
+    public char getMarker() {
+        return marker;
+    }
+
+    public static EmptyQueryResponse parse(ByteBuffer buffer, int offset) {
+        if (buffer.get(offset) != PacketMarker.B_EmptyQueryResponse.getValue()) {
+            throw new IllegalArgumentException(
+                    "this packetData not is EmptyQueryResponse");
+        }
+        int _offset = offset + 1;
+        EmptyQueryResponse pack = new EmptyQueryResponse();
+        pack.length = PIOUtils.redInteger4(buffer, _offset);
+        return pack;
+    }
 
 }

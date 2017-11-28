@@ -30,25 +30,28 @@ import io.mycat.route.parser.util.ParseUtil;
  */
 public final class ManagerParseRollback {
 
-    public static final int OTHER = -1;
+    public static final int OTHER  = -1;
+
     public static final int CONFIG = 1;
-    public static final int ROUTE = 2;
-    public static final int USER = 3;
+
+    public static final int ROUTE  = 2;
+
+    public static final int USER   = 3;
 
     public static int parse(String stmt, int offset) {
         int i = offset;
         for (; i < stmt.length(); i++) {
             switch (stmt.charAt(i)) {
-            case ' ':
-                continue;
-            case '/':
-            case '#':
-                i = ParseUtil.comment(stmt, i);
-                continue;
-            case '@':
-                return rollback2Check(stmt, i);
-            default:
-                return OTHER;
+                case ' ':
+                    continue;
+                case '/':
+                case '#':
+                    i = ParseUtil.comment(stmt, i);
+                    continue;
+                case '@':
+                    return rollback2Check(stmt, i);
+                default:
+                    return OTHER;
             }
         }
         return OTHER;
@@ -57,7 +60,7 @@ public final class ManagerParseRollback {
     static int rollback2Check(String stmt, int offset) {
         if (stmt.length() > ++offset && stmt.charAt(offset) == '@'
                 && stmt.length() > ++offset) {
-                switch (stmt.charAt(offset)) {
+            switch (stmt.charAt(offset)) {
                 case 'C':
                 case 'c':
                     return rollback2CCheck(stmt, offset);
@@ -69,7 +72,7 @@ public final class ManagerParseRollback {
                     return rollback2UCheck(stmt, offset);
                 default:
                     return OTHER;
-                }
+            }
         }
         return OTHER;
     }

@@ -14,26 +14,35 @@ import java.util.List;
 public class MigrateTask implements Serializable {
 
     private String from;
+
     private String to;
+
     private String table;
-    private List<Range> slots=new ArrayList<>();
+
+    private List<Range> slots = new ArrayList<>();
 
     private String method;
-    private String fclass=PartitionByCRC32PreSlot.class.getName();
+
+    private String fclass = PartitionByCRC32PreSlot.class.getName();
 
     private String schema;
 
 
     private int slaveId;
 
-    private transient String zkpath;
-    private transient String binlogFile;
-    private transient int pos;
-    private transient volatile Date lastBinlogDate;
-    private transient volatile boolean haserror=false;
+    private transient          String zkpath;
+
+    private transient          String binlogFile;
+
+    private transient          int    pos;
+
+    private transient volatile Date   lastBinlogDate;
+
+    private transient volatile boolean haserror = false;
+
     private transient volatile int status;
 
-    private transient volatile boolean hasExecute=false;
+    private transient volatile boolean hasExecute = false;
 
     public int getStatus() {
         return status;
@@ -59,10 +68,10 @@ public class MigrateTask implements Serializable {
         this.slots = slots;
     }
 
-    public int getSize()
-    {   int size=0;
+    public int getSize() {
+        int size = 0;
         for (Range slot : slots) {
-           size=size+slot.size;
+            size = size + slot.size;
         }
         return size;
     }
@@ -163,13 +172,11 @@ public class MigrateTask implements Serializable {
         this.zkpath = zkpath;
     }
 
-    public void addSlots(Range range)
-    {
+    public void addSlots(Range range) {
         slots.add(range);
     }
 
-    public void addSlots(List<Range> ranges)
-    {
+    public void addSlots(List<Range> ranges) {
         slots.addAll(ranges);
     }
 

@@ -8,5 +8,5 @@ package io.mycat.memory.unsafe.ringbuffer.common.event;
  * @date 2016/7/29
  */
 public interface EventTranslator<T> {
-     void translateTo(final T event, long sequence);
+    void translateTo(final T event, long sequence);
 }

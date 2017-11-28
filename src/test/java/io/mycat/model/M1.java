@@ -32,8 +32,10 @@ import jsr166y.LinkedTransferQueue;
  */
 public class M1 {
 
-    private long count;
+    private       long                          count;
+
     private final BlockingQueue<TransferObject> x;
+
     private final BlockingQueue<TransferObject> y;
 
     public M1() {
@@ -62,10 +64,11 @@ public class M1 {
     private final class A implements Runnable {
         @Override
         public void run() {
-            for (;;) {
+            for (; ; ) {
                 try {
                     Thread.sleep(200L);
-                } catch (InterruptedException e) {
+                }
+                catch (InterruptedException e) {
                 }
                 for (int i = 0; i < 1000000; i++) {
                     x.offer(new TransferObject());
@@ -78,10 +81,11 @@ public class M1 {
         @Override
         public void run() {
             TransferObject t = null;
-            for (;;) {
+            for (; ; ) {
                 try {
                     t = x.take();
-                } catch (InterruptedException e) {
+                }
+                catch (InterruptedException e) {
                     continue;
                 }
                 t.handle();
@@ -94,10 +98,11 @@ public class M1 {
         @Override
         public void run() {
             TransferObject t = null;
-            for (;;) {
+            for (; ; ) {
                 try {
                     t = y.take();
-                } catch (InterruptedException e) {
+                }
+                catch (InterruptedException e) {
                     continue;
                 }
                 t.compelete();

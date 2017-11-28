@@ -80,16 +80,26 @@ public class MongoEmbeddedObjectProcessorTest {
 }
 
 class TestObject {
-    private ObjectId _id;
-    private String str;
-    private Integer inte;
-    private Date date;
-    private Long lon;
-    private Boolean bool;
-    private String[] strs;
-    private Integer[] intes;
-    private byte[] bytes;
-    private Byte b;
+    private ObjectId       _id;
+
+    private String         str;
+
+    private Integer        inte;
+
+    private Date           date;
+
+    private Long           lon;
+
+    private Boolean        bool;
+
+    private String[]       strs;
+
+    private Integer[]      intes;
+
+    private byte[]         bytes;
+
+    private Byte           b;
+
     private EmbeddedObject embeddedObject;
 
     public ObjectId get_id() {
@@ -182,9 +192,11 @@ class TestObject {
 }
 
 class EmbeddedObject {
-    private String embeddedStr;
+    private String           embeddedStr;
+
     private List<TestObject> testObjectList;
-    private Set<String> someCodeSet;
+
+    private Set<String>      someCodeSet;
 
     public String getEmbeddedStr() {
         return embeddedStr;

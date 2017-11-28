@@ -29,7 +29,8 @@ import java.io.Serializable;
  * @author mycat
  */
 public class TableRuleConfig implements Serializable {
-    private  String name;
+    private       String     name;
+
     private final RuleConfig rule;
 
     public TableRuleConfig(String name, RuleConfig rule) {
@@ -40,7 +41,7 @@ public class TableRuleConfig implements Serializable {
         if (rule == null) {
             throw new IllegalArgumentException("no rule is found");
         }
-        this.rule =rule;
+        this.rule = rule;
     }
 
     public String getName() {

@@ -12,28 +12,29 @@ import com.alibaba.druid.util.JdbcConstants;
 /**
  * Created by nange on 2015/3/13.
  */
-public class MycatStatementParser extends MySqlStatementParser
-{
-    private static final String LOW_PRIORITY   = "LOW_PRIORITY";
-    private static final String LOCAL          = "LOCAL";
-    private static final String IGNORE         = "IGNORE";
-    private static final String CHARACTER      = "CHARACTER";
-    public MycatStatementParser(String sql)
-    {
+public class MycatStatementParser extends MySqlStatementParser {
+    private static final String LOW_PRIORITY = "LOW_PRIORITY";
+
+    private static final String LOCAL        = "LOCAL";
+
+    private static final String IGNORE       = "IGNORE";
+
+    private static final String CHARACTER    = "CHARACTER";
+
+    public MycatStatementParser(String sql) {
         super(sql);
         selectExprParser = new MycatExprParser(sql);
     }
 
-    public MycatStatementParser(Lexer lexer)
-    {
+    public MycatStatementParser(Lexer lexer) {
         super(lexer);
         selectExprParser = new MycatExprParser(lexer);
     }
 
     protected SQLExprParser selectExprParser;
+
     @Override
-    public SQLSelectStatement parseSelect()
-    {
+    public SQLSelectStatement parseSelect() {
 
         MycatSelectParser selectParser = new MycatSelectParser(this.selectExprParser);
         return new SQLSelectStatement(selectParser.select(), JdbcConstants.MYSQL);
@@ -48,8 +49,7 @@ public class MycatStatementParser extends MySqlStatementParser
 //    }
 
     @Override
-    protected MySqlLoadDataInFileStatement parseLoadDataInFile()
-    {
+    protected MySqlLoadDataInFileStatement parseLoadDataInFile() {
         acceptIdentifier("DATA");
 
         LoadDataStatement stmt = new LoadDataStatement();
@@ -151,7 +151,7 @@ public class MycatStatementParser extends MySqlStatementParser
 
         if (identifierEquals(IGNORE)) {
             lexer.nextToken();
-            stmt.setIgnoreLinesNumber( this.exprParser.expr());
+            stmt.setIgnoreLinesNumber(this.exprParser.expr());
             acceptIdentifier("LINES");
         }
 

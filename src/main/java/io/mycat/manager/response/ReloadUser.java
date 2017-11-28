@@ -23,7 +23,8 @@
  */
 package io.mycat.manager.response;
 
-import org.slf4j.Logger; import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import io.mycat.config.ErrorCode;
 import io.mycat.manager.ManagerConnection;
@@ -48,7 +49,8 @@ public final class ReloadUser {
             ok.serverStatus = 2;
             ok.message = "Reload userConfig success".getBytes();
             ok.write(c);
-        } else {
+        }
+        else {
             c.writeErrMessage(ErrorCode.ER_YES, "Unsupported statement");
         }
     }

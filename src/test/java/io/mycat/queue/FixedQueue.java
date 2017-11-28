@@ -27,15 +27,19 @@ import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * 固定容量的阻塞队列
- * 
+ *
  * @author mycat
  */
 public final class FixedQueue<E> {
 
-    private final E[] items;
-    private int putIndex;
-    private int takeIndex;
-    private int count;
+    private final E[]           items;
+
+    private       int           putIndex;
+
+    private       int           takeIndex;
+
+    private       int           count;
+
     private final ReentrantLock lock;
 
     @SuppressWarnings("unchecked")
@@ -52,7 +56,8 @@ public final class FixedQueue<E> {
         lock.lock();
         try {
             return count;
-        } finally {
+        }
+        finally {
             lock.unlock();
         }
     }
@@ -66,11 +71,13 @@ public final class FixedQueue<E> {
         try {
             if (count >= items.length) {
                 return false;
-            } else {
+            }
+            else {
                 insert(e);
                 return true;
             }
-        } finally {
+        }
+        finally {
             lock.unlock();
         }
     }
@@ -83,7 +90,8 @@ public final class FixedQueue<E> {
                 return null;
             }
             return extract();
-        } finally {
+        }
+        finally {
             lock.unlock();
         }
     }
@@ -102,7 +110,8 @@ public final class FixedQueue<E> {
             count = 0;
             putIndex = 0;
             takeIndex = 0;
-        } finally {
+        }
+        finally {
             lock.unlock();
         }
     }

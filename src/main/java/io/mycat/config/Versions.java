@@ -28,18 +28,19 @@ package io.mycat.config;
  */
 public abstract class Versions {
 
-    /**协议版本**/
+    /** 协议版本 **/
     public static final byte PROTOCOL_VERSION = 10;
 
-    /**服务器版本**/
+    /** 服务器版本 **/
     public static byte[] SERVER_VERSION = "5.6.29-mycat-1.6.5-BETA-20170424174212".getBytes();
 
     public static void setServerVersion(String version) {
         byte[] mysqlVersionPart = version.getBytes();
         int startIndex;
         for (startIndex = 0; startIndex < SERVER_VERSION.length; startIndex++) {
-            if (SERVER_VERSION[startIndex] == '-')
+            if (SERVER_VERSION[startIndex] == '-') {
                 break;
+            }
         }
 
         // 生成mycat version信息

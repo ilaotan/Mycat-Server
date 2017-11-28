@@ -35,7 +35,8 @@ import io.mycat.config.model.MycatNodeConfig;
  */
 public final class MycatCluster {
 
-    private final Map<String, MycatNode> nodes;
+    private final Map<String, MycatNode>    nodes;
+
     private final Map<String, List<String>> groups;
 
     public MycatCluster(ClusterConfig clusterConf) {

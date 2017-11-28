@@ -35,11 +35,12 @@ public class M2Main {
         new Thread() {
             @Override
             public void run() {
-                for (;;) {
+                for (; ; ) {
                     long c = m2.getCount();
                     try {
                         Thread.sleep(2000L);
-                    } catch (InterruptedException e) {
+                    }
+                    catch (InterruptedException e) {
                         continue;
                     }
                     System.out.println("tps:" + (m2.getCount() - c) / 2);

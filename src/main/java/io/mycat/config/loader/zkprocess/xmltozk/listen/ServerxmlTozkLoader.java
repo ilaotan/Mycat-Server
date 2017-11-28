@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.util.List;
 
 import org.apache.curator.framework.CuratorFramework;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,61 +29,68 @@ import io.mycat.config.loader.zkprocess.zookeeper.process.ZkMultLoader;
 
 /**
  * 进行从server.xml加载到zk中加载
-* 源文件名：SchemasLoader.java
-* 文件版本：1.0.0
-* 创建作者：liujun
-* 创建日期：2016年9月15日
-* 修改作者：liujun
-* 修改日期：2016年9月15日
-* 文件描述：TODO
-* 版权所有：Copyright 2016 zjhz, Inc. All Rights Reserved.
-*/
+ * 源文件名：SchemasLoader.java
+ * 文件版本：1.0.0
+ * 创建作者：liujun
+ * 创建日期：2016年9月15日
+ * 修改作者：liujun
+ * 修改日期：2016年9月15日
+ * 文件描述：TODO
+ * 版权所有：Copyright 2016 zjhz, Inc. All Rights Reserved.
+ */
 public class ServerxmlTozkLoader extends ZkMultLoader implements NotiflyService {
 
     /**
      * 日志
-    * @字段说明 LOGGER
-    */
+     *
+     * @字段说明 LOGGER
+     */
     private static final Logger LOGGER = LoggerFactory.getLogger(ServerxmlTozkLoader.class);
 
     /**
-     * 当前文件中的zkpath信息 
-    * @字段说明 currZkPath
-    */
+     * 当前文件中的zkpath信息
+     *
+     * @字段说明 currZkPath
+     */
     private final String currZkPath;
 
     /**
      * server文件的路径信息
-    * @字段说明 SCHEMA_PATH
-    */
+     *
+     * @字段说明 SCHEMA_PATH
+     */
     private static final String SERVER_PATH = ZookeeperPath.ZK_LOCAL_CFG_PATH.getKey() + "server.xml";
 
     /**
      * index_to_charset文件的路径信息
+     *
      * @字段说明 SCHEMA_PATH
      */
     private static final String INDEX_TOCHARSET_PATH = "index_to_charset.properties";
 
     /**
      * server的xml的转换信息
-    * @字段说明 parseServerXMl
-    */
+     *
+     * @字段说明 parseServerXMl
+     */
     private ParseXmlServiceInf<Server> parseServerXMl;
 
     /**
      * system信息
-    * @字段说明 parseJsonSchema
-    */
+     *
+     * @字段说明 parseJsonSchema
+     */
     private ParseJsonServiceInf<System> parseJsonSystem = new SystemJsonParse();
 
     /**
      * system信息
+     *
      * @字段说明 parseJsonSchema
      */
     private ParseJsonServiceInf<List<User>> parseJsonUser = new UserJsonParse();
 
     public ServerxmlTozkLoader(ZookeeperProcessListen zookeeperListen, CuratorFramework curator,
-            XmlProcessBase xmlParseBase) {
+                               XmlProcessBase xmlParseBase) {
 
         this.setCurator(curator);
 
@@ -121,10 +129,11 @@ public class ServerxmlTozkLoader extends ZkMultLoader implements NotiflyService 
 
     /**
      * 写入集群节点的信息
-    * 方法描述
-    * @throws Exception
-    * @创建日期 2016年9月17日
-    */
+     * 方法描述
+     *
+     * @throws Exception
+     * @创建日期 2016年9月17日
+     */
     private void writeClusterNode(String basePath) throws Exception {
         // 1，读取集群节点信息
         String[] zkNodes = ZkConfig.getInstance().getValue(ZkParamCfg.ZK_CFG_CLUSTER_NODES)
@@ -151,12 +160,13 @@ public class ServerxmlTozkLoader extends ZkMultLoader implements NotiflyService 
 
     /**
      * 将xml文件的信息写入到zk中
-    * 方法描述
-    * @param basePath 基本路径
-    * @param schema schema文件的信息
-    * @throws Exception 异常信息
-    * @创建日期 2016年9月17日
-    */
+     * 方法描述
+     *
+     * @param basePath 基本路径
+     * @param schema   schema文件的信息
+     * @throws Exception 异常信息
+     * @创建日期 2016年9月17日
+     */
     private void xmlTozkServerJson(String basePath, Server server) throws Exception {
         // 设置默认的节点信息
         String defaultSystem = ZookeeperPath.ZK_SEPARATOR.getKey() + ZookeeperPath.FLOW_ZK_PATH_SERVER_DEFAULT.getKey();
@@ -171,12 +181,13 @@ public class ServerxmlTozkLoader extends ZkMultLoader implements NotiflyService 
 
     /**
      * 将xml文件的信息写入到zk中
-    * 方法描述
-    * @param basePath 基本路径
-    * @param schema schema文件的信息
-    * @throws Exception 异常信息
-    * @创建日期 2016年9月17日
-    */
+     * 方法描述
+     *
+     * @param basePath 基本路径
+     * @param schema   schema文件的信息
+     * @throws Exception 异常信息
+     * @创建日期 2016年9月17日
+     */
     private void xmlTozkClusterNodeJson(String basePath, String node, Server server) throws Exception {
         // 设置集群中的节点信息
         basePath = basePath + ZookeeperPath.ZK_SEPARATOR.getKey() + ZookeeperPath.FLOW_ZK_PATH_SERVER_CLUSTER.getKey();
@@ -186,11 +197,12 @@ public class ServerxmlTozkLoader extends ZkMultLoader implements NotiflyService 
 
     /**
      * 读取 properties配制文件的信息
-    * 方法描述
-    * @param name 名称信息
-    * @return
-    * @创建日期 2016年9月18日
-    */
+     * 方法描述
+     *
+     * @param name 名称信息
+     * @return
+     * @创建日期 2016年9月18日
+     */
     private String readProperties(String name) {
 
         String path = ZookeeperPath.ZK_LOCAL_CFG_PATH.getKey() + name;
@@ -209,11 +221,13 @@ public class ServerxmlTozkLoader extends ZkMultLoader implements NotiflyService 
                 while ((readIndex = input.read(buffers)) != -1) {
                     mapFileStr.append(new String(buffers, 0, readIndex));
                 }
-            } catch (IOException e) {
+            }
+            catch (IOException e) {
                 e.printStackTrace();
                 LOGGER.error("SequenceTozkLoader readMapFile IOException", e);
 
-            } finally {
+            }
+            finally {
                 IOUtils.close(input);
             }
 

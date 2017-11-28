@@ -22,6 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class DistributedSequenceHandlerTest {
     TestingServer testingServer = null;
+
     DistributedSequenceHandler distributedSequenceHandler[];
 
     @Before
@@ -102,7 +103,8 @@ public class DistributedSequenceHandlerTest {
                     continue;
                 }
                 distributedSequenceHandler[i].nextId("");
-                System.out.println("Node [" + i + "]is leader:" + distributedSequenceHandler[i].getLeaderSelector().hasLeadership() );
+                System.out.println("Node [" + i + "]is leader:" + distributedSequenceHandler[i].getLeaderSelector()
+                        .hasLeadership());
                 System.out.println(" InstanceID:" + distributedSequenceHandler[i].getInstanceId());
                 idSet.add(distributedSequenceHandler[i].getInstanceId());
             }
@@ -112,11 +114,12 @@ public class DistributedSequenceHandlerTest {
             System.out.println("***断掉两个leader节点后（curator会抛对应的异常断链异常，不用在意）***：");
             for (int i = 0; i < 16; i++) {
                 if (i == leader || i == leader2) {
-                    System.out.println("Node ["+i + " used to be leader");
+                    System.out.println("Node [" + i + " used to be leader");
                     continue;
                 }
                 distributedSequenceHandler[i].nextId("");
-                System.out.println("Node ["+i + "]is leader:" + distributedSequenceHandler[i].getLeaderSelector().hasLeadership());
+                System.out.println("Node [" + i + "]is leader:" + distributedSequenceHandler[i].getLeaderSelector()
+                        .hasLeadership());
                 System.out.println(" InstanceID:" + distributedSequenceHandler[i].getInstanceId());
                 idSet.add(distributedSequenceHandler[i].getInstanceId());
             }
@@ -132,13 +135,16 @@ public class DistributedSequenceHandlerTest {
             distributedSequenceHandler[leader2].nextId("");
             System.out.println("新加入两个节点后");
             for (int i = 0; i < 16; i++) {
-                System.out.println("Node ["+i + "]is leader:" + distributedSequenceHandler[i].getLeaderSelector().hasLeadership() );
+                System.out.println("Node [" + i + "]is leader:" + distributedSequenceHandler[i].getLeaderSelector()
+                        .hasLeadership());
                 System.out.println(" InstanceID:" + distributedSequenceHandler[i].getInstanceId());
                 idSet.add(distributedSequenceHandler[i].getInstanceId());
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
 
-        } finally {
+        }
+        finally {
             Assert.assertEquals(idSet.size(), 16);
         }
 
@@ -152,15 +158,18 @@ public class DistributedSequenceHandlerTest {
             }
             if (distributedSequenceHandler[i].getLeaderSelector().hasLeadership()) {
                 leader = i;
-            } else {
+            }
+            else {
                 follower = i;
             }
-            System.out.println("Node ["+i + "]is leader:" + distributedSequenceHandler[i].getLeaderSelector().hasLeadership() );
+            System.out.println("Node [" + i + "]is leader:" + distributedSequenceHandler[i].getLeaderSelector()
+                    .hasLeadership());
             System.out.println(" InstanceID:" + distributedSequenceHandler[i].getInstanceId());
         }
         try {
             distributedSequenceHandler[leader].close();
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
         }
 
         while (true) {

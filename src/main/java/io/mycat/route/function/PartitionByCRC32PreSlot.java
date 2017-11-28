@@ -5,6 +5,7 @@ import com.google.common.base.Splitter;
 import com.google.common.io.Files;
 import io.mycat.config.model.SystemConfig;
 import io.mycat.config.model.rule.RuleAlgorithm;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,19 +19,22 @@ import java.util.*;
  * @author nange magicdoom@gmail.com
  */
 public class PartitionByCRC32PreSlot extends AbstractPartitionAlgorithm
-        implements RuleAlgorithm, TableRuleAware, SlotFunction,ReloadFunction {
+        implements RuleAlgorithm, TableRuleAware, SlotFunction, ReloadFunction {
 
     private static final Logger LOGGER = LoggerFactory.getLogger("PartitionByCRC32PreSlot");
 
     public static final int DEFAULT_SLOTS_NUM = 102400;
 
-    private static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
-    private Map<Integer, List<Range>> rangeMap = new TreeMap<>();
+    private static final Charset                   DEFAULT_CHARSET = Charset.forName("UTF-8");
+
+    private              Map<Integer, List<Range>> rangeMap        = new TreeMap<>();
 
     private int count;
+
     //slot:index
     private int[] rangeMap2 = new int[DEFAULT_SLOTS_NUM];
-    private int slot = -1;
+
+    private int   slot      = -1;
 
     public Map<Integer, List<Range>> getRangeMap() {
         return rangeMap;
@@ -40,9 +44,11 @@ public class PartitionByCRC32PreSlot extends AbstractPartitionAlgorithm
         this.rangeMap = rangeMap;
 
         Properties prop = new Properties();
-        File file = new File(SystemConfig.getHomePath(), "conf" + File.separator +"ruledata"+ File.separator + ruleName + ".properties");
-        if (file.exists())
+        File file = new File(SystemConfig.getHomePath(), "conf" + File.separator + "ruledata" + File.separator +
+                ruleName + ".properties");
+        if (file.exists()) {
             file.delete();
+        }
         for (Map.Entry<Integer, List<Range>> integerListEntry : rangeMap.entrySet()) {
             String key = String.valueOf(integerListEntry.getKey());
             List<String> values = new ArrayList<>();
@@ -53,12 +59,14 @@ public class PartitionByCRC32PreSlot extends AbstractPartitionAlgorithm
         }
         try {
             Files.createParentDirs(file);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             throw new RuntimeException(e);
         }
         try (FileOutputStream out = new FileOutputStream(file)) {
             prop.store(out, "WARNING   !!!Please do not modify or delete this file!!!");
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             throw new RuntimeException(e);
         }
 
@@ -66,19 +74,23 @@ public class PartitionByCRC32PreSlot extends AbstractPartitionAlgorithm
 
     private Properties loadProps(String name, boolean forceNew) {
         Properties prop = new Properties();
-        File file = new File(SystemConfig.getHomePath(), "conf" + File.separator +"ruledata"+ File.separator + ruleName + ".properties");
-        if (file.exists() && forceNew)
+        File file = new File(SystemConfig.getHomePath(), "conf" + File.separator + "ruledata" + File.separator +
+                ruleName + ".properties");
+        if (file.exists() && forceNew) {
             file.delete();
+        }
         if (!file.exists()) {
             prop = genarateP();
             try {
                 Files.createParentDirs(file);
-            } catch (IOException e) {
+            }
+            catch (IOException e) {
                 throw new RuntimeException(e);
             }
             try (FileOutputStream out = new FileOutputStream(file)) {
                 prop.store(out, "WARNING   !!!Please do not modify or delete this file!!!");
-            } catch (IOException e) {
+            }
+            catch (IOException e) {
                 throw new RuntimeException(e);
             }
             return prop;
@@ -86,7 +98,8 @@ public class PartitionByCRC32PreSlot extends AbstractPartitionAlgorithm
 
         try (FileInputStream filein = new FileInputStream(file)) {
             prop.load(filein);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             throw new RuntimeException(e);
         }
         return prop;
@@ -98,7 +111,8 @@ public class PartitionByCRC32PreSlot extends AbstractPartitionAlgorithm
         for (int i = 0; i < count; i++) {
             if (i == count - 1) {
                 prop.put(String.valueOf(i), i * slotSize + "-" + (DEFAULT_SLOTS_NUM - 1));
-            } else {
+            }
+            else {
                 prop.put(String.valueOf(i), i * slotSize + "-" + ((i + 1) * slotSize - 1));
             }
 
@@ -120,11 +134,13 @@ public class PartitionByCRC32PreSlot extends AbstractPartitionAlgorithm
                     Range ran = new Range(Integer.parseInt(vv.get(0)), Integer.parseInt(vv.get(1)));
                     rangeList.add(ran);
 
-                } else if (vv.size() == 1) {
+                }
+                else if (vv.size() == 1) {
                     Range ran = new Range(Integer.parseInt(vv.get(0)), Integer.parseInt(vv.get(0)));
                     rangeList.add(ran);
 
-                } else {
+                }
+                else {
                     throw new RuntimeException("load crc32slot datafile error:dn=" + k + ",value=" + range);
                 }
             }
@@ -134,7 +150,8 @@ public class PartitionByCRC32PreSlot extends AbstractPartitionAlgorithm
         return map;
     }
 
-    @Override public void init() {
+    @Override
+    public void init() {
 
         super.init();
         if (ruleName != null) {
@@ -154,8 +171,7 @@ public class PartitionByCRC32PreSlot extends AbstractPartitionAlgorithm
     }
 
 
-    private void hack(   )
-    {
+    private void hack() {
         //todo   优化
         Iterator<Map.Entry<Integer, List<Range>>> iterator = rangeMap.entrySet().iterator();
         while (iterator
@@ -163,14 +179,14 @@ public class PartitionByCRC32PreSlot extends AbstractPartitionAlgorithm
             Map.Entry<Integer, List<Range>> rangeEntry = iterator.next();
             List<Range> range = rangeEntry.getValue();
             for (Range range1 : range) {
-                for(int i=range1.start;i<=range1.end;i++)
-                {
-                    rangeMap2[i]=rangeEntry.getKey() ;
+                for (int i = range1.start; i <= range1.end; i++) {
+                    rangeMap2[i] = rangeEntry.getKey();
                 }
             }
 
         }
     }
+
     /**
      * 节点的数量
      *
@@ -180,9 +196,11 @@ public class PartitionByCRC32PreSlot extends AbstractPartitionAlgorithm
         this.count = count;
     }
 
-    @Override public Integer calculate(String columnValue) {
-        if (ruleName == null)
+    @Override
+    public Integer calculate(String columnValue) {
+        if (ruleName == null) {
             throw new RuntimeException();
+        }
         PureJavaCrc32 crc32 = new PureJavaCrc32();
         byte[] bytes = columnValue.getBytes(DEFAULT_CHARSET);
         crc32.update(bytes, 0, bytes.length);
@@ -211,7 +229,8 @@ public class PartitionByCRC32PreSlot extends AbstractPartitionAlgorithm
 //        return index;
     }
 
-    @Override public int getPartitionNum() {
+    @Override
+    public int getPartitionNum() {
         return this.count;
     }
 
@@ -266,30 +285,37 @@ public class PartitionByCRC32PreSlot extends AbstractPartitionAlgorithm
     }
 
     private String tableName;
+
     private String ruleName;
 
-    @Override public void setTableName(String tableName) {
+    @Override
+    public void setTableName(String tableName) {
         this.tableName = tableName;
     }
 
-    @Override public void setRuleName(String ruleName) {
+    @Override
+    public void setRuleName(String ruleName) {
         this.ruleName = ruleName;
     }
 
-    @Override public String getTableName() {
+    @Override
+    public String getTableName() {
         return tableName;
     }
 
-    @Override public String getRuleName() {
+    @Override
+    public String getRuleName() {
         return ruleName;
     }
 
-    @Override public int slotValue() {
+    @Override
+    public int slotValue() {
         return slot;
     }
 
-    @Override public void reload() {
-          init();
+    @Override
+    public void reload() {
+        init();
     }
 
     public static class Range implements Serializable {
@@ -303,6 +329,7 @@ public class PartitionByCRC32PreSlot extends AbstractPartitionAlgorithm
         }
 
         public int start;
+
         public int end;
 
         public int size;

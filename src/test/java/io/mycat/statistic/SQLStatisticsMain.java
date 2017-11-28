@@ -32,6 +32,4 @@ import io.mycat.statistic.SQLRecorder;
 public class SQLStatisticsMain {
 
 
-
-
 }

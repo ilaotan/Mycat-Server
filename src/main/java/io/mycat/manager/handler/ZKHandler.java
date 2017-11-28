@@ -3,6 +3,7 @@ package io.mycat.manager.handler;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.utils.ZKPaths;
 import org.apache.zookeeper.data.Stat;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,11 +57,13 @@ public class ZKHandler {
                 offset += RELOAD_FROM_ZK.length();
 
                 ReloadZktoXml.execute(c, "zk reload success ");
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 LOGGER.error("ZKHandler loadZktoFile exception", e);
                 c.writeErrMessage(ErrorCode.ER_YES, "zk command send error,command is :" + command);
             }
-        } else {
+        }
+        else {
             String[] matchKeys = stmt.split("\\s+");
 
             if (null != matchKeys && matchKeys.length > 2) {
@@ -77,7 +80,8 @@ public class ZKHandler {
                 for (int i = 2; i < matchKeys.length; i++) {
                     if (i == matchKeys.length - 1) {
                         commandMsg.append(matchKeys[i]);
-                    } else {
+                    }
+                    else {
                         commandMsg.append(matchKeys[i]).append(" ");
                     }
                 }
@@ -93,7 +97,8 @@ public class ZKHandler {
                         }
 
                         ReloadZktoXml.execute(c, "zk reload " + matchKeys[1] + " success ");
-                    } catch (Exception e) {
+                    }
+                    catch (Exception e) {
                         c.writeErrMessage(ErrorCode.ER_YES, "zk command send error");
                     }
                 }
@@ -105,7 +110,8 @@ public class ZKHandler {
                                 sendZkCommand(myid, commandMsg.toString());
 
                                 ReloadZktoXml.execute(c, "zk reload " + matchKeys[1] + " success ");
-                            } catch (Exception e) {
+                            }
+                            catch (Exception e) {
                                 c.writeErrMessage(ErrorCode.ER_YES, "zk command send error,myid :" + myid);
                             }
 
@@ -114,7 +120,8 @@ public class ZKHandler {
                     }
                 }
 
-            } else {
+            }
+            else {
                 c.writeErrMessage(ErrorCode.ER_YES, "zk command is error");
             }
         }
@@ -122,8 +129,9 @@ public class ZKHandler {
 
     /**
      * 向节点发送命令
-     * @param myId 节点的id信息
-     * @param command 命令内容 
+     *
+     * @param myId    节点的id信息
+     * @param command 命令内容
      * @throws Exception 异常信息
      */
     private static void sendZkCommand(String myId, String command) throws Exception {
@@ -143,7 +151,8 @@ public class ZKHandler {
             }
             // 设置节点信息
             zkConn.setData().inBackground().forPath(nodePath, command.getBytes());
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             LOGGER.error("ZKHandler sendZkCommand exception", e);
             throw e;
         }

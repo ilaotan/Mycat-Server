@@ -46,14 +46,15 @@ import io.mycat.net.mysql.QuitPacket;
 
 /**
  * 前端认证处理器
- * 
+ *
  * @author mycat
  */
 public class FrontendAuthenticator implements NIOHandler {
-	
-    private static final Logger LOGGER = LoggerFactory.getLogger(FrontendAuthenticator.class);
-    private static final byte[] AUTH_OK = new byte[] { 7, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0 };
-    
+
+    private static final Logger LOGGER  = LoggerFactory.getLogger(FrontendAuthenticator.class);
+
+    private static final byte[] AUTH_OK = new byte[]{7, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0};
+
     protected final FrontendConnection source;
 
     public FrontendAuthenticator(FrontendConnection source) {
@@ -76,82 +77,86 @@ public class FrontendAuthenticator implements NIOHandler {
         //如果无密码登陆则跳过密码验证这个步骤
         boolean skipPassWord = false;
         String defaultUser = "";
-        if(nopassWordLogin == 1){
-        	skipPassWord = true;
-        	Map<String, UserConfig> userMaps =  MycatServer.getInstance().getConfig().getUsers();
-        	if(!userMaps.isEmpty()){
-        		setDefaultAccount(auth, userMaps);
-        	}
+        if (nopassWordLogin == 1) {
+            skipPassWord = true;
+            Map<String, UserConfig> userMaps = MycatServer.getInstance().getConfig().getUsers();
+            if (!userMaps.isEmpty()) {
+                setDefaultAccount(auth, userMaps);
+            }
         }
         // check user
         if (!checkUser(auth.user, source.getHost())) {
-        	failure(ErrorCode.ER_ACCESS_DENIED_ERROR, "Access denied for user '" + auth.user + "' with host '" + source.getHost()+ "'");
-        	return;
+            failure(ErrorCode.ER_ACCESS_DENIED_ERROR, "Access denied for user '" + auth.user + "' with host '" +
+                    source.getHost() + "'");
+            return;
         }
         // check password
         if (!skipPassWord && !checkPassword(auth.password, auth.user)) {
-        	failure(ErrorCode.ER_ACCESS_DENIED_ERROR, "Access denied for user '" + auth.user + "', because password is error ");
-        	return;
+            failure(ErrorCode.ER_ACCESS_DENIED_ERROR, "Access denied for user '" + auth.user + "', because password " +
+                    "is error ");
+            return;
         }
-        
+
         // check degrade
-        if ( isDegrade( auth.user ) ) {
-        	 failure(ErrorCode.ER_ACCESS_DENIED_ERROR, "Access denied for user '" + auth.user + "', because service be degraded ");
-             return;
+        if (isDegrade(auth.user)) {
+            failure(ErrorCode.ER_ACCESS_DENIED_ERROR, "Access denied for user '" + auth.user + "', because service be" +
+                    " degraded ");
+            return;
         }
-        
+
         // check schema
         switch (checkSchema(auth.database, auth.user)) {
-        case ErrorCode.ER_BAD_DB_ERROR:
-            failure(ErrorCode.ER_BAD_DB_ERROR, "Unknown database '" + auth.database + "'");
-            break;
-        case ErrorCode.ER_DBACCESS_DENIED_ERROR:
-            String s = "Access denied for user '" + auth.user + "' to database '" + auth.database + "'";
-            failure(ErrorCode.ER_DBACCESS_DENIED_ERROR, s);
-            break;
-        default:
-            success(auth);
+            case ErrorCode.ER_BAD_DB_ERROR:
+                failure(ErrorCode.ER_BAD_DB_ERROR, "Unknown database '" + auth.database + "'");
+                break;
+            case ErrorCode.ER_DBACCESS_DENIED_ERROR:
+                String s = "Access denied for user '" + auth.user + "' to database '" + auth.database + "'";
+                failure(ErrorCode.ER_DBACCESS_DENIED_ERROR, s);
+                break;
+            default:
+                success(auth);
         }
     }
 
     /**
      * 设置了无密码登陆的情况下把客户端传过来的用户账号改变为默认账户
+     *
      * @param auth
      * @param userMaps
      */
-	private void setDefaultAccount(AuthPacket auth, Map<String, UserConfig> userMaps) {
-		String defaultUser;
-		Iterator<UserConfig> items = userMaps.values().iterator();
-		while(items.hasNext()){
-			UserConfig userConfig = items.next();
-			if(userConfig.isDefaultAccount()){
-				defaultUser = userConfig.getName(); 
-				auth.user = defaultUser;
-			}
-		}
-	}
-    
+    private void setDefaultAccount(AuthPacket auth, Map<String, UserConfig> userMaps) {
+        String defaultUser;
+        Iterator<UserConfig> items = userMaps.values().iterator();
+        while (items.hasNext()) {
+            UserConfig userConfig = items.next();
+            if (userConfig.isDefaultAccount()) {
+                defaultUser = userConfig.getName();
+                auth.user = defaultUser;
+            }
+        }
+    }
+
     //TODO: add by zhuam
     //前端 connection 达到该用户设定的阀值后, 立马降级拒绝连接
     protected boolean isDegrade(String user) {
-    	
-    	int benchmark = source.getPrivileges().getBenchmark(user);
-    	if ( benchmark > 0 ) {
-    	
-	    	int forntedsLength = 0;
-	    	NIOProcessor[] processors = MycatServer.getInstance().getProcessors();
-			for (NIOProcessor p : processors) {
-				forntedsLength += p.getForntedsLength();
-			}
-		
-			if ( forntedsLength >= benchmark ) {							
-				return true;
-			}			
-    	}
-		
-		return false;
+
+        int benchmark = source.getPrivileges().getBenchmark(user);
+        if (benchmark > 0) {
+
+            int forntedsLength = 0;
+            NIOProcessor[] processors = MycatServer.getInstance().getProcessors();
+            for (NIOProcessor p : processors) {
+                forntedsLength += p.getForntedsLength();
+            }
+
+            if (forntedsLength >= benchmark) {
+                return true;
+            }
+        }
+
+        return false;
     }
-    
+
     protected boolean checkUser(String user, String host) {
         return source.getPrivileges().userExists(user, host);
     }
@@ -163,7 +168,8 @@ public class FrontendAuthenticator implements NIOHandler {
         if (pass == null || pass.length() == 0) {
             if (password == null || password.length == 0) {
                 return true;
-            } else {
+            }
+            else {
                 return false;
             }
         }
@@ -175,7 +181,8 @@ public class FrontendAuthenticator implements NIOHandler {
         byte[] encryptPass = null;
         try {
             encryptPass = SecurityUtil.scramble411(pass.getBytes(), source.getSeed());
-        } catch (NoSuchAlgorithmException e) {
+        }
+        catch (NoSuchAlgorithmException e) {
             LOGGER.warn(source.toString(), e);
             return false;
         }
@@ -186,7 +193,8 @@ public class FrontendAuthenticator implements NIOHandler {
                     return false;
                 }
             }
-        } else {
+        }
+        else {
             return false;
         }
 
@@ -204,7 +212,8 @@ public class FrontendAuthenticator implements NIOHandler {
         Set<String> schemas = privileges.getUserSchemas(user);
         if (schemas == null || schemas.size() == 0 || schemas.contains(schema)) {
             return 0;
-        } else {
+        }
+        else {
             return ErrorCode.ER_DBACCESS_DENIED_ERROR;
         }
     }
@@ -228,10 +237,9 @@ public class FrontendAuthenticator implements NIOHandler {
 
         ByteBuffer buffer = source.allocate();
         source.write(source.writeToBuffer(AUTH_OK, buffer));
-        boolean clientCompress = Capabilities.CLIENT_COMPRESS==(Capabilities.CLIENT_COMPRESS & auth.clientFlags);
-        boolean usingCompress= MycatServer.getInstance().getConfig().getSystem().getUseCompression()==1 ;
-        if(clientCompress&&usingCompress)
-        {
+        boolean clientCompress = Capabilities.CLIENT_COMPRESS == (Capabilities.CLIENT_COMPRESS & auth.clientFlags);
+        boolean usingCompress = MycatServer.getInstance().getConfig().getSystem().getUseCompression() == 1;
+        if (clientCompress && usingCompress) {
             source.setSupportCompress(true);
         }
     }

@@ -75,16 +75,16 @@ public class DelegateResponseHandler implements ResponseHandler {
         target.rowEofResponse(eof, conn);
     }
 
-	@Override
-	public void writeQueueAvailable() {
-		target.writeQueueAvailable();
-		
-	}
+    @Override
+    public void writeQueueAvailable() {
+        target.writeQueueAvailable();
 
-	@Override
-	public void connectionClose(BackendConnection conn, String reason) {
-		target.connectionClose(conn, reason);
-	}
+    }
 
-	
+    @Override
+    public void connectionClose(BackendConnection conn, String reason) {
+        target.connectionClose(conn, reason);
+    }
+
+
 }

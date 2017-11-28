@@ -1,7 +1,6 @@
 package io.mycat.memory.unsafe.storage;
 
 
-
 import io.mycat.memory.unsafe.utils.MycatPropertyConf;
 
 import java.io.File;
@@ -14,10 +13,12 @@ import java.io.IOException;
 public class DataNodeDiskManager {
 
     private MycatPropertyConf conf;
-    private  boolean deleteFilesOnStop;
-    private  SerializerManager serializerManager;
 
-    public DataNodeDiskManager(MycatPropertyConf conf, boolean deleteFilesOnStop, SerializerManager  serializerManager){
+    private boolean           deleteFilesOnStop;
+
+    private SerializerManager serializerManager;
+
+    public DataNodeDiskManager(MycatPropertyConf conf, boolean deleteFilesOnStop, SerializerManager serializerManager) {
         this.conf = conf;
         this.deleteFilesOnStop = deleteFilesOnStop;
         this.serializerManager = serializerManager;
@@ -39,7 +40,7 @@ public class DataNodeDiskManager {
             SerializerInstance serializerInstance,
             int bufferSize) throws IOException {
         boolean syncWrites = conf.getBoolean("mycat.merge.sync", false);
-        return new DiskRowWriter(file, serializerInstance, bufferSize,new FileOutputStream(file),
-                syncWrites,blockId);
+        return new DiskRowWriter(file, serializerInstance, bufferSize, new FileOutputStream(file),
+                syncWrites, blockId);
     }
 }

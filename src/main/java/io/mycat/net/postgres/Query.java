@@ -25,12 +25,12 @@ package io.mycat.net.postgres;
 
 /**
  * <pre>
- * Query (F) 
- * Byte1('Q') Identifies the message as a simple query. 
- * Int32 Length of message contents in bytes, including self. 
+ * Query (F)
+ * Byte1('Q') Identifies the message as a simple query.
+ * Int32 Length of message contents in bytes, including self.
  * String The query string itself.
  * </pre>
- * 
+ *
  * @author mycat
  */
 public class Query extends PostgresPacket {

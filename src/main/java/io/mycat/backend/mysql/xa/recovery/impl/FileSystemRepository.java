@@ -5,6 +5,7 @@ import io.mycat.backend.mysql.xa.*;
 import io.mycat.backend.mysql.xa.recovery.*;
 import io.mycat.config.MycatConfig;
 import io.mycat.config.model.SystemConfig;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,25 +20,27 @@ import java.util.Map;
 /**
  * Created by zhangchao on 2016/10/13.
  */
-public class FileSystemRepository implements Repository{
+public class FileSystemRepository implements Repository {
     public static final Logger logger = LoggerFactory
             .getLogger(FileSystemRepository.class);
+
     private VersionedFile file;
+
     private FileChannel rwChannel = null;
 
-    public FileSystemRepository()  {
-           init();
+    public FileSystemRepository() {
+        init();
     }
 
     @Override
-    public void init(){
+    public void init() {
 //        ConfigProperties configProperties = Configuration.getConfigProperties();
 //        String baseDir = configProperties.getLogBaseDir();
 //        String baseName = configProperties.getLogBaseName();
         MycatConfig mycatconfig = MycatServer.getInstance().getConfig();
         SystemConfig systemConfig = mycatconfig.getSystem();
 
-        String baseDir =systemConfig.getXARecoveryLogBaseDir();
+        String baseDir = systemConfig.getXARecoveryLogBaseDir();
         String baseName = systemConfig.getXARecoveryLogBaseName();
 
         logger.debug("baseDir " + baseDir);
@@ -58,8 +61,9 @@ public class FileSystemRepository implements Repository{
         try {
             initChannelIfNecessary();
             write(coordinatorLogEntry, true);
-        } catch (IOException e) {
-            logger.error(e.getMessage(),e);
+        }
+        catch (IOException e) {
+            logger.error(e.getMessage(), e);
         }
     }
 
@@ -99,7 +103,8 @@ public class FileSystemRepository implements Repository{
         FileInputStream fis = null;
         try {
             fis = file.openLastValidVersionForReading();
-        } catch (FileNotFoundException firstStart) {
+        }
+        catch (FileNotFoundException firstStart) {
             // the file could not be opened for reading;
             // merely return the default empty vector
         }
@@ -118,9 +123,11 @@ public class FileSystemRepository implements Repository{
             InputStreamReader isr = new InputStreamReader(in);
             br = new BufferedReader(isr);
             coordinatorLogEntries = readContent(br);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             logger.error("Error in recover", e);
-        } finally {
+        }
+        finally {
             closeSilently(br);
         }
         return coordinatorLogEntries.values();
@@ -138,22 +145,26 @@ public class FileSystemRepository implements Repository{
                         coordinatorLogEntry);
             }
 
-        } catch (EOFException unexpectedEOF) {
+        }
+        catch (EOFException unexpectedEOF) {
             logger.info(
                     "Unexpected EOF - logfile not closed properly last time?",
                     unexpectedEOF);
             // merely return what was read so far...
-        } catch (StreamCorruptedException unexpectedEOF) {
+        }
+        catch (StreamCorruptedException unexpectedEOF) {
             logger.info(
                     "Unexpected EOF - logfile not closed properly last time?",
                     unexpectedEOF);
             // merely return what was read so far...
-        } catch (ObjectStreamException unexpectedEOF) {
+        }
+        catch (ObjectStreamException unexpectedEOF) {
             logger.info(
                     "Unexpected EOF - logfile not closed properly last time?",
                     unexpectedEOF);
             // merely return what was read so far...
-        } catch (DeserialisationException unexpectedEOF) {
+        }
+        catch (DeserialisationException unexpectedEOF) {
             logger.info("Unexpected EOF - logfile not closed properly last time? "
                     + unexpectedEOF);
         }
@@ -162,9 +173,11 @@ public class FileSystemRepository implements Repository{
 
     private static void closeSilently(BufferedReader fis) {
         try {
-            if (fis != null)
+            if (fis != null) {
                 fis.close();
-        } catch (IOException io) {
+            }
+        }
+        catch (IOException io) {
             logger.warn("Fail to close logfile after reading - ignoring");
         }
     }
@@ -180,7 +193,8 @@ public class FileSystemRepository implements Repository{
     public void close() {
         try {
             closeOutput();
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             logger.warn("Error closing file - ignoring", e);
         }
 
@@ -191,15 +205,15 @@ public class FileSystemRepository implements Repository{
             if (file != null) {
                 file.close();
             }
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             throw new IllegalStateException("Error closing previous output", e);
         }
     }
 
     @Override
     public synchronized void writeCheckpoint(
-            Collection<CoordinatorLogEntry> checkpointContent)
-             {
+            Collection<CoordinatorLogEntry> checkpointContent) {
 
         try {
             closeOutput();
@@ -210,10 +224,12 @@ public class FileSystemRepository implements Repository{
             }
             rwChannel.force(false);
             file.discardBackupVersion();
-        } catch (FileNotFoundException firstStart) {
+        }
+        catch (FileNotFoundException firstStart) {
             // the file could not be opened for reading;
             // merely return the default empty vector
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             logger.error("Failed to write checkpoint", e);
         }
 
@@ -221,12 +237,13 @@ public class FileSystemRepository implements Repository{
 
     /**
      * create the log base dir
+     *
      * @param baseDir
      */
-    public void createBaseDir(String baseDir){
-        File baseDirFolder = new File (baseDir);
-        if (!baseDirFolder.exists()){
-                baseDirFolder.mkdirs();
+    public void createBaseDir(String baseDir) {
+        File baseDirFolder = new File(baseDir);
+        if (!baseDirFolder.exists()) {
+            baseDirFolder.mkdirs();
         }
     }
 

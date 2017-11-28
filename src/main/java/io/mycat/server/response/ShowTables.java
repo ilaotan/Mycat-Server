@@ -28,42 +28,50 @@ import io.mycat.util.StringUtil;
 
 /**
  * show tables impl
- * @author yanglixue
  *
+ * @author yanglixue
  */
-public class ShowTables { 
+public class ShowTables {
 
-    private static final int FIELD_COUNT = 1;
-    private static final ResultSetHeaderPacket header = PacketUtil.getHeader(FIELD_COUNT);
-    private static final FieldPacket[] fields = new FieldPacket[FIELD_COUNT];
-    private static final EOFPacket eof = new EOFPacket();
-    
-    private static final String SCHEMA_KEY = "schemaName";
-    private static final String LIKE_KEY = "like";
-    private static final   Pattern pattern = Pattern.compile("^\\s*(SHOW)\\s+(TABLES)(\\s+(FROM)\\s+([a-zA-Z_0-9]+))?(\\s+(LIKE\\s+'(.*)'))?\\s*",Pattern.CASE_INSENSITIVE);
-	
-	/**
-	 * response method.
-	 * @param c
-	 */
-	public static void response(ServerConnection c,String stmt,int type) {
-        String showSchemal= SchemaUtil.parseShowTableSchema(stmt) ;
-        String cSchema =showSchemal==null? c.getSchema():showSchemal;
+    private static final int                   FIELD_COUNT = 1;
+
+    private static final ResultSetHeaderPacket header      = PacketUtil.getHeader(FIELD_COUNT);
+
+    private static final FieldPacket[]         fields      = new FieldPacket[FIELD_COUNT];
+
+    private static final EOFPacket             eof         = new EOFPacket();
+
+    private static final String  SCHEMA_KEY = "schemaName";
+
+    private static final String  LIKE_KEY   = "like";
+
+    private static final Pattern pattern    = Pattern.compile("^\\s*(SHOW)\\s+(TABLES)(\\s+(FROM)\\s+([a-zA-Z_0-9]+))" +
+            "?(\\s+(LIKE\\s+'(.*)'))?\\s*", Pattern.CASE_INSENSITIVE);
+
+    /**
+     * response method.
+     *
+     * @param c
+     */
+    public static void response(ServerConnection c, String stmt, int type) {
+        String showSchemal = SchemaUtil.parseShowTableSchema(stmt);
+        String cSchema = showSchemal == null ? c.getSchema() : showSchemal;
         SchemaConfig schema = MycatServer.getInstance().getConfig().getSchemas().get(cSchema);
-        if(schema != null) {
-        	//不分库的schema，show tables从后端 mysql中查
+        if (schema != null) {
+            //不分库的schema，show tables从后端 mysql中查
             String node = schema.getDataNode();
-            if(!Strings.isNullOrEmpty(node)) {
-            	c.execute(stmt, ServerParse.SHOW);
+            if (!Strings.isNullOrEmpty(node)) {
+                c.execute(stmt, ServerParse.SHOW);
                 return;
             }
-        } else {
-             c.writeErrMessage(ErrorCode.ER_NO_DB_ERROR,"No database selected");
-             return;
+        }
+        else {
+            c.writeErrMessage(ErrorCode.ER_NO_DB_ERROR, "No database selected");
+            return;
         }
 
         //分库的schema，直接从SchemaConfig中获取所有表名
-        Map<String,String> parm = buildFields(c,stmt);
+        Map<String, String> parm = buildFields(c, stmt);
         java.util.Set<String> tableSet = getTableSet(c, parm);
 
 
@@ -76,46 +84,44 @@ public class ShowTables {
         ByteBuffer buffer = c.allocate();
 
         // write header
-        buffer = header.write(buffer, c,true);
+        buffer = header.write(buffer, c, true);
 
         // write fields
         for (FieldPacket field : fields) {
-            buffer = field.write(buffer, c,true);
+            buffer = field.write(buffer, c, true);
         }
 
         // write eof
-        buffer = eof.write(buffer, c,true);
+        buffer = eof.write(buffer, c, true);
 
         // write rows
-         packetId = eof.packetId;
+        packetId = eof.packetId;
 
         for (String name : tableSet) {
             RowDataPacket row = new RowDataPacket(FIELD_COUNT);
             row.add(StringUtil.encode(name.toLowerCase(), c.getCharset()));
             row.packetId = ++packetId;
-            buffer = row.write(buffer, c,true);
+            buffer = row.write(buffer, c, true);
         }
         // write last eof
         EOFPacket lastEof = new EOFPacket();
         lastEof.packetId = ++packetId;
-        buffer = lastEof.write(buffer, c,true);
+        buffer = lastEof.write(buffer, c, true);
 
         // post write
         c.write(buffer);
-		
-		
-    }
 
-    public static Set<String> getTableSet(ServerConnection c, String stmt)
-    {
-        Map<String,String> parm = buildFields(c,stmt);
-       return getTableSet(c, parm);
 
     }
 
+    public static Set<String> getTableSet(ServerConnection c, String stmt) {
+        Map<String, String> parm = buildFields(c, stmt);
+        return getTableSet(c, parm);
 
-    private static Set<String> getTableSet(ServerConnection c, Map<String, String> parm)
-    {
+    }
+
+
+    private static Set<String> getTableSet(ServerConnection c, Map<String, String> parm) {
         TreeSet<String> tableSet = new TreeSet<String>();
         MycatConfig conf = MycatServer.getInstance().getConfig();
 
@@ -125,19 +131,20 @@ public class ShowTables {
 
 
             Map<String, SchemaConfig> schemas = conf.getSchemas();
-            for (String name:schemas.keySet()){
-                if (null !=parm.get(SCHEMA_KEY) && parm.get(SCHEMA_KEY).toUpperCase().equals(name.toUpperCase())  ){
+            for (String name : schemas.keySet()) {
+                if (null != parm.get(SCHEMA_KEY) && parm.get(SCHEMA_KEY).toUpperCase().equals(name.toUpperCase())) {
 
-                    if(null==parm.get("LIKE_KEY")){
+                    if (null == parm.get("LIKE_KEY")) {
                         tableSet.addAll(schemas.get(name).getTables().keySet());
-                    }else{
+                    }
+                    else {
                         String p = "^" + parm.get("LIKE_KEY").replaceAll("%", ".*");
-                        Pattern pattern = Pattern.compile(p,Pattern.CASE_INSENSITIVE);
-                        Matcher ma ;
+                        Pattern pattern = Pattern.compile(p, Pattern.CASE_INSENSITIVE);
+                        Matcher ma;
 
-                        for (String tname : schemas.get(name).getTables().keySet()){
-                            ma=pattern.matcher(tname);
-                            if(ma.matches()){
+                        for (String tname : schemas.get(name).getTables().keySet()) {
+                            ma = pattern.matcher(tname);
+                            if (ma.matches()) {
                                 tableSet.add(tname);
                             }
                         }
@@ -145,8 +152,8 @@ public class ShowTables {
                     }
 
                 }
-            };
-
+            }
+            ;
 
 
         }
@@ -154,39 +161,38 @@ public class ShowTables {
     }
 
     /**
-	 * build fields
-	 * @param c
-	 * @param stmt
-	 */
-	private static Map<String,String> buildFields(ServerConnection c,String stmt) {
-	 
-		Map<String,String> map = new HashMap<String, String>();
+     * build fields
+     *
+     * @param c
+     * @param stmt
+     */
+    private static Map<String, String> buildFields(ServerConnection c, String stmt) {
 
-		Matcher ma = pattern.matcher(stmt);
+        Map<String, String> map = new HashMap<String, String>();
 
-		if(ma.find()){
-			  String schemaName=ma.group(5);
-			  if (null !=schemaName && (!"".equals(schemaName)) && (!"null".equals(schemaName))){
-				  map.put(SCHEMA_KEY, schemaName);
-			  }
-			  
-			 String like = ma.group(8);
-			 if (null !=like && (!"".equals(like)) && (!"null".equals(like))){
-				  map.put("LIKE_KEY", like);
-			  }
-			}
+        Matcher ma = pattern.matcher(stmt);
+
+        if (ma.find()) {
+            String schemaName = ma.group(5);
+            if (null != schemaName && (!"".equals(schemaName)) && (!"null".equals(schemaName))) {
+                map.put(SCHEMA_KEY, schemaName);
+            }
+
+            String like = ma.group(8);
+            if (null != like && (!"".equals(like)) && (!"null".equals(like))) {
+                map.put("LIKE_KEY", like);
+            }
+        }
 
 
-		if(null==map.get(SCHEMA_KEY)){
-			map.put(SCHEMA_KEY, c.getSchema());
-		}
-		 
-		
+        if (null == map.get(SCHEMA_KEY)) {
+            map.put(SCHEMA_KEY, c.getSchema());
+        }
 
-         
-        return  map;
-        
-	}
 
-	
+        return map;
+
+    }
+
+
 }

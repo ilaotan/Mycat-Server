@@ -1,21 +1,22 @@
 package io.mycat.net;
 
 public class WriteEventCheckRunner implements Runnable {
-	private final SocketWR socketWR;
-	private volatile boolean finshed = true;
+    private final SocketWR socketWR;
 
-	public WriteEventCheckRunner(SocketWR socketWR) {
-		this.socketWR = socketWR;
-	}
+    private volatile boolean finshed = true;
 
-	public boolean isFinished() {
-		return finshed;
-	}
+    public WriteEventCheckRunner(SocketWR socketWR) {
+        this.socketWR = socketWR;
+    }
 
-	@Override
-	public void run() {
-		finshed = false;
-		socketWR.doNextWriteCheck();
-		finshed = true;
-	}
+    public boolean isFinished() {
+        return finshed;
+    }
+
+    @Override
+    public void run() {
+        finshed = false;
+        socketWR.doNextWriteCheck();
+        finshed = true;
+    }
 }

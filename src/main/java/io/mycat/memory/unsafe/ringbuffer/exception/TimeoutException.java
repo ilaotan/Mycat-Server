@@ -8,13 +8,11 @@ package io.mycat.memory.unsafe.ringbuffer.exception;
 public class TimeoutException extends Exception {
     public static final TimeoutException INSTANCE = new TimeoutException();
 
-    private TimeoutException()
-    {
+    private TimeoutException() {
     }
 
     @Override
-    public synchronized Throwable fillInStackTrace()
-    {
+    public synchronized Throwable fillInStackTrace() {
         return this;
     }
 }

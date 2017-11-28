@@ -29,105 +29,121 @@ import io.mycat.statistic.DataSourceSyncRecorder;
 import io.mycat.statistic.HeartbeatRecorder;
 
 public abstract class DBHeartbeat {
-	public static final int DB_SYN_ERROR = -1;
-	public static final int DB_SYN_NORMAL = 1;
+    public static final int DB_SYN_ERROR  = -1;
 
-	public static final int OK_STATUS = 1;
-	public static final int ERROR_STATUS = -1;
-	public static final int TIMEOUT_STATUS = -2;
-	public static final int INIT_STATUS = 0;
-	private static final long DEFAULT_HEARTBEAT_TIMEOUT = 30 * 1000L;
-	private static final int DEFAULT_HEARTBEAT_RETRY = 10;
-	// heartbeat config
-	protected long heartbeatTimeout = DEFAULT_HEARTBEAT_TIMEOUT; // 心跳超时时间
-	protected int heartbeatRetry = DEFAULT_HEARTBEAT_RETRY; // 检查连接发生异常到切换，重试次数
-	protected String heartbeatSQL;// 静态心跳语句
-	protected final AtomicBoolean isStop = new AtomicBoolean(true);
-	protected final AtomicBoolean isChecking = new AtomicBoolean(false);
-	protected int errorCount;
-	protected volatile int status;
-	protected final HeartbeatRecorder recorder = new HeartbeatRecorder();
-	protected final DataSourceSyncRecorder asynRecorder = new DataSourceSyncRecorder();
+    public static final int DB_SYN_NORMAL = 1;
 
-	private volatile Integer slaveBehindMaster;
-	private volatile int dbSynStatus = DB_SYN_NORMAL;
+    public static final  int  OK_STATUS                 = 1;
 
-	public Integer getSlaveBehindMaster() {
-		return slaveBehindMaster;
-	}
+    public static final  int  ERROR_STATUS              = -1;
 
-	public int getDbSynStatus() {
-		return dbSynStatus;
-	}
+    public static final  int  TIMEOUT_STATUS            = -2;
 
-	public void setDbSynStatus(int dbSynStatus) {
-		this.dbSynStatus = dbSynStatus;
-	}
+    public static final  int  INIT_STATUS               = 0;
 
-	public void setSlaveBehindMaster(Integer slaveBehindMaster) {
-		this.slaveBehindMaster = slaveBehindMaster;
-	}
+    private static final long DEFAULT_HEARTBEAT_TIMEOUT = 30 * 1000L;
 
-	public int getStatus() {
-		return status;
-	}
+    private static final int  DEFAULT_HEARTBEAT_RETRY   = 10;
 
-	public boolean isChecking() {
-		return isChecking.get();
-	}
+    // heartbeat config
+    protected            long heartbeatTimeout          = DEFAULT_HEARTBEAT_TIMEOUT; // 心跳超时时间
 
-	public abstract void start();
+    protected            int  heartbeatRetry            = DEFAULT_HEARTBEAT_RETRY; // 检查连接发生异常到切换，重试次数
 
-	public abstract void stop();
+    protected String heartbeatSQL;// 静态心跳语句
 
-	public boolean isStop() {
-		return isStop.get();
-	}
+    protected final AtomicBoolean isStop     = new AtomicBoolean(true);
 
-	public int getErrorCount() {
-		return errorCount;
-	}
+    protected final AtomicBoolean isChecking = new AtomicBoolean(false);
 
-	public HeartbeatRecorder getRecorder() {
-		return recorder;
-	}
+    protected          int errorCount;
 
-	public abstract String getLastActiveTime();
+    protected volatile int status;
 
-	public abstract long getTimeout();
+    protected final HeartbeatRecorder      recorder     = new HeartbeatRecorder();
 
-	public abstract void heartbeat();
+    protected final DataSourceSyncRecorder asynRecorder = new DataSourceSyncRecorder();
 
-	public long getHeartbeatTimeout() {
-		return heartbeatTimeout;
-	}
+    private volatile Integer slaveBehindMaster;
 
-	public void setHeartbeatTimeout(long heartbeatTimeout) {
-		this.heartbeatTimeout = heartbeatTimeout;
-	}
+    private volatile int dbSynStatus = DB_SYN_NORMAL;
 
-	public int getHeartbeatRetry() {
-		return heartbeatRetry;
-	}
+    public Integer getSlaveBehindMaster() {
+        return slaveBehindMaster;
+    }
 
-	public void setHeartbeatRetry(int heartbeatRetry) {
-		this.heartbeatRetry = heartbeatRetry;
-	}
+    public int getDbSynStatus() {
+        return dbSynStatus;
+    }
 
-	public String getHeartbeatSQL() {
-		return heartbeatSQL;
-	}
+    public void setDbSynStatus(int dbSynStatus) {
+        this.dbSynStatus = dbSynStatus;
+    }
 
-	public void setHeartbeatSQL(String heartbeatSQL) {
-		this.heartbeatSQL = heartbeatSQL;
-	}
+    public void setSlaveBehindMaster(Integer slaveBehindMaster) {
+        this.slaveBehindMaster = slaveBehindMaster;
+    }
 
-	public boolean isNeedHeartbeat() {
-		return heartbeatSQL != null;
-	}
+    public int getStatus() {
+        return status;
+    }
 
-	public DataSourceSyncRecorder getAsynRecorder() {
-		return this.asynRecorder;
-	}
+    public boolean isChecking() {
+        return isChecking.get();
+    }
+
+    public abstract void start();
+
+    public abstract void stop();
+
+    public boolean isStop() {
+        return isStop.get();
+    }
+
+    public int getErrorCount() {
+        return errorCount;
+    }
+
+    public HeartbeatRecorder getRecorder() {
+        return recorder;
+    }
+
+    public abstract String getLastActiveTime();
+
+    public abstract long getTimeout();
+
+    public abstract void heartbeat();
+
+    public long getHeartbeatTimeout() {
+        return heartbeatTimeout;
+    }
+
+    public void setHeartbeatTimeout(long heartbeatTimeout) {
+        this.heartbeatTimeout = heartbeatTimeout;
+    }
+
+    public int getHeartbeatRetry() {
+        return heartbeatRetry;
+    }
+
+    public void setHeartbeatRetry(int heartbeatRetry) {
+        this.heartbeatRetry = heartbeatRetry;
+    }
+
+    public String getHeartbeatSQL() {
+        return heartbeatSQL;
+    }
+
+    public void setHeartbeatSQL(String heartbeatSQL) {
+        this.heartbeatSQL = heartbeatSQL;
+    }
+
+    public boolean isNeedHeartbeat() {
+        return heartbeatSQL != null;
+    }
+
+    public DataSourceSyncRecorder getAsynRecorder() {
+        return this.asynRecorder;
+    }
 
 }

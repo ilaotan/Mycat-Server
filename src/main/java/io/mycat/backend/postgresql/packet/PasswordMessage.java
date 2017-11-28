@@ -18,31 +18,31 @@ import io.mycat.backend.postgresql.utils.PIOUtils;
 //口令（如果要求了，就是加密后的）。
 public class PasswordMessage extends PostgreSQLPacket {
 
-	public PasswordMessage(String user, String password, AuthType aut, byte[] salt)
-			throws UnsupportedEncodingException {
-		if (aut == AuthType.MD5Password) {
-			this.password = MD5Digest.encode(user.getBytes(UTF8), password.getBytes(UTF8), salt);
-		}
-	}
+    public PasswordMessage(String user, String password, AuthType aut, byte[] salt)
+            throws UnsupportedEncodingException {
+        if (aut == AuthType.MD5Password) {
+            this.password = MD5Digest.encode(user.getBytes(UTF8), password.getBytes(UTF8), salt);
+        }
+    }
 
-	private char marker = PacketMarker.F_PwdMess.getValue();
+    private char marker = PacketMarker.F_PwdMess.getValue();
 
-	private byte[] password;
+    private byte[] password;
 
-	@Override
-	public int getLength() {
-		return  4 + password.length;
-	}
+    @Override
+    public int getLength() {
+        return 4 + password.length;
+    }
 
-	@Override
-	public char getMarker() {
-		return marker;
-	}
+    @Override
+    public char getMarker() {
+        return marker;
+    }
 
-	public void write(ByteBuffer buffer) {
-		PIOUtils.SendChar(getMarker(), buffer);
-		PIOUtils.SendInteger4(getLength(), buffer);
-		PIOUtils.Send(password, buffer);
-	}
+    public void write(ByteBuffer buffer) {
+        PIOUtils.SendChar(getMarker(), buffer);
+        PIOUtils.SendInteger4(getLength(), buffer);
+        PIOUtils.Send(password, buffer);
+    }
 
 }

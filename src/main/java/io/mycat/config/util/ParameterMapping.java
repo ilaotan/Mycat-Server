@@ -44,12 +44,15 @@ import io.mycat.util.StringUtil;
  */
 public class ParameterMapping {
     private static final Logger                              LOGGER      = LoggerFactory
-                                                                             .getLogger(ParameterMapping.class);
-    private static final Map<Class<?>, PropertyDescriptor[]> descriptors = new HashMap<Class<?>, PropertyDescriptor[]>();
+            .getLogger(ParameterMapping.class);
+
+    private static final Map<Class<?>, PropertyDescriptor[]> descriptors = new HashMap<Class<?>,
+            PropertyDescriptor[]>();
 
     /**
      * 将property键值对赋值组装到object中
-     * @param object 目标反射对象
+     *
+     * @param object    目标反射对象
      * @param parameter property的键值对
      * @throws IllegalAccessException
      * @throws InvocationTargetException
@@ -72,9 +75,11 @@ public class ParameterMapping {
                 if (isPrimitiveType(cls)) {
                     value = convert(cls, string);
                 }
-            } else if (obj instanceof BeanConfig) {
+            }
+            else if (obj instanceof BeanConfig) {
                 value = createBean((BeanConfig) obj);
-            } else if (obj instanceof BeanConfig[]) {
+            }
+            else if (obj instanceof BeanConfig[]) {
                 List<Object> list = new ArrayList<Object>();
                 for (BeanConfig beanconfig : (BeanConfig[]) obj) {
                     list.add(createBean(beanconfig));
@@ -84,10 +89,10 @@ public class ParameterMapping {
             //赋值
             if (cls != null
                     && value != null) {
-                    Method method = pd.getWriteMethod();
-                    if (method != null) {
-                        method.invoke(object, new Object[] { value });
-                    }
+                Method method = pd.getWriteMethod();
+                if (method != null) {
+                    method.invoke(object, new Object[]{value});
+                }
             }
         }
     }
@@ -107,8 +112,10 @@ public class ParameterMapping {
                 }
                 map.put(key, value);
             }
-        } else if (bean instanceof List) {
-        } else {
+        }
+        else if (bean instanceof List) {
+        }
+        else {
             mapping(bean, config.getParams());
         }
         return bean;
@@ -116,6 +123,7 @@ public class ParameterMapping {
 
     /**
      * 用于导出clazz这个JavaBean的所有属性的PropertyDescriptor
+     *
      * @param clazz
      * @return
      */
@@ -138,7 +146,8 @@ public class ParameterMapping {
                 }
                 pds2 = new PropertyDescriptor[list.size()];
                 list.toArray(pds2);
-            } catch (IntrospectionException ie) {
+            }
+            catch (IntrospectionException ie) {
                 LOGGER.error("ParameterMappingError", ie);
                 pds2 = new PropertyDescriptor[0];
             }
@@ -152,37 +161,49 @@ public class ParameterMapping {
         Object value = null;
         if (cls.equals(String.class)) {
             value = string;
-        } else if (cls.equals(Boolean.TYPE)) {
+        }
+        else if (cls.equals(Boolean.TYPE)) {
             value = Boolean.valueOf(string);
-        } else if (cls.equals(Byte.TYPE)) {
+        }
+        else if (cls.equals(Byte.TYPE)) {
             value = Byte.valueOf(string);
-        } else if (cls.equals(Short.TYPE)) {
+        }
+        else if (cls.equals(Short.TYPE)) {
             value = Short.valueOf(string);
-        } else if (cls.equals(Integer.TYPE)) {
+        }
+        else if (cls.equals(Integer.TYPE)) {
             value = Integer.valueOf(string);
-        } else if (cls.equals(Long.TYPE)) {
+        }
+        else if (cls.equals(Long.TYPE)) {
             value = Long.valueOf(string);
-        } else if (cls.equals(Double.TYPE)) {
+        }
+        else if (cls.equals(Double.TYPE)) {
             value = Double.valueOf(string);
-        } else if (cls.equals(Float.TYPE)) {
+        }
+        else if (cls.equals(Float.TYPE)) {
             value = Float.valueOf(string);
-        } else if ((cls.equals(Boolean.class)) || (cls.equals(Byte.class)) || (cls.equals(Short.class))
+        }
+        else if ((cls.equals(Boolean.class)) || (cls.equals(Byte.class)) || (cls.equals(Short.class))
                 || (cls.equals(Integer.class)) || (cls.equals(Long.class)) || (cls.equals(Float.class))
                 || (cls.equals(Double.class))) {
             try {
-                method = cls.getMethod("valueOf", new Class[] { String.class });
-                value = method.invoke(null, new Object[] { string });
-            } catch (Exception t) {
+                method = cls.getMethod("valueOf", new Class[]{String.class});
+                value = method.invoke(null, new Object[]{string});
+            }
+            catch (Exception t) {
                 LOGGER.error("valueofError", t);
                 value = null;
             }
-        } else if (cls.equals(Class.class)) {
+        }
+        else if (cls.equals(Class.class)) {
             try {
                 value = Class.forName(string);
-            } catch (ClassNotFoundException e) {
+            }
+            catch (ClassNotFoundException e) {
                 throw new ConfigException(e);
             }
-        } else {
+        }
+        else {
             value = null;
         }
         return (value);
@@ -195,7 +216,8 @@ public class ParameterMapping {
                 || cls.equals(Short.class) || cls.equals(Integer.class) || cls.equals(Long.class)
                 || cls.equals(Float.class) || cls.equals(Double.class) || cls.equals(Class.class)) {
             return true;
-        } else {
+        }
+        else {
             return false;
         }
     }

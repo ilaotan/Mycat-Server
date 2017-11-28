@@ -20,18 +20,21 @@ import java.util.Map;
  * @see @https://github.com/netty/netty
  */
 public class TestByteBufferArena {
-    int pageSize = 256;
-    int chunkSize = 1024 * 8;
-    int chunkCount = 8*128;
+    int pageSize   = 256;
+
+    int chunkSize  = 1024 * 8;
+
+    int chunkCount = 8 * 128;
+
     @Test
     public void testAllocate() {
-        int allocTimes =  1024 ;
-        ByteBufferArena byteBufferArena = new ByteBufferArena(chunkSize,pageSize,chunkCount,8);
+        int allocTimes = 1024;
+        ByteBufferArena byteBufferArena = new ByteBufferArena(chunkSize, pageSize, chunkCount, 8);
         long start = System.currentTimeMillis();
         for (int i = 0; i < allocTimes; i++) {
 //            System.out.println("allocate "+i);
 //            long start=System.nanoTime();
-            int size = (i % 1024) + 1 ;
+            int size = (i % 1024) + 1;
             ByteBuffer byteBufer = byteBufferArena.allocate(size);
             ByteBuffer byteBufer2 = byteBufferArena.allocate(size);
             ByteBuffer byteBufer3 = byteBufferArena.allocate(size);
@@ -47,14 +50,14 @@ public class TestByteBufferArena {
 
     @Test
     public void testAllocateDirect() {
-        int pageSize = 1024 ;
+        int pageSize = 1024;
         int allocTimes = 100;
-        DirectByteBufferPool pool = new DirectByteBufferPool(pageSize, (short) 256, (short) 8,0);
+        DirectByteBufferPool pool = new DirectByteBufferPool(pageSize, (short) 256, (short) 8, 0);
         long start = System.currentTimeMillis();
         for (int i = 0; i < allocTimes; i++) {
             //System.out.println("allocate "+i);
             //long start=System.nanoTime();
-            int size = (i % 1024) + 1 ;
+            int size = (i % 1024) + 1;
             ByteBuffer byteBufer = pool.allocate(size);
             ByteBuffer byteBufer2 = pool.allocate(size);
             ByteBuffer byteBufer3 = pool.allocate(size);
@@ -69,9 +72,9 @@ public class TestByteBufferArena {
     }
 
     @Test
-    public void testExpansion(){
-        ByteBufferArena byteBufferArena = new ByteBufferArena(1024,8,1,8);
-        for (int i = 0; i < 1 ; i++) {
+    public void testExpansion() {
+        ByteBufferArena byteBufferArena = new ByteBufferArena(1024, 8, 1, 8);
+        for (int i = 0; i < 1; i++) {
             ByteBuffer byteBufer = byteBufferArena.allocate(256);
             ByteBuffer byteBufer2 = byteBufferArena.allocate(256);
             ByteBuffer byteBufer3 = byteBufferArena.allocate(256);
@@ -85,7 +88,7 @@ public class TestByteBufferArena {
         int size = 256;
         int pageSize = size * 4;
         int allocTimes = 8;
-        ByteBufferArena byteBufferArena = new ByteBufferArena(256*4,256,2,8);
+        ByteBufferArena byteBufferArena = new ByteBufferArena(256 * 4, 256, 2, 8);
         Map<Long, ByteBuffer> buffs = new HashMap<Long, ByteBuffer>(8);
         ByteBuffer byteBuffer = null;
         DirectBuffer directBuffer = null;
@@ -122,7 +125,8 @@ public class TestByteBufferArena {
         int size = 256;
         int pageSize = size * 4;
         int allocTimes = 9;
-        ByteBufferArena pool = new ByteBufferArena(256*4,256,2,8);;
+        ByteBufferArena pool = new ByteBufferArena(256 * 4, 256, 2, 8);
+        ;
         long start = System.currentTimeMillis();
         ByteBuffer byteBuffer = null;
         List<ByteBuffer> buffs = new ArrayList<ByteBuffer>();

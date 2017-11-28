@@ -45,7 +45,8 @@ import io.mycat.util.SplitUtil;
  */
 public class ClusterConfig {
     private final Map<String, MycatNodeConfig> nodes;
-    private final Map<String, List<String>> groups;
+
+    private final Map<String, List<String>>    groups;
 
     public ClusterConfig(Element root, int port) {
         nodes = Collections.unmodifiableMap(loadNode(root, port));

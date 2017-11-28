@@ -4,7 +4,8 @@ package io.mycat.config.loader.zkprocess.zookeeper;
  * Created by magicdoom on 2016/12/21.
  */
 public class ClusterInfo {
-    private int clusterSize;
+    private int    clusterSize;
+
     private String clusterNodes;
 
 

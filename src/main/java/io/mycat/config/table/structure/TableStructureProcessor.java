@@ -9,5 +9,6 @@ package io.mycat.config.table.structure;
  */
 public abstract class TableStructureProcessor {
     public abstract void saveTableStructure();
+
     public abstract void loadTableStructure();
 }

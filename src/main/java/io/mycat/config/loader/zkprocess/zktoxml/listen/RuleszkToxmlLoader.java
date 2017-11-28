@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.curator.framework.CuratorFramework;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,61 +37,68 @@ import io.mycat.manager.response.ReloadConfig;
 
 /**
  * 进行rule的文件从zk中加载
-* 源文件名：RuleszkToxmlLoader.java
-* 文件版本：1.0.0
-* 创建作者：liujun
-* 创建日期：2016年9月15日
-* 修改作者：liujun
-* 修改日期：2016年9月15日
-* 文件描述：TODO
-* 版权所有：Copyright 2016 zjhz, Inc. All Rights Reserved.
-*/
+ * 源文件名：RuleszkToxmlLoader.java
+ * 文件版本：1.0.0
+ * 创建作者：liujun
+ * 创建日期：2016年9月15日
+ * 修改作者：liujun
+ * 修改日期：2016年9月15日
+ * 文件描述：TODO
+ * 版权所有：Copyright 2016 zjhz, Inc. All Rights Reserved.
+ */
 public class RuleszkToxmlLoader extends ZkMultLoader implements NotiflyService {
 
     /**
      * 日志
-    * @字段说明 LOGGER
-    */
+     *
+     * @字段说明 LOGGER
+     */
     private static final Logger LOGGER = LoggerFactory.getLogger(RuleszkToxmlLoader.class);
 
     /**
-     * 当前文件中的zkpath信息 
-    * @字段说明 currZkPath
-    */
+     * 当前文件中的zkpath信息
+     *
+     * @字段说明 currZkPath
+     */
     private final String currZkPath;
 
     /**
      * 写入本地的文件路径
-    * @字段说明 WRITEPATH
-    */
+     *
+     * @字段说明 WRITEPATH
+     */
     private static final String WRITEPATH = "rule.xml";
 
     /**
      * Rules的xml的转换信息
-    * @字段说明 parseRulesXMl
-    */
+     *
+     * @字段说明 parseRulesXMl
+     */
     private ParseXmlServiceInf<Rules> parseRulesXMl;
 
     /**
      * 表的路由信息
-    * @字段说明 parseJsonService
-    */
+     *
+     * @字段说明 parseJsonService
+     */
     private ParseJsonServiceInf<List<TableRule>> parseJsonTableRuleService = new TableRuleJsonParse();
 
     /**
      * 表对应的字段信息
-    * @字段说明 parseJsonFunctionService
-    */
+     *
+     * @字段说明 parseJsonFunctionService
+     */
     private ParseJsonServiceInf<List<Function>> parseJsonFunctionService = new FunctionJsonParse();
 
     /**
      * zk的监控路径信息
-    * @字段说明 zookeeperListen
-    */
+     *
+     * @字段说明 zookeeperListen
+     */
     private ZookeeperProcessListen zookeeperListen;
 
     public RuleszkToxmlLoader(ZookeeperProcessListen zookeeperListen, CuratorFramework curator,
-            XmlProcessBase xmlParseBase) {
+                              XmlProcessBase xmlParseBase) {
 
         this.setCurator(curator);
 
@@ -139,19 +147,21 @@ public class RuleszkToxmlLoader extends ZkMultLoader implements NotiflyService {
 
         LOGGER.info("RuleszkToxmlLoader notiflyProcess zk to object zk Rules      write :" + path + " is success");
 
-        if (MycatServer.getInstance().getProcessors() != null)
+        if (MycatServer.getInstance().getProcessors() != null) {
             ReloadConfig.reload();
+        }
 
         return true;
     }
 
     /**
      * 将zk上面的信息转换为javabean对象
-    * 方法描述
-    * @param zkDirectory
-    * @return
-    * @创建日期 2016年9月17日
-    */
+     * 方法描述
+     *
+     * @param zkDirectory
+     * @return
+     * @创建日期 2016年9月17日
+     */
     private Rules zktoRulesBean(DiretoryInf zkDirectory) {
         Rules Rules = new Rules();
 
@@ -181,11 +191,12 @@ public class RuleszkToxmlLoader extends ZkMultLoader implements NotiflyService {
     }
 
     /**
-     *  读取序列配制文件便利店  
-    * 方法描述
-    * @param functionList
-    * @创建日期 2016年9月18日
-    */
+     * 读取序列配制文件便利店
+     * 方法描述
+     *
+     * @param functionList
+     * @创建日期 2016年9月18日
+     */
     private void writeMapFileAddFunction(List<Function> functionList) {
 
         List<Property> tempData = new ArrayList<>();
@@ -235,11 +246,12 @@ public class RuleszkToxmlLoader extends ZkMultLoader implements NotiflyService {
 
     /**
      * 读取 mapFile文件的信息
-    * 方法描述
-    * @param name 名称信息
-    * @return
-    * @创建日期 2016年9月18日
-    */
+     * 方法描述
+     *
+     * @param name 名称信息
+     * @return
+     * @创建日期 2016年9月18日
+     */
     private void writeMapFile(String name, String value) {
 
         // 加载数据
@@ -253,7 +265,8 @@ public class RuleszkToxmlLoader extends ZkMultLoader implements NotiflyService {
         // 进行数据写入
         try {
             Files.write(value.getBytes(), new File(path));
-        } catch (IOException e1) {
+        }
+        catch (IOException e1) {
             e1.printStackTrace();
         }
 

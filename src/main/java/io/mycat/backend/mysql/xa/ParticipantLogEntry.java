@@ -47,13 +47,14 @@ public class ParticipantLogEntry implements Serializable {
     }
 
 
-
     @Override
     public boolean equals(Object other) {
         boolean ret = false;
         if (other instanceof ParticipantLogEntry) {
             ParticipantLogEntry o = (ParticipantLogEntry) other;
-            if (o.coordinatorId.equals(coordinatorId) && o.uri.equals(uri)) ret = true;
+            if (o.coordinatorId.equals(coordinatorId) && o.uri.equals(uri)) {
+                ret = true;
+            }
         }
         return ret;
     }
@@ -62,7 +63,6 @@ public class ParticipantLogEntry implements Serializable {
     public int hashCode() {
         return coordinatorId.hashCode();
     }
-
 
 
     @Override

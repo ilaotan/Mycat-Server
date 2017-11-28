@@ -30,7 +30,8 @@ import jsr166y.LinkedTransferQueue;
  */
 public class QueueSimpleMain {
 
-    static long putCount = 0;
+    static long putCount  = 0;
+
     static long takeCount = 0;
 
     public static void main(String[] args) {
@@ -45,12 +46,13 @@ public class QueueSimpleMain {
         new Thread() {
             @Override
             public void run() {
-                for (;;) {
+                for (; ; ) {
                     long put = putCount;
                     long take = takeCount;
                     try {
                         Thread.sleep(5000L);
-                    } catch (InterruptedException e) {
+                    }
+                    catch (InterruptedException e) {
                         e.printStackTrace();
                     }
                     System.out.println("put:" + (putCount - put) / 5 + " take:" + (takeCount - take) / 5);
@@ -61,7 +63,7 @@ public class QueueSimpleMain {
         new Thread() {
             @Override
             public void run() {
-                for (;;) {
+                for (; ; ) {
                     if (queue.offer("A")) {
                         putCount++;
                     }
@@ -72,7 +74,7 @@ public class QueueSimpleMain {
         new Thread() {
             @Override
             public void run() {
-                for (;;) {
+                for (; ; ) {
                     // try {
                     if (queue.poll() != null) {
                         takeCount++;

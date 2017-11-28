@@ -33,7 +33,8 @@ import java.nio.channels.CompletionHandler;
 import java.nio.channels.NetworkChannel;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.slf4j.Logger; import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import io.mycat.MycatServer;
 import io.mycat.net.factory.FrontendConnectionFactory;
@@ -42,123 +43,135 @@ import io.mycat.net.factory.FrontendConnectionFactory;
  * @author mycat
  */
 public final class AIOAcceptor implements SocketAcceptor,
-		CompletionHandler<AsynchronousSocketChannel, Long> {
-	private static final Logger LOGGER = LoggerFactory.getLogger(AIOAcceptor.class);
-	private static final AcceptIdGenerator ID_GENERATOR = new AcceptIdGenerator();
+        CompletionHandler<AsynchronousSocketChannel, Long> {
+    private static final Logger            LOGGER       = LoggerFactory.getLogger(AIOAcceptor.class);
 
-	private final int port;
-	private final AsynchronousServerSocketChannel serverChannel;
-	private final FrontendConnectionFactory factory;
+    private static final AcceptIdGenerator ID_GENERATOR = new AcceptIdGenerator();
 
-	private long acceptCount;
-	private final String name;
+    private final int                             port;
 
-	public AIOAcceptor(String name, String ip, int port,
-			FrontendConnectionFactory factory, AsynchronousChannelGroup group)
-			throws IOException {
-		this.name = name;
-		this.port = port;
-		this.factory = factory;
-		serverChannel = AsynchronousServerSocketChannel.open(group);
-		/** 设置TCP属性 */
-		serverChannel.setOption(StandardSocketOptions.SO_REUSEADDR, true);
-		serverChannel.setOption(StandardSocketOptions.SO_RCVBUF, 1024 * 16 * 2);
-		// backlog=100
-		serverChannel.bind(new InetSocketAddress(ip, port), 100);
-	}
+    private final AsynchronousServerSocketChannel serverChannel;
 
-	public String getName() {
-		return name;
-	}
+    private final FrontendConnectionFactory       factory;
 
-	public void start() {
-		this.pendingAccept();
-	}
+    private       long   acceptCount;
 
-	public int getPort() {
-		return port;
-	}
+    private final String name;
 
-	public long getAcceptCount() {
-		return acceptCount;
-	}
+    public AIOAcceptor(String name, String ip, int port,
+                       FrontendConnectionFactory factory, AsynchronousChannelGroup group)
+            throws IOException {
+        this.name = name;
+        this.port = port;
+        this.factory = factory;
+        serverChannel = AsynchronousServerSocketChannel.open(group);
+        /** 设置TCP属性 */
+        serverChannel.setOption(StandardSocketOptions.SO_REUSEADDR, true);
+        serverChannel.setOption(StandardSocketOptions.SO_RCVBUF, 1024 * 16 * 2);
+        // backlog=100
+        serverChannel.bind(new InetSocketAddress(ip, port), 100);
+    }
 
-	private void accept(NetworkChannel channel, Long id) {
-		try {
-			FrontendConnection c = factory.make(channel);
-			c.setAccepted(true);
-			c.setId(id);
-			NIOProcessor processor = MycatServer.getInstance().nextProcessor();
-			c.setProcessor(processor);
-			c.register();
-		} catch (Exception e) {
-		    LOGGER.error("AioAcceptorError", e);
-			closeChannel(channel);
-		}
-	}
+    @Override
+    public String getName() {
+        return name;
+    }
 
-	private void pendingAccept() {
-		if (serverChannel.isOpen()) {
-			serverChannel.accept(ID_GENERATOR.getId(), this);
-		} else {
-			throw new IllegalStateException(
-					"MyCAT Server Channel has been closed");
-		}
+    @Override
+    public void start() {
+        this.pendingAccept();
+    }
 
-	}
+    @Override
+    public int getPort() {
+        return port;
+    }
 
-	@Override
-	public void completed(AsynchronousSocketChannel result, Long id) {
-		accept(result, id);
-		// next pending waiting
-		pendingAccept();
+    public long getAcceptCount() {
+        return acceptCount;
+    }
 
-	}
+    private void accept(NetworkChannel channel, Long id) {
+        try {
+            FrontendConnection c = factory.make(channel);
+            c.setAccepted(true);
+            c.setId(id);
+            NIOProcessor processor = MycatServer.getInstance().nextProcessor();
+            c.setProcessor(processor);
+            c.register();
+        }
+        catch (Exception e) {
+            LOGGER.error("AioAcceptorError", e);
+            closeChannel(channel);
+        }
+    }
 
-	@Override
-	public void failed(Throwable exc, Long id) {
-		LOGGER.info("acception connect failed:" + exc);
-		// next pending waiting
-		pendingAccept();
+    private void pendingAccept() {
+        if (serverChannel.isOpen()) {
+            serverChannel.accept(ID_GENERATOR.getId(), this);
+        }
+        else {
+            throw new IllegalStateException(
+                    "MyCAT Server Channel has been closed");
+        }
 
-	}
+    }
 
-	private static void closeChannel(NetworkChannel channel) {
-		if (channel == null) {
-			return;
-		}
-		try {
-			channel.close();
-		} catch (IOException e) {
-	        LOGGER.error("AioAcceptorError", e);
-		}
-	}
+    @Override
+    public void completed(AsynchronousSocketChannel result, Long id) {
+        accept(result, id);
+        // next pending waiting
+        pendingAccept();
 
-	/**
-	 * 前端连接ID生成器
-	 * 
-	 * @author mycat
-	 */
-	private static class AcceptIdGenerator {
+    }
 
-		private static final long MAX_VALUE = 0xffffffffL;
+    @Override
+    public void failed(Throwable exc, Long id) {
+        LOGGER.info("acception connect failed:" + exc);
+        // next pending waiting
+        pendingAccept();
 
-		private AtomicLong acceptId = new AtomicLong();
-		private final Object lock = new Object();
+    }
 
-		private long getId() {
-			long newValue = acceptId.getAndIncrement();
-			if (newValue >= MAX_VALUE) {
-				synchronized (lock) {
-					newValue = acceptId.getAndIncrement();
-					if (newValue >= MAX_VALUE) {
-						acceptId.set(0);
-					}
-				}
-				return acceptId.getAndDecrement();
-			} else {
-				return newValue;
-			}
-		}
-	}
+    private static void closeChannel(NetworkChannel channel) {
+        if (channel == null) {
+            return;
+        }
+        try {
+            channel.close();
+        }
+        catch (IOException e) {
+            LOGGER.error("AioAcceptorError", e);
+        }
+    }
+
+    /**
+     * 前端连接ID生成器
+     *
+     * @author mycat
+     */
+    private static class AcceptIdGenerator {
+
+        private static final long MAX_VALUE = 0xffffffffL;
+
+        private       AtomicLong acceptId = new AtomicLong();
+
+        private final Object     lock     = new Object();
+
+        private long getId() {
+            long newValue = acceptId.getAndIncrement();
+            if (newValue >= MAX_VALUE) {
+                synchronized (lock) {
+                    newValue = acceptId.getAndIncrement();
+                    if (newValue >= MAX_VALUE) {
+                        acceptId.set(0);
+                    }
+                }
+                return acceptId.getAndDecrement();
+            }
+            else {
+                return newValue;
+            }
+        }
+    }
 }

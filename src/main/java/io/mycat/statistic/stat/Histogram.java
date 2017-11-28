@@ -4,10 +4,11 @@ import java.util.concurrent.atomic.AtomicLongArray;
 
 public class Histogram {
 
-    private final long[] ranges;
+    private final long[]          ranges;
+
     private final AtomicLongArray rangeCounters;
 
-    public Histogram(long... ranges){
+    public Histogram(long... ranges) {
         this.ranges = ranges;
         this.rangeCounters = new AtomicLongArray(ranges.length);
     }
@@ -67,6 +68,7 @@ public class Histogram {
         return sum;
     }
 
+    @Override
     public String toString() {
         StringBuilder buf = new StringBuilder();
         buf.append('[');

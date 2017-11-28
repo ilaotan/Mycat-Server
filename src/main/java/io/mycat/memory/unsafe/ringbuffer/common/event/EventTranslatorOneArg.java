@@ -8,6 +8,6 @@ package io.mycat.memory.unsafe.ringbuffer.common.event;
  * @version 3.3.5
  * @date 2016/7/29
  */
-public interface EventTranslatorOneArg<T,A> {
-     void translateTo(final T event, long sequence, final A arg0);
+public interface EventTranslatorOneArg<T, A> {
+    void translateTo(final T event, long sequence, final A arg0);
 }

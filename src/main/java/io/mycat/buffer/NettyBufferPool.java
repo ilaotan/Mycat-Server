@@ -26,6 +26,7 @@ public class NettyBufferPool implements BufferPool {
 
 
     MyCatMemoryAllocator allocator;
+
     private int chunkSize = 0;
 
     public NettyBufferPool(int chunkSize) {

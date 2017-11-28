@@ -12,44 +12,53 @@ import io.mycat.config.loader.zkprocess.entity.Named;
 
 /**
  * <dataHost name="localhost1" maxCon="1000" minCon="10" balance="0"
-     * writeType="0" dbType="mysql" dbDriver="native" switchType="1"  slaveThreshold="100">
-     * </dataHost>
-* 源文件名：DataHost.java
-* 文件版本：1.0.0
-* 创建作者：liujun
-* 创建日期：2016年9月15日
-* 修改作者：liujun
-* 修改日期：2016年9月15日
-* 文件描述：TODO
-* 版权所有：Copyright 2016 zjhz, Inc. All Rights Reserved.
-*/
+ * writeType="0" dbType="mysql" dbDriver="native" switchType="1"  slaveThreshold="100">
+ * </dataHost>
+ * 源文件名：DataHost.java
+ * 文件版本：1.0.0
+ * 创建作者：liujun
+ * 创建日期：2016年9月15日
+ * 修改作者：liujun
+ * 修改日期：2016年9月15日
+ * 文件描述：TODO
+ * 版权所有：Copyright 2016 zjhz, Inc. All Rights Reserved.
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "dataHost")
 public class DataHost implements Named {
 
     @XmlAttribute(required = true)
     protected Integer balance;
+
     @XmlAttribute(required = true)
     protected Integer maxCon;
+
     @XmlAttribute(required = true)
     protected Integer minCon;
+
     @XmlAttribute(required = true)
-    protected String name;
+    protected String  name;
+
     @XmlAttribute
     protected Integer writeType;
+
     @XmlAttribute
     protected Integer switchType;
+
     @XmlAttribute
     protected Integer slaveThreshold;
+
     @XmlAttribute(required = true)
-    protected String dbType;
+    protected String  dbType;
+
     @XmlAttribute(required = true)
-    protected String dbDriver;
+    protected String  dbDriver;
 
     @XmlAttribute()
     protected String slaveIDs;
 
     protected String heartbeat;
+
     protected String connectionInitSql;
 
     protected List<WriteHost> writeHost;
@@ -89,6 +98,7 @@ public class DataHost implements Named {
         this.writeHost = writeHost;
     }
 
+    @Override
     public String getName() {
         return name;
     }

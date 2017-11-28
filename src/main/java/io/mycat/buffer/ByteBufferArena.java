@@ -20,16 +20,21 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class ByteBufferArena implements BufferPool {
     private static final Logger LOGGER = LoggerFactory.getLogger(ByteBufferChunkList.class);
+
     private final ByteBufferChunkList q[];
 
     private final AtomicInteger chunkCount = new AtomicInteger(0);
-    private final AtomicInteger failCount = new AtomicInteger(0);
+
+    private final AtomicInteger failCount  = new AtomicInteger(0);
 
     private static final int FAIL_THRESHOLD = 1000;
+
     private final int pageSize;
+
     private final int chunkSize;
 
     private final AtomicLong capacity;
+
     private final AtomicLong size;
 
     private final ConcurrentHashMap<Thread, Integer> sharedOptsCount;
@@ -37,8 +42,9 @@ public class ByteBufferArena implements BufferPool {
     /**
      * 记录对线程ID->该线程的所使用Direct Buffer的size
      */
-    private final ConcurrentHashMap<Long,Long> memoryUsage;
-    private final int conReadBuferChunk;
+    private final ConcurrentHashMap<Long, Long> memoryUsage;
+
+    private final int                           conReadBuferChunk;
 
     public ByteBufferArena(int chunkSize, int pageSize, int chunkCount, int conReadBuferChunk) {
         try {
@@ -73,7 +79,8 @@ public class ByteBufferArena implements BufferPool {
             size = new AtomicLong(6 * chunkCount * chunkSize);
             sharedOptsCount = new ConcurrentHashMap<>();
             memoryUsage = new ConcurrentHashMap<>();
-        } finally {
+        }
+        finally {
         }
     }
 
@@ -89,7 +96,8 @@ public class ByteBufferArena implements BufferPool {
                     if (count > FAIL_THRESHOLD) {
                         try {
                             expand();
-                        } finally {
+                        }
+                        finally {
                         }
                     }
                 }
@@ -102,23 +110,26 @@ public class ByteBufferArena implements BufferPool {
 //            }
 //            printList();
             capacity.addAndGet(-reqCapacity);
-            final Thread thread =  Thread.currentThread();
+            final Thread thread = Thread.currentThread();
             final long threadId = thread.getId();
 
-            if (memoryUsage.containsKey(threadId)){
-                memoryUsage.put(threadId,memoryUsage.get(thread.getId())+reqCapacity);
-            }else {
+            if (memoryUsage.containsKey(threadId)) {
+                memoryUsage.put(threadId, memoryUsage.get(thread.getId()) + reqCapacity);
+            }
+            else {
                 memoryUsage.put(threadId, (long) reqCapacity);
             }
             if (sharedOptsCount.contains(thread)) {
                 int currentCount = sharedOptsCount.get(thread);
                 currentCount++;
-                sharedOptsCount.put(thread,currentCount);
-            } else{
-                sharedOptsCount.put(thread,0);
+                sharedOptsCount.put(thread, currentCount);
+            }
+            else {
+                sharedOptsCount.put(thread, 0);
             }
             return byteBuffer;
-        } finally {
+        }
+        finally {
         }
     }
 
@@ -131,7 +142,7 @@ public class ByteBufferArena implements BufferPool {
 
     @Override
     public void recycle(ByteBuffer byteBuffer) {
-        final long size = byteBuffer != null?byteBuffer.capacity():0;
+        final long size = byteBuffer != null ? byteBuffer.capacity() : 0;
         try {
             int i;
             for (i = 0; i < 6; i++) {
@@ -143,22 +154,24 @@ public class ByteBufferArena implements BufferPool {
                 LOGGER.warn("This ByteBuffer is not maintained in ByteBufferArena!");
                 return;
             }
-            final Thread thread =  Thread.currentThread();
+            final Thread thread = Thread.currentThread();
             final long threadId = thread.getId();
 
-            if (memoryUsage.containsKey(threadId)){
-                memoryUsage.put(threadId,memoryUsage.get(thread.getId())-size);
+            if (memoryUsage.containsKey(threadId)) {
+                memoryUsage.put(threadId, memoryUsage.get(thread.getId()) - size);
             }
             if (sharedOptsCount.contains(thread)) {
                 int currentCount = sharedOptsCount.get(thread);
                 currentCount--;
-                sharedOptsCount.put(thread,currentCount);
-            } else{
-                sharedOptsCount.put(thread,0);
+                sharedOptsCount.put(thread, currentCount);
+            }
+            else {
+                sharedOptsCount.put(thread, 0);
             }
             capacity.addAndGet(byteBuffer.capacity());
             return;
-        } finally {
+        }
+        finally {
         }
     }
 
@@ -187,7 +200,7 @@ public class ByteBufferArena implements BufferPool {
     public int getSharedOptsCount() {
         final Set<Integer> integers = (Set<Integer>) sharedOptsCount.values();
         int count = 0;
-        for(int i : integers){
+        for (int i : integers) {
             count += i;
         }
         return count;
@@ -195,6 +208,7 @@ public class ByteBufferArena implements BufferPool {
 
     /**
      * 这里pageSize就是DirectByteBuffer的chunksize
+     *
      * @return
      */
     @Override

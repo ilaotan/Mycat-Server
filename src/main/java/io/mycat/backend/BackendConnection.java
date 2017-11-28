@@ -9,57 +9,56 @@ import io.mycat.route.RouteResultsetNode;
 import io.mycat.server.ServerConnection;
 
 public interface BackendConnection extends ClosableConnection {
-	public boolean isModifiedSQLExecuted();
+    public boolean isModifiedSQLExecuted();
 
-	public boolean isFromSlaveDB();
+    public boolean isFromSlaveDB();
 
-	public String getSchema();
+    public String getSchema();
 
-	public void setSchema(String newSchema);
+    public void setSchema(String newSchema);
 
-	public long getLastTime();
+    public long getLastTime();
 
-	public boolean isClosedOrQuit();
+    public boolean isClosedOrQuit();
 
-	public void setAttachment(Object attachment);
+    public void setAttachment(Object attachment);
 
-	public void quit();
+    public void quit();
 
-	public void setLastTime(long currentTimeMillis);
+    public void setLastTime(long currentTimeMillis);
 
-	public void release();
+    public void release();
 
-	public boolean setResponseHandler(ResponseHandler commandHandler);
+    public boolean setResponseHandler(ResponseHandler commandHandler);
 
-	public void commit();
+    public void commit();
 
-	public void query(String sql) throws UnsupportedEncodingException;
+    public void query(String sql) throws UnsupportedEncodingException;
 
-	public Object getAttachment();
+    public Object getAttachment();
 
-	// public long getThreadId();
+    // public long getThreadId();
 
 
+    public void execute(RouteResultsetNode node, ServerConnection source,
+                        boolean autocommit) throws IOException;
 
-	public void execute(RouteResultsetNode node, ServerConnection source,
-			boolean autocommit) throws IOException;
+    public void recordSql(String host, String schema, String statement);
 
-	public void recordSql(String host, String schema, String statement);
+    public boolean syncAndExcute();
 
-	public boolean syncAndExcute();
+    public void rollback();
 
-	public void rollback();
+    public boolean isBorrowed();
 
-	public boolean isBorrowed();
+    public void setBorrowed(boolean borrowed);
 
-	public void setBorrowed(boolean borrowed);
+    public int getTxIsolation();
 
-	public int getTxIsolation();
+    public boolean isAutocommit();
 
-	public boolean isAutocommit();
+    public long getId();
 
-	public long getId();
-
-	public void discardClose(String reason);
+    public void discardClose(String reason);
 
 }

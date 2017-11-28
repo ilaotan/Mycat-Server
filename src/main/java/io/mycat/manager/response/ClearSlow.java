@@ -38,12 +38,13 @@ import io.mycat.net.mysql.OkPacket;
 public class ClearSlow {
 
     public static void dataNode(ManagerConnection c, String name) {
-    	PhysicalDBNode dn = MycatServer.getInstance().getConfig().getDataNodes().get(name);
-    	PhysicalDBPool ds = null;
-        if (dn != null && ((ds = dn.getDbPool())!= null)) {
-           // ds.getSqlRecorder().clear();
+        PhysicalDBNode dn = MycatServer.getInstance().getConfig().getDataNodes().get(name);
+        PhysicalDBPool ds = null;
+        if (dn != null && ((ds = dn.getDbPool()) != null)) {
+            // ds.getSqlRecorder().clear();
             c.write(c.writeToBuffer(OkPacket.OK, c.allocate()));
-        } else {
+        }
+        else {
             c.writeErrMessage(ErrorCode.ER_YES, "Invalid DataNode:" + name);
         }
     }
@@ -61,7 +62,8 @@ public class ClearSlow {
 //                }
 //            }
             c.write(c.writeToBuffer(OkPacket.OK, c.allocate()));
-        } else {
+        }
+        else {
             c.writeErrMessage(ErrorCode.ER_YES, "Invalid Schema:" + name);
         }
     }

@@ -43,7 +43,8 @@ public class Reply323Packet extends MySQLPacket {
         StreamUtil.write(out, packetId);
         if (seed == null) {
             StreamUtil.write(out, (byte) 0);
-        } else {
+        }
+        else {
             StreamUtil.writeWithNull(out, seed);
         }
     }
@@ -55,7 +56,8 @@ public class Reply323Packet extends MySQLPacket {
         buffer.put(packetId);
         if (seed == null) {
             buffer.put((byte) 0);
-        } else {
+        }
+        else {
             BufferUtil.writeWithNull(buffer, seed);
         }
         c.write(buffer);

@@ -13,44 +13,54 @@ import io.mycat.config.loader.zkprocess.entity.Named;
 /**
  * <table name="travelrecord" dataNode="dn1,dn2,dn3" rule="auto-sharding-long" />
  * 用于具体的表信息
-* 源文件名：Table.java
-* 文件版本：1.0.0
-* 创建作者：liujun
-* 创建日期：2016年9月15日
-* 修改作者：liujun
-* 修改日期：2016年9月15日
-* 文件描述：TODO
-* 版权所有：Copyright 2016 zjhz, Inc. All Rights Reserved.
-*/
+ * 源文件名：Table.java
+ * 文件版本：1.0.0
+ * 创建作者：liujun
+ * 创建日期：2016年9月15日
+ * 修改作者：liujun
+ * 修改日期：2016年9月15日
+ * 文件描述：TODO
+ * 版权所有：Copyright 2016 zjhz, Inc. All Rights Reserved.
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "table")
 public class Table implements Named {
 
     @XmlAttribute(required = true)
-    protected String name;
+    protected String  name;
+
     @XmlAttribute
-    protected String nameSuffix;
+    protected String  nameSuffix;
+
     @XmlAttribute(required = true)
-    protected String dataNode;
+    protected String  dataNode;
+
     @XmlAttribute
-    protected String rule;
+    protected String  rule;
+
     @XmlAttribute
     protected Boolean ruleRequired;
+
     @XmlAttribute
-    protected String primaryKey;
+    protected String  primaryKey;
+
     @XmlAttribute
     protected Boolean autoIncrement;
+
     @XmlAttribute
     protected Boolean needAddLimit;
+
     @XmlAttribute
-    protected String type;
+    protected String  type;
 
     /**
      * 子节点信息
-    * @字段说明 childTable
-    */
+     *
+     * @字段说明 childTable
+     */
     protected List<ChildTable> childTable;
 
+    @Override
     public String getName() {
         return name;
     }

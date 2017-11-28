@@ -27,7 +27,7 @@ import io.mycat.util.StringUtil;
 
 /**
  * 数据分区工具
- * 
+ *
  * @author mycat
  */
 public final class PartitionUtil {

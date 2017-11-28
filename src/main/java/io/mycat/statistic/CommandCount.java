@@ -29,20 +29,33 @@ package io.mycat.statistic;
 public class CommandCount {
 
     private long initDB;
+
     private long query;
+
     private long stmtPrepare;
+
     private long stmtSendLongData;
+
     private long stmtReset;
+
     private long stmtExecute;
+
     private long stmtClose;
+
     private long ping;
+
     private long kill;
+
     private long quit;
+
     private long heartbeat;
+
     private long other;
-    public CommandCount(){
+
+    public CommandCount() {
 
     }
+
     public void doInitDB() {
         ++initDB;
     }
@@ -66,21 +79,21 @@ public class CommandCount {
     public long stmtPrepareCount() {
         return stmtPrepare;
     }
-    
+
     public void doStmtSendLongData() {
-    	++stmtSendLongData;
+        ++stmtSendLongData;
     }
-    
+
     public long stmtSendLongDataCount() {
-    	return stmtSendLongData;
+        return stmtSendLongData;
     }
-    
+
     public void doStmtReset() {
-    	++stmtReset;
+        ++stmtReset;
     }
-    
+
     public long stmtResetCount() {
-    	return stmtReset;
+        return stmtReset;
     }
 
     public void doStmtExecute() {

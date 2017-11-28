@@ -1,6 +1,5 @@
 /**
  * @author Coollf
- *
  */
 package io.mycat.backend.postgresql;
 /*

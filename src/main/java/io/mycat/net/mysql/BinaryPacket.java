@@ -36,12 +36,18 @@ import io.mycat.net.FrontendConnection;
  * @author mycat
  */
 public class BinaryPacket extends MySQLPacket {
-    public static final byte OK = 1;
-    public static final byte ERROR = 2;
-    public static final byte HEADER = 3;
-    public static final byte FIELD = 4;
-    public static final byte FIELD_EOF = 5;
-    public static final byte ROW = 6;
+    public static final byte OK         = 1;
+
+    public static final byte ERROR      = 2;
+
+    public static final byte HEADER     = 3;
+
+    public static final byte FIELD      = 4;
+
+    public static final byte FIELD_EOF  = 5;
+
+    public static final byte ROW        = 6;
+
     public static final byte PACKET_EOF = 7;
 
     public byte[] data;
@@ -55,17 +61,18 @@ public class BinaryPacket extends MySQLPacket {
     }
 
     @Override
-    public ByteBuffer write(ByteBuffer buffer, FrontendConnection c,boolean writeSocketIfFull) {
-        buffer = c.checkWriteBuffer(buffer, c.getPacketHeaderSize(),writeSocketIfFull);
+    public ByteBuffer write(ByteBuffer buffer, FrontendConnection c, boolean writeSocketIfFull) {
+        buffer = c.checkWriteBuffer(buffer, c.getPacketHeaderSize(), writeSocketIfFull);
         BufferUtil.writeUB3(buffer, calcPacketSize());
         buffer.put(packetId);
         buffer = c.writeToBuffer(data, buffer);
         return buffer;
     }
+
     @Override
     public void write(BackendAIOConnection c) {
         ByteBuffer buffer = c.allocate();
-        buffer=  c.checkWriteBuffer(buffer,c.getPacketHeaderSize()+calcPacketSize(),false);
+        buffer = c.checkWriteBuffer(buffer, c.getPacketHeaderSize() + calcPacketSize(), false);
         BufferUtil.writeUB3(buffer, calcPacketSize());
         buffer.put(packetId);
         buffer.put(data);

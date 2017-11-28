@@ -12,7 +12,8 @@ import io.mycat.net.mysql.RowDataPacket;
  */
 public class MinHeap implements HeapItf {
 
-    private RowDataCmp cmp;
+    private RowDataCmp          cmp;
+
     private List<RowDataPacket> data;
 
     public MinHeap(RowDataCmp cmp, int size) {
@@ -60,19 +61,23 @@ public class MinHeap implements HeapItf {
         data.set(j, tmp);
     }
 
+    @Override
     public RowDataPacket getRoot() {
         return data.get(0);
     }
 
+    @Override
     public void setRoot(RowDataPacket root) {
         data.set(0, root);
         heapify(0, data.size());
     }
 
+    @Override
     public List<RowDataPacket> getData() {
         return data;
     }
 
+    @Override
     public void add(RowDataPacket row) {
         data.add(row);
     }

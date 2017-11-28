@@ -77,13 +77,16 @@ public class BufferUtil {
     public static final void writeLength(ByteBuffer buffer, long l) {
         if (l < 251) {
             buffer.put((byte) l);
-        } else if (l < 0x10000L) {
+        }
+        else if (l < 0x10000L) {
             buffer.put((byte) 252);
             writeUB2(buffer, (int) l);
-        } else if (l < 0x1000000L) {
+        }
+        else if (l < 0x1000000L) {
             buffer.put((byte) 253);
             writeUB3(buffer, (int) l);
-        } else {
+        }
+        else {
             buffer.put((byte) 254);
             writeLong(buffer, l);
         }
@@ -98,13 +101,16 @@ public class BufferUtil {
         int length = src.length;
         if (length < 251) {
             buffer.put((byte) length);
-        } else if (length < 0x10000L) {
+        }
+        else if (length < 0x10000L) {
             buffer.put((byte) 252);
             writeUB2(buffer, length);
-        } else if (length < 0x1000000L) {
+        }
+        else if (length < 0x1000000L) {
             buffer.put((byte) 253);
             writeUB3(buffer, length);
-        } else {
+        }
+        else {
             buffer.put((byte) 254);
             writeLong(buffer, length);
         }
@@ -114,7 +120,8 @@ public class BufferUtil {
     public static final void writeWithLength(ByteBuffer buffer, byte[] src, byte nullValue) {
         if (src == null) {
             buffer.put(nullValue);
-        } else {
+        }
+        else {
             writeWithLength(buffer, src);
         }
     }
@@ -122,11 +129,14 @@ public class BufferUtil {
     public static final int getLength(long length) {
         if (length < 251) {
             return 1;
-        } else if (length < 0x10000L) {
+        }
+        else if (length < 0x10000L) {
             return 3;
-        } else if (length < 0x1000000L) {
+        }
+        else if (length < 0x1000000L) {
             return 4;
-        } else {
+        }
+        else {
             return 9;
         }
     }
@@ -135,11 +145,14 @@ public class BufferUtil {
         int length = src.length;
         if (length < 251) {
             return 1 + length;
-        } else if (length < 0x10000L) {
+        }
+        else if (length < 0x10000L) {
             return 3 + length;
-        } else if (length < 0x1000000L) {
+        }
+        else if (length < 0x1000000L) {
             return 4 + length;
-        } else {
+        }
+        else {
             return 9 + length;
         }
     }

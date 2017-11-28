@@ -21,6 +21,7 @@ public class User implements Propertied, Named {
 
     protected List<Property> property;
 
+    @Override
     public String getName() {
         return name;
     }

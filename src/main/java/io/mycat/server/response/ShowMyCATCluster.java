@@ -28,7 +28,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger; import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import io.mycat.MycatServer;
 import io.mycat.backend.mysql.PacketUtil;
@@ -54,10 +55,14 @@ public class ShowMyCATCluster {
 
     private static final Logger alarm = LoggerFactory.getLogger("alarm");
 
-    private static final int FIELD_COUNT = 2;
-    private static final ResultSetHeaderPacket header = PacketUtil.getHeader(FIELD_COUNT);
-    private static final FieldPacket[] fields = new FieldPacket[FIELD_COUNT];
-    private static final EOFPacket eof = new EOFPacket();
+    private static final int                   FIELD_COUNT = 2;
+
+    private static final ResultSetHeaderPacket header      = PacketUtil.getHeader(FIELD_COUNT);
+
+    private static final FieldPacket[]         fields      = new FieldPacket[FIELD_COUNT];
+
+    private static final EOFPacket             eof         = new EOFPacket();
+
     static {
         int i = 0;
         byte packetId = 0;
@@ -73,27 +78,27 @@ public class ShowMyCATCluster {
         ByteBuffer buffer = c.allocate();
 
         // write header
-        buffer = header.write(buffer, c,true);
+        buffer = header.write(buffer, c, true);
 
         // write field
         for (FieldPacket field : fields) {
-            buffer = field.write(buffer, c,true);
+            buffer = field.write(buffer, c, true);
         }
 
         // write eof
-        buffer = eof.write(buffer, c,true);
+        buffer = eof.write(buffer, c, true);
 
         // write rows
         byte packetId = eof.packetId;
         for (RowDataPacket row : getRows(c)) {
             row.packetId = ++packetId;
-            buffer = row.write(buffer, c,true);
+            buffer = row.write(buffer, c, true);
         }
 
         // last eof
         EOFPacket lastEof = new EOFPacket();
         lastEof.packetId = ++packetId;
-        buffer = lastEof.write(buffer, c,true);
+        buffer = lastEof.write(buffer, c, true);
 
         // post write
         c.write(buffer);
@@ -114,14 +119,15 @@ public class ShowMyCATCluster {
                     rows.add(getRow(n, c.getCharset()));
                 }
             }
-        } else {
+        }
+        else {
 
-        	 Map<String, MycatNode> nodes = cluster.getNodes();
-             for (MycatNode n : nodes.values()) {
-                 if (n != null && n.isOnline()) {
-                     rows.add(getRow(n, c.getCharset()));
-                 }
-             }
+            Map<String, MycatNode> nodes = cluster.getNodes();
+            for (MycatNode n : nodes.values()) {
+                if (n != null && n.isOnline()) {
+                    rows.add(getRow(n, c.getCharset()));
+                }
+            }
         }
 
         if (rows.size() == 0) {

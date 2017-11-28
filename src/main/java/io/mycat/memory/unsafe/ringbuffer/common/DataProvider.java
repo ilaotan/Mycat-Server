@@ -8,6 +8,7 @@ package io.mycat.memory.unsafe.ringbuffer.common;
 public interface DataProvider<T> {
     /**
      * 获取sequence对应的对象
+     *
      * @param sequence
      * @return
      */

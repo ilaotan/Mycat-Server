@@ -17,37 +17,37 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 
 public class TestMycatMemoryAlloctor {
-    private ConcurrentHashMap<Long,ByteBuf> freeMaps = new ConcurrentHashMap<>();
-    final MyCatMemoryAllocator memoryAllocator =
-            new MyCatMemoryAllocator(Runtime.getRuntime().availableProcessors()*2);
-    @Test
-    public void testMemAlloc(){
+    private ConcurrentHashMap<Long, ByteBuf> freeMaps        = new ConcurrentHashMap<>();
 
-        for (int i = 0; i <10000/**20000000*/; i++) {
+    final   MyCatMemoryAllocator             memoryAllocator =
+            new MyCatMemoryAllocator(Runtime.getRuntime().availableProcessors() * 2);
+
+    @Test
+    public void testMemAlloc() {
+
+        for (int i = 0; i < 10000/**20000000*/; i++) {
             ByteBuffer byteBuffer = getBuffer(8194);
             byteBuffer.put("helll world".getBytes());
             byteBuffer.flip();
-            byte [] src= new byte[byteBuffer.remaining()];
+            byte[] src = new byte[byteBuffer.remaining()];
             byteBuffer.get(src);
-            Assert.assertEquals("helll world",new String(src));
+            Assert.assertEquals("helll world", new String(src));
             free(byteBuffer);
         }
     }
 
 
-    public ByteBuffer getBuffer(int len)
-    {
+    public ByteBuffer getBuffer(int len) {
         ByteBuf byteBuf = memoryAllocator.directBuffer(len);
-        ByteBuffer  byteBuffer = byteBuf.nioBuffer(0,len);
-        freeMaps.put(PlatformDependent.directBufferAddress(byteBuffer),byteBuf);
+        ByteBuffer byteBuffer = byteBuf.nioBuffer(0, len);
+        freeMaps.put(PlatformDependent.directBufferAddress(byteBuffer), byteBuf);
         return byteBuffer;
     }
 
-    public void free(ByteBuffer byteBuffer)
-    {
+    public void free(ByteBuffer byteBuffer) {
         ByteBuf byteBuf1 = freeMaps.get(PlatformDependent.directBufferAddress(byteBuffer));
         byteBuf1.release();
-        Assert.assertEquals(0,byteBuf1.refCnt());
+        Assert.assertEquals(0, byteBuf1.refCnt());
     }
 
 
@@ -60,14 +60,14 @@ public class TestMycatMemoryAlloctor {
             decoder = charset.newDecoder();
             charBuffer = decoder.decode(buffer.asReadOnlyBuffer());
             return charBuffer.toString();
-        } catch (Exception ex) {
+        }
+        catch (Exception ex) {
             ex.printStackTrace();
             return "error";
         }
     }
 
-    public static ByteBuffer getByteBuffer(String str)
-    {
+    public static ByteBuffer getByteBuffer(String str) {
         return ByteBuffer.wrap(str.getBytes());
     }
 }

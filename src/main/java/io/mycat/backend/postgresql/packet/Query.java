@@ -6,7 +6,7 @@ import io.mycat.backend.postgresql.utils.PIOUtils;
 
 /**********
  * 查询数据包
- * 
+ *
  * @author Coollf
  */
 // Query (F)
@@ -20,27 +20,27 @@ import io.mycat.backend.postgresql.utils.PIOUtils;
 // 查询字串自身。
 public class Query extends PostgreSQLPacket {
 
-	private String sql;
+    private String sql;
 
-	@Override
-	public int getLength() {
-		return 4 + (sql == null ? 0 : (sql.getBytes(UTF8).length)); // length + string
-															// length
-	}
+    @Override
+    public int getLength() {
+        return 4 + (sql == null ? 0 : (sql.getBytes(UTF8).length)); // length + string
+        // length
+    }
 
-	@Override
-	public char getMarker() {
-		return PacketMarker.F_Query.getValue();
-	}
+    @Override
+    public char getMarker() {
+        return PacketMarker.F_Query.getValue();
+    }
 
-	public Query(String sql) {
-		this.sql = sql.trim() + "\0";
-	}
+    public Query(String sql) {
+        this.sql = sql.trim() + "\0";
+    }
 
-	public void write(ByteBuffer buffer) {
-		PIOUtils.SendChar(getMarker(), buffer);
-		PIOUtils.SendInteger4(getLength(), buffer);
-		PIOUtils.SendString(sql, buffer);
-	}
+    public void write(ByteBuffer buffer) {
+        PIOUtils.SendChar(getMarker(), buffer);
+        PIOUtils.SendInteger4(getLength(), buffer);
+        PIOUtils.SendString(sql, buffer);
+    }
 
 }

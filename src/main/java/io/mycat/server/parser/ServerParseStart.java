@@ -30,24 +30,25 @@ import io.mycat.route.parser.util.ParseUtil;
  */
 public final class ServerParseStart {
 
-    public static final int OTHER = -1;
+    public static final int OTHER       = -1;
+
     public static final int TRANSACTION = 1;
 
     public static int parse(String stmt, int offset) {
         int i = offset;
         for (; i < stmt.length(); i++) {
             switch (stmt.charAt(i)) {
-            case ' ':
-                continue;
-            case '/':
-            case '#':
-                i = ParseUtil.comment(stmt, i);
-                continue;
-            case 'T':
-            case 't':
-                return transactionCheck(stmt, i);
-            default:
-                return OTHER;
+                case ' ':
+                    continue;
+                case '/':
+                case '#':
+                    i = ParseUtil.comment(stmt, i);
+                    continue;
+                case 'T':
+                case 't':
+                    return transactionCheck(stmt, i);
+                default:
+                    return OTHER;
             }
         }
         return OTHER;

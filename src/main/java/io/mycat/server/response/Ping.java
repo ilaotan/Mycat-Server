@@ -31,7 +31,7 @@ import io.mycat.net.mysql.OkPacket;
 
 /**
  * 加入了offline状态推送，用于心跳语句。
- * 
+ *
  * @author mycat
  */
 public class Ping {
@@ -41,7 +41,8 @@ public class Ping {
     public static void response(FrontendConnection c) {
         if (MycatServer.getInstance().isOnline()) {
             c.write(c.writeToBuffer(OkPacket.OK, c.allocate()));
-        } else {
+        }
+        else {
             error.write(c);
         }
     }

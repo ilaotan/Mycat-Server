@@ -33,20 +33,18 @@ import io.mycat.net.mysql.FieldPacket;
 import io.mycat.net.mysql.ResultSetHeaderPacket;
 import io.mycat.server.ServerConnection;
 
-public class MysqlProcHandler
-{
-    private static final int FIELD_COUNT = 2;
-    private static final FieldPacket[] fields = new FieldPacket[FIELD_COUNT];
+public class MysqlProcHandler {
+    private static final int           FIELD_COUNT = 2;
 
-    static
-    {
+    private static final FieldPacket[] fields      = new FieldPacket[FIELD_COUNT];
+
+    static {
         fields[0] = PacketUtil.getField("name",
                 Fields.FIELD_TYPE_VAR_STRING);
         fields[1] = PacketUtil.getField("type", Fields.FIELD_TYPE_VAR_STRING);
     }
 
-    public static void handle(String stmt, ServerConnection c)
-    {
+    public static void handle(String stmt, ServerConnection c) {
 
         ByteBuffer buffer = c.allocate();
 
@@ -56,8 +54,7 @@ public class MysqlProcHandler
         buffer = header.write(buffer, c, true);
 
         // write fields
-        for (FieldPacket field : fields)
-        {
+        for (FieldPacket field : fields) {
             field.packetId = ++packetId;
             buffer = field.write(buffer, c, true);
         }

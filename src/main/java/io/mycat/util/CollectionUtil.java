@@ -34,8 +34,7 @@ import java.util.Set;
  */
 public class CollectionUtil {
     /**
-     * @param orig
-     *            if null, return intersect
+     * @param orig if null, return intersect
      */
     public static Set<? extends Object> intersectSet(Set<? extends Object> orig, Set<? extends Object> intersect) {
         if (orig == null) {
@@ -52,10 +51,12 @@ public class CollectionUtil {
         }
         return set;
     }
-    public static boolean isEmpty(Collection<?> collection){
-    	return collection==null || collection.isEmpty();
+
+    public static boolean isEmpty(Collection<?> collection) {
+        return collection == null || collection.isEmpty();
     }
-    public static boolean isEmpty(Map<?,?> map){
-    	return map==null || map.isEmpty();
+
+    public static boolean isEmpty(Map<?, ?> map) {
+        return map == null || map.isEmpty();
     }
 }

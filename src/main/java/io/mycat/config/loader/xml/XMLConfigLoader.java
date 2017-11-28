@@ -42,15 +42,21 @@ public class XMLConfigLoader implements ConfigLoader {
 
     /** unmodifiable */
     private final Map<String, DataHostConfig> dataHosts;
+
     /** unmodifiable */
     private final Map<String, DataNodeConfig> dataNodes;
+
     /** unmodifiable */
-    private final Map<String, SchemaConfig> schemas;
-    private final SystemConfig system;
+    private final Map<String, SchemaConfig>   schemas;
+
+    private final SystemConfig                system;
+
     /** unmodifiable */
-    private final Map<String, UserConfig> users;
-    private final FirewallConfig firewall;
-    private final ClusterConfig cluster;
+    private final Map<String, UserConfig>     users;
+
+    private final FirewallConfig              firewall;
+
+    private final ClusterConfig               cluster;
 
     public XMLConfigLoader(SchemaLoader schemaLoader) {
         XMLServerLoader serverLoader = new XMLServerLoader();
@@ -88,6 +94,7 @@ public class XMLConfigLoader implements ConfigLoader {
     public SystemConfig getSystemConfig() {
         return system;
     }
+
     @Override
     public Map<String, SchemaConfig> getSchemaConfigs() {
         return schemas;

@@ -31,6 +31,7 @@ import io.mycat.manager.response.Online;
 import io.mycat.net.handler.FrontendQueryHandler;
 import io.mycat.net.mysql.OkPacket;
 import io.mycat.route.parser.ManagerParse;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,14 +40,18 @@ import org.slf4j.LoggerFactory;
  */
 public class ManagerQueryHandler implements FrontendQueryHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(ManagerQueryHandler.class);
-    private static final int SHIFT = 8;
+
+    private static final int    SHIFT  = 8;
+
     private final ManagerConnection source;
-    protected Boolean readOnly;
+
+    protected     Boolean           readOnly;
 
     public ManagerQueryHandler(ManagerConnection source) {
         this.source = source;
     }
 
+    @Override
     public void setReadOnly(Boolean readOnly) {
         this.readOnly = readOnly;
     }

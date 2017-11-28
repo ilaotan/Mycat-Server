@@ -10,9 +10,9 @@ import java.util.Map;
 /**
  * Created by magicdoom on 2015/3/13.
  */
-public class MycatLexer extends MySqlLexer
-{
+public class MycatLexer extends MySqlLexer {
     public final static Keywords DEFAULT_MYCAT_KEYWORDS;
+
     static {
         Map<String, Token> map = new HashMap<String, Token>();
 
@@ -42,14 +42,12 @@ public class MycatLexer extends MySqlLexer
     }
 
 
-    public MycatLexer(char[] input, int inputLength, boolean skipComment)
-    {
+    public MycatLexer(char[] input, int inputLength, boolean skipComment) {
         super(input, inputLength, skipComment);
         super.keywods = DEFAULT_MYCAT_KEYWORDS;
     }
 
-    public MycatLexer(String input)
-    {
+    public MycatLexer(String input) {
         super(input);
         super.keywods = DEFAULT_MYCAT_KEYWORDS;
     }
